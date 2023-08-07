@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Enums;
+
+use App\Traits\HasEnum;
+
+enum {{ name }}: int
+{
+    use HasEnum;
+
+    case DRAFT = 1;
+    case PUBLISHED = 2;
+    case ARCHIVED = 3;
+
+    public function label(): string
+    {
+        return static::getLabel($this);
+    }
+
+    public static function getLabel(self $value): string
+    {
+        return match ($value) {
+            self::DRAFT => 'draft',
+            self::PUBLISHED => 'published',
+            self::ARCHIVED => 'archived',
+        };
+    }
+}
