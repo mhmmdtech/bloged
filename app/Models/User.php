@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\GenderStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Hash;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -21,7 +20,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = ['id', 'updated_at', 'created_at'];
+    protected $guarded = ['id', 'updated_at', 'created_at'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -48,6 +47,16 @@ class User extends Authenticatable
     {
         return Attribute::make(
             set: fn ($value) => Hash::needsRehash($value) ? Hash::make($value) : $value,
+        );
+    }
+
+    /**
+     * Interact with the user's password.
+     */
+    protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->first_name . " " . $this->last_name,
         );
     }
 }

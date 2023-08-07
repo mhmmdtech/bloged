@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Enums\GenderStatus;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -20,8 +21,13 @@ class RegistrationTest extends TestCase
     public function test_new_users_can_register(): void
     {
         $response = $this->post('/register', [
-            'name' => 'Test User',
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'national_code' => '674-96-0165',
+            'mobile_number' => '+17169736475',
+            'gender' => GenderStatus::Male->value,
             'email' => 'test@example.com',
+            'username' => 'mhmdmrkbti',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
