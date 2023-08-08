@@ -28,4 +28,12 @@ class Category extends Model
     protected $casts = [
         'status' => CategoryStatus::class,
     ];
+
+    /**
+     * Get the user that owns the category.
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'creator_id');
+    }
 }

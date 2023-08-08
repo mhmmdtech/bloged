@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\CategoryStatus;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,6 +20,7 @@ class CategoryFactory extends Factory
     {
         $title = fake()->unique()->word();
         $description = fake()->text();
+        $creators = collect(User::all()->modelKeys());
 
         return [
             'thumbnail' => fake()->imageUrl(),
@@ -27,6 +29,7 @@ class CategoryFactory extends Factory
             'description' => $description,
             'seo_description' => $description,
             'status' => fake()->randomElement([CategoryStatus::Active, CategoryStatus::Disable]),
+            'creator_id' => $creators->random(),
         ];
     }
 }

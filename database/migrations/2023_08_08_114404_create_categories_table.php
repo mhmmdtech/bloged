@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\CategoryStatus;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,6 +19,7 @@ return new class extends Migration {
             $table->string('seo_title');
             $table->string('description');
             $table->string('seo_description');
+            $table->foreignIdFor(User::class, 'creator_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->tinyInteger('status')->default(CategoryStatus::Disable->value)->comment('1 => active, 2 => disable');
             $table->timestamps();
             $table->softDeletes();

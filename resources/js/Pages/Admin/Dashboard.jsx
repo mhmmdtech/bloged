@@ -1,8 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
-export default ({ auth, categories }) => {
-    console.log(categories);
+export default ({ auth }) => {
     return (
         <AuthenticatedLayout
             user={auth?.user?.data}
