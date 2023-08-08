@@ -1,7 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
-export default function Dashboard({ auth, categories }) {
+export default ({ auth, categories }) => {
     console.log(categories);
     return (
         <AuthenticatedLayout
@@ -25,4 +25,4 @@ export default function Dashboard({ auth, categories }) {
             </div>
         </AuthenticatedLayout>
     );
-}
+};
