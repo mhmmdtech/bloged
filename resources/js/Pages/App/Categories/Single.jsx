@@ -31,9 +31,18 @@ export default ({ auth, category: { data: category }, posts }) => {
                             />
                             <div className="my-2">
                                 <h3 className="">{post.title}</h3>
-                                <span>
-                                    was written by {post?.author.username}
-                                </span>
+                                <div className="flex flex-wrap justify-between">
+                                    <span>
+                                        written by {post?.author.username}
+                                    </span>
+                                    <span>
+                                        {post.reading_time}{" "}
+                                        {post.reading_time === 1
+                                            ? "min"
+                                            : "mins"}{" "}
+                                        to read
+                                    </span>
+                                </div>
                             </div>
                         </Link>
                     ))}

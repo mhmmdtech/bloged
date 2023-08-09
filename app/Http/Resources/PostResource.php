@@ -26,6 +26,7 @@ class PostResource extends JsonResource
             'author' => $this->whenLoaded('author'),
             'category' => $this->whenLoaded('category'),
             'status' => ['key' => $this->status->value, 'value' => $this->status->name],
+            'reading_time' => $this->reading_time,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,

@@ -27,6 +27,10 @@ export default ({ auth, post: { data: post } }) => {
                     <li>User: {post.author?.username ?? "Unknown"}</li>
                     <li>Status: {post.status?.value ?? "Unknown"}</li>
                     <li>
+                        Reading Time: It takes {post.reading_time}{" "}
+                        {post.reading_time === 1 ? "min" : "mins"} to read
+                    </li>
+                    <li>
                         Created:{" "}
                         {formatDistance(new Date(post.created_at), new Date(), {
                             addSuffix: true,

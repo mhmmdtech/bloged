@@ -33,7 +33,7 @@ export default ({ auth, categories: { data: categories } }) => {
                             <div className="my-2">
                                 <h3 className="">{category.title}</h3>
                                 <span>
-                                    was created by {category?.creator?.username}
+                                    created by {category?.creator?.username}
                                 </span>
                             </div>
                         </Link>

@@ -31,6 +31,7 @@ class PostFactory extends Factory
             'description' => $description,
             'seo_description' => $description,
             'body' => fake()->paragraphs(3, true),
+            'reading_time' => fake()->randomDigitNotNull(),
             'status' => fake()->randomElement([PostStatus::Draft, PostStatus::Published, PostStatus::Archived]),
             'author_id' => $authors->random(),
             'category_id' => $categories->random(),

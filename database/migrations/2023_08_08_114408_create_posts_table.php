@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->string('seo_description');
             $table->text('body');
             $table->boolean('is_featured')->default(0);
+            $table->integer('reading_time')->nullable();
             $table->foreignIdFor(User::class, 'author_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Category::class, 'category_id')->constrained('categories')->cascadeOnDelete()->cascadeOnUpdate();
             $table->tinyInteger('status')->default(PostStatus::Draft->value)->comment('1 => draft, 2 => published, 3 => archived');

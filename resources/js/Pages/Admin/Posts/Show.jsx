@@ -55,6 +55,10 @@ export default function Show({ auth, post: { data: postDetails } }) {
                     <li>User: {postDetails.author?.username ?? "Unknown"}</li>
                     <li>Status: {postDetails.status?.value ?? "Unknown"}</li>
                     <li>
+                        Reading Time: It takes {postDetails.reading_time} mins
+                        to read
+                    </li>
+                    <li>
                         Created:{" "}
                         {formatDistance(
                             new Date(postDetails.created_at),
