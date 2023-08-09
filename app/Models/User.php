@@ -39,6 +39,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'gender' => GenderStatus::class,
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'birthday' => 'date',
     ];
 
     /**
