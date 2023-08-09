@@ -4,13 +4,13 @@ namespace App\Enums;
 
 use App\Traits\HasEnum;
 
-enum {{ name }}: int
+enum MilitaryStatus: int
 {
     use HasEnum;
 
-    case Draft = 1;
-    case Published = 2;
-    case Archived = 3;
+    case TemporaryExemption = 1;
+    case PermanentExemption = 2;
+    case Done = 3;
 
     public function label(): string
     {
@@ -20,9 +20,9 @@ enum {{ name }}: int
     public static function getLabel(self $value): string
     {
         return match ($value) {
-            self::Draft => 'draft',
-            self::Published => 'published',
-            self::Archived => 'archived',
+            self::TemporaryExemption => 'temporary exemption',
+            self::PermanentExemption => 'permanent exemption',
+            self::Done => 'done',
         };
     }
 }

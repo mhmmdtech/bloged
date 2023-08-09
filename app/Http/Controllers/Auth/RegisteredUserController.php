@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Enums\GenderStatus;
+use App\Enums\MilitaryStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterationRequest;
 use App\Models\User;
@@ -24,7 +25,8 @@ class RegisteredUserController extends Controller
     public function create(): Response
     {
         $genders = GenderStatus::array();
-        return Inertia::render('Auth/Register', compact('genders'));
+        $militaryStatuses = MilitaryStatus::array();
+        return Inertia::render('Auth/Register', compact('genders', 'militaryStatuses'));
     }
 
     /**
@@ -35,6 +37,9 @@ class RegisteredUserController extends Controller
     public function store(RegisterationRequest $request, ImageService $imageService): RedirectResponse
     {
         $inputs = $request->validated();
+
+        if ($inputs['gender'] != GenderStatus::Male->value)
+            $inputs['military_status'] = null;
 
         $user = User::create($inputs);
 

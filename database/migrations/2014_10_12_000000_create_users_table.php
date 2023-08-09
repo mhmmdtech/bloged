@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\MilitaryStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -23,6 +24,7 @@ return new class extends Migration {
             $table->string('password');
             $table->string('avatar')->nullable();
             $table->date('birthday')->nullable();
+            $table->tinyInteger('military_status')->nullable()->comment('1 => temporary exemption, 2 => permanent exemption, 3 => done');
             $table->rememberToken();
             $table->timestamps();
         });

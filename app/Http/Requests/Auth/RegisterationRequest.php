@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Enums\GenderStatus;
+use App\Enums\MilitaryStatus;
 use App\Models\User;
 use App\Rules\DontStartWithNumbers;
 use App\Rules\IrMobileNumber;
@@ -41,6 +42,19 @@ class RegisterationRequest extends FormRequest
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'avatar' => ['nullable', Rules\File::image()->max(200)],
             'birthday' => ['nullable', 'date', 'before_or_equal:' . Carbon::now()->subYears(10)->toDateString()],
+            'military_status' => ['nullable', 'required_if:gender,' . GenderStatus::Male->value, new Rules\Enum(MilitaryStatus::class)],
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'military_status.required_if' => 'The military status field is required when gender is male.',
         ];
     }
 }

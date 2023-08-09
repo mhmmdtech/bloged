@@ -8,7 +8,7 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import SelectInput from "@/Components/SelectInput";
 import FileInput from "@/Components/FileInput";
 
-export default function Register({ genders }) {
+export default function Register({ genders, militaryStatuses }) {
     const { data, setData, post, processing, errors, reset, progress } =
         useForm({
             first_name: "",
@@ -22,6 +22,7 @@ export default function Register({ genders }) {
             password_confirmation: "",
             avatar: "",
             birthday: "",
+            military_status: "",
         });
 
     useEffect(() => {
@@ -253,6 +254,40 @@ export default function Register({ genders }) {
                     />
 
                     <InputError message={errors.birthday} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel
+                        htmlFor="military_status"
+                        value="Military Status"
+                    />
+
+                    <SelectInput
+                        id="military_status"
+                        name="military_status"
+                        value={data.military_status}
+                        className="mt-1 block w-full"
+                        autoComplete="username"
+                        isFocused={false}
+                        onChange={(e) =>
+                            setData("military_status", e.target.value)
+                        }
+                        disabled={data.gender != 1}
+                    >
+                        <option value="">Choose</option>
+                        {Object.entries(militaryStatuses).map(
+                            ([key, value]) => (
+                                <option key={key} value={key}>
+                                    {value}
+                                </option>
+                            )
+                        )}
+                    </SelectInput>
+
+                    <InputError
+                        message={errors.military_status}
+                        className="mt-2"
+                    />
                 </div>
 
                 <div className="flex items-center justify-end mt-4">
