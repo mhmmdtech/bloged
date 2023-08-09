@@ -25,7 +25,7 @@ class PostResource extends JsonResource
             'is_featured' => $this->is_featured ? true : false,
             'author' => $this->whenLoaded('author'),
             'category' => $this->whenLoaded('category'),
-            'status' => ['key' => $this->status->value, 'value' => $this->status->name],
+            'status' => ['key' => $this->status->value, 'value' => $this->status->label()],
             'reading_time' => $this->reading_time,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

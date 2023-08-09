@@ -22,7 +22,7 @@ class CategoryResource extends JsonResource
             'description' => $this->description,
             'seo_description' => $this->seo_description,
             'creator' => $this->whenLoaded('creator'),
-            'status' => ['key' => $this->status->value, 'value' => $this->status->name],
+            'status' => ['key' => $this->status->value, 'value' => $this->status->label()],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
