@@ -3,12 +3,17 @@ import { Head, Link } from "@inertiajs/react";
 import Icons from "@/Components/Icons";
 import Pagination from "@/Components/Pagination";
 import { shortenText } from "@/utils/functions";
+import { router } from "@inertiajs/react";
 
 export default function Index({ auth, posts }) {
     const {
         data,
         meta: { links },
     } = posts;
+
+    function toggleFeatured(id) {
+        router.patch(route("administration.posts.toggle-featured", id));
+    }
 
     return (
         <AuthenticatedLayout
@@ -36,6 +41,7 @@ export default function Index({ auth, posts }) {
                     <table className="w-full whitespace-nowrap">
                         <thead>
                             <tr className="font-bold text-left">
+                                <th className="px-6 pt-5 pb-4">Is Featured</th>
                                 <th className="px-6 pt-5 pb-4">Title</th>
                                 <th className="px-6 pt-5 pb-4">Author</th>
                                 <th className="px-6 pt-5 pb-4">Category</th>
@@ -44,11 +50,28 @@ export default function Index({ auth, posts }) {
                         </thead>
                         <tbody>
                             {data.map(
-                                ({ id, title, author, category, status }) => (
+                                ({
+                                    id,
+                                    title,
+                                    author,
+                                    category,
+                                    status,
+                                    is_featured,
+                                }) => (
                                     <tr
                                         key={id}
                                         className="hover:bg-gray-100 focus-within:bg-gray-100"
                                     >
+                                        <td className="border-t p-6">
+                                            <input
+                                                type="checkbox"
+                                                checked={is_featured}
+                                                onChange={() =>
+                                                    toggleFeatured(id)
+                                                }
+                                                id="is_featured"
+                                            />
+                                        </td>
                                         <td className="border-t">
                                             <Link
                                                 tabIndex="-1"

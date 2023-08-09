@@ -40,6 +40,14 @@ export default function Authenticated({ user, header, children }) {
                                 >
                                     Categories
                                 </NavLink>
+                                <NavLink
+                                    href={route("administration.posts.index")}
+                                    active={route().current(
+                                        "administration.posts.index"
+                                    )}
+                                >
+                                    Posts
+                                </NavLink>
                             </div>
                         </div>
 
@@ -151,6 +159,14 @@ export default function Authenticated({ user, header, children }) {
                             )}
                         >
                             Categories
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route("administration.posts.index")}
+                            active={route().current(
+                                "administration.posts.index"
+                            )}
+                        >
+                            Posts
                         </ResponsiveNavLink>
                     </div>
 

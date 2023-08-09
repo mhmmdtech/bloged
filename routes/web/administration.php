@@ -10,5 +10,7 @@ Route::prefix('terminator')->name('administration.')->middleware(['auth', 'verif
     Route::inertia('/', 'Admin/Dashboard')->name('dashboard');
 
     Route::resource('categories', CategoryController::class);
+
+    Route::patch('/posts/{post}/toggle-featured', [PostController::class, 'toggleFeatured'])->name('posts.toggle-featured');
     Route::resource('posts', PostController::class);
 });

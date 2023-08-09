@@ -104,4 +104,17 @@ class PostController extends Controller
 
         return redirect()->route('administration.posts.index');
     }
+
+    public function toggleFeatured(Post $post)
+    {
+        if ($post->is_featured) {
+            $post->update(['is_featured' => false]);
+            return;
+        }
+
+        // Disable the previously featured post
+        Post::where('is_featured', true)->update(['is_featured' => false]);
+
+        $post->update(['is_featured' => true]);
+    }
 }

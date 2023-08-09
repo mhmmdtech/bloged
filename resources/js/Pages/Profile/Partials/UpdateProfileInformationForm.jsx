@@ -24,7 +24,6 @@ export default function UpdateProfileInformation({
             email: user.email,
             username: user.username,
         });
-    console.log(errors);
 
     const submit = (e) => {
         e.preventDefault();
