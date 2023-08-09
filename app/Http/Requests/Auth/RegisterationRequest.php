@@ -7,12 +7,14 @@ use App\Models\User;
 use App\Rules\DontStartWithNumbers;
 use App\Rules\IrMobileNumber;
 use App\Rules\IrNationalCode;
+use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\Rule;
 
 class RegisterationRequest extends FormRequest
 {
+    // private $tenYearsAgo = Carbon::now()->subYear(10)->toDateString();
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -37,6 +39,8 @@ class RegisterationRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'min:5', 'max:255', Rule::unique(User::class)],
             'username' => ['required', 'string', 'alpha_num:ascii', 'min:2', 'max:100', new DontStartWithNumbers, Rule::unique(User::class)],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'avatar' => ['nullable', Rules\File::image()->max(200)],
+            'birthday' => ['nullable', 'date', 'before_or_equal:' . Carbon::now()->subYears(10)->toDateString()],
         ];
     }
 }
