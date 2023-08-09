@@ -2,6 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
 import Icons from "@/Components/Icons";
 import Pagination from "@/Components/Pagination";
+import { shortenText } from "@/utils/functions";
 
 export default function Index({ auth, categories }) {
     const {
@@ -53,7 +54,7 @@ export default function Index({ auth, categories }) {
                                             )}
                                             className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
                                         >
-                                            {title}
+                                            {shortenText(title, 25)}
                                         </Link>
                                     </td>
                                     <td className="border-t">
@@ -91,7 +92,7 @@ export default function Index({ auth, categories }) {
                                         className="px-6 py-4 border-t"
                                         colSpan="4"
                                     >
-                                        No products found.
+                                        No categories found.
                                     </td>
                                 </tr>
                             )}

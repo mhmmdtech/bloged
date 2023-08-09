@@ -68,4 +68,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Category::class, 'creator_id');
     }
+
+    /**
+     * Get the posts for the category.
+     */
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class, 'author_id');
+    }
 }

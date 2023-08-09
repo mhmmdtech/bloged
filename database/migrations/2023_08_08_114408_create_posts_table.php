@@ -1,6 +1,8 @@
 <?php
 
 use App\Enums\PostStatus;
+use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,6 +22,8 @@ return new class extends Migration {
             $table->string('seo_description');
             $table->text('body');
             $table->boolean('is_featured')->default(0);
+            $table->foreignIdFor(User::class, 'author_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(Category::class, 'category_id')->constrained('categories')->cascadeOnDelete()->cascadeOnUpdate();
             $table->tinyInteger('status')->default(PostStatus::Draft->value)->comment('1 => draft, 2 => published, 3 => archived');
             $table->timestamps();
             $table->softDeletes();

@@ -40,4 +40,20 @@ class Post extends Model
             get: fn(string $value) => Str::startsWith($value, 'https://') ? $value : Storage::url($value),
         );
     }
+
+    /**
+     * Get the user that owns the post.
+     */
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * Get the category that owns the post.
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 }

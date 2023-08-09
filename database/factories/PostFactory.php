@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Enums\PostStatus;
+use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,6 +21,8 @@ class PostFactory extends Factory
     {
         $title = fake()->unique()->sentence();
         $description = fake()->text();
+        $authors = collect(User::all()->modelKeys());
+        $categories = collect(Category::all()->modelKeys());
 
         return [
             'thumbnail' => fake()->imageUrl(),
@@ -28,6 +32,8 @@ class PostFactory extends Factory
             'seo_description' => $description,
             'body' => fake()->paragraphs(3, true),
             'status' => fake()->randomElement([PostStatus::Draft, PostStatus::Published, PostStatus::Archived]),
+            'author_id' => $authors->random(),
+            'category_id' => $categories->random(),
         ];
     }
 }
