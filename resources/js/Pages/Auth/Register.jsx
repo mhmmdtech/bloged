@@ -131,7 +131,7 @@ export default function Register({ genders, militaryStatuses }) {
                         name="email"
                         value={data.email}
                         className="mt-1 block w-full"
-                        autoComplete="username"
+                        autoComplete="email"
                         isFocused={false}
                         onChange={(e) => setData("email", e.target.value)}
                     />

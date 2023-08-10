@@ -77,10 +77,7 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $inputs = $request->validated();
-
-        if ($inputs['thumbnail'] === null)
-            unset($inputs['thumbnail']);
+        $inputs = removeNullFromArray($request->validated());
 
         $category->update($inputs);
 

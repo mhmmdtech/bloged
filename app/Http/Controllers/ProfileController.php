@@ -34,7 +34,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request, ImageService $imageService): RedirectResponse
     {
-        $inputs = $request->validated();
+        $inputs = removeNullFromArray($request->validated());
 
         if ($inputs['gender'] != GenderStatus::Male->value)
             $inputs['military_status'] = null;
@@ -54,7 +54,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        return redirect()->route('administration.users.index');
     }
 
     /**

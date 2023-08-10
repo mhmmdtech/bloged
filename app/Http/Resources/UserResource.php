@@ -24,6 +24,7 @@ class UserResource extends JsonResource
             'gender' => ['key' => $this->gender->value, 'value' => $this->gender->label()],
             'email' => $this->email,
             'username' => $this->username,
+            'creator' => $this->whenLoaded('creator'),
             'avatar' => $this->avatar,
             'birthday' => $this->birthday,
             'military_status' => $this->military_status ? ['key' => $this->military_status->value, 'value' => $this->military_status->label()] : $this->military_status,

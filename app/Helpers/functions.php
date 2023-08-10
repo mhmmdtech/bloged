@@ -40,3 +40,16 @@ if (!function_exists('replaceEnDigitsWithFaDigits')) {
         return str_replace($englishDigits, $persianDigits, $text);
     }
 }
+
+if (!function_exists('removeNullFromArray')) {
+    /**
+     * Remove null values from array
+     *
+     * @param array $array The array that should be removed its null value
+     * @return array The array that its null value was removed.
+     */
+    function removeNullFromArray(array $array): array
+    {
+        return array_filter($array, fn($value) => $value !== null);
+    }
+}

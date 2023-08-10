@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
+use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
 use App\Models\User;
+use App\Rules\DontStartWithNumbers;
 use App\Rules\IrMobileNumber;
 use App\Rules\IrNationalCode;
+use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\Rule;
-use App\Enums\GenderStatus;
-use App\Rules\DontStartWithNumbers;
-use Illuminate\Support\Carbon;
 
-class ProfileUpdateRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +26,7 @@ class ProfileUpdateRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
      */
     public function rules(): array
     {

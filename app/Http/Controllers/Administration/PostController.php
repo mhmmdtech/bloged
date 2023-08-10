@@ -85,10 +85,7 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        $inputs = $request->validated();
-
-        if ($inputs['thumbnail'] === null)
-            unset($inputs['thumbnail']);
+        $inputs = removeNullFromArray($request->validated());
 
         $post->update($inputs);
 
