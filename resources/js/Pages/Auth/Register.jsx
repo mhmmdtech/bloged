@@ -305,7 +305,6 @@ export default function Register({ genders, militaryStatuses }) {
                             value={data.captcha_code}
                             className="mt-1 block w-full"
                             autoComplete="captcha_code"
-                            isFocused={true}
                             onChange={(e) =>
                                 setData("captcha_code", e.target.value)
                             }

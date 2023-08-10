@@ -18,4 +18,9 @@ trait HasEnum
     {
         return array_combine(self::values(), self::names());
     }
+
+    public static function fromName(string $name)
+    {
+        return constant("self::$name");
+    }
 }
