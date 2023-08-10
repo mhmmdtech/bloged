@@ -23,6 +23,7 @@ export default function Register({ genders, militaryStatuses }) {
             avatar: "",
             birthday: "",
             military_status: "",
+            captcha_code: "",
         });
 
     useEffect(() => {
@@ -288,6 +289,33 @@ export default function Register({ genders, militaryStatuses }) {
                         message={errors.military_status}
                         className="mt-2"
                     />
+                </div>
+
+                <div className="mt-4">
+                    <img src={route("captcha")} />
+                    <div>
+                        <InputLabel
+                            htmlFor="captcha_code"
+                            value="Captcha Code *"
+                        />
+
+                        <TextInput
+                            id="captcha_code"
+                            name="captcha_code"
+                            value={data.captcha_code}
+                            className="mt-1 block w-full"
+                            autoComplete="captcha_code"
+                            isFocused={true}
+                            onChange={(e) =>
+                                setData("captcha_code", e.target.value)
+                            }
+                        />
+
+                        <InputError
+                            message={errors.captcha_code}
+                            className="mt-2"
+                        />
+                    </div>
                 </div>
 
                 <div className="flex items-center justify-end mt-4">

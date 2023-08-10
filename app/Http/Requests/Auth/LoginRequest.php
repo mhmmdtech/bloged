@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Rules\DontStartWithNumbers;
+use App\Rules\CaptchaValidator;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,8 @@ class LoginRequest extends FormRequest
         return [
             'username' => ['required', 'string', 'alpha_num:ascii', 'min:2', 'max:100', new DontStartWithNumbers],
             'password' => ['required', 'string'],
+            'captcha_code' => ['required', 'numeric', 'digits_between:6,8', new CaptchaValidator]
+
         ];
     }
 

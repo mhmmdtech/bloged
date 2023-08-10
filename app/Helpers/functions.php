@@ -24,3 +24,19 @@ if (!function_exists('estimateReadingTime')) {
         return $readingTime;
     }
 }
+
+if (!function_exists('replaceEnDigitsWithFaDigits')) {
+    /**
+     * Replace english digit in a serntence with farsi digits.
+     *
+     * @param string $text The text that should be changed its en value.
+     * @return string The text with farsi digits.
+     */
+    function replaceEnDigitsWithFaDigits(string $text): string
+    {
+        $englishDigits = range(0, 9);
+        $persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+
+        return str_replace($englishDigits, $persianDigits, $text);
+    }
+}

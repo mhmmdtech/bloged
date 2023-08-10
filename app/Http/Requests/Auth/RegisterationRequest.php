@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Rules\DontStartWithNumbers;
 use App\Rules\IrMobileNumber;
 use App\Rules\IrNationalCode;
+use App\Rules\CaptchaValidator;
 use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
@@ -43,6 +44,7 @@ class RegisterationRequest extends FormRequest
             'avatar' => ['nullable', Rules\File::image()->max(200)],
             'birthday' => ['nullable', 'date', 'before_or_equal:' . Carbon::now()->subYears(10)->toDateString()],
             'military_status' => ['nullable', 'required_if:gender,' . GenderStatus::Male->value, new Rules\Enum(MilitaryStatus::class)],
+            'captcha_code' => ['required', 'numeric', 'digits_between:6,8', new CaptchaValidator]
         ];
     }
 
