@@ -6,7 +6,9 @@ use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
+use App\Http\Requests\Admin\UpdateUserPermissionsRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
+use App\Http\Requests\Admin\UpdateUserRolesRequest;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -14,6 +16,8 @@ use App\Services\Image\ImageService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Auth\Events\Registered;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller
 {
@@ -124,5 +128,47 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('administration.users.index');
+    }
+
+    /**
+     * Display a listing of all roles.
+     */
+    public function roles(User $user)
+    {
+        $roles = Role::all();
+        $user = new UserResource($user);
+        $currentRoles = $user->getRoleNames()->toArray();
+
+        return Inertia::render('Admin/Users/Roles', compact('user', 'roles', 'currentRoles'));
+    }
+
+    public function updateRoles(UpdateUserRolesRequest $request, User $user)
+    {
+        $inputs = $request->validated();
+
+        $user->syncRoles($inputs['currentRoles']);
+
+        return redirect()->route('administration.users.show', $user->id);
+    }
+
+    /**
+     * Display a listing of all permissions.
+     */
+    public function permissions(User $user)
+    {
+        $permissions = Permission::all();
+        $user = new UserResource($user);
+        $currentPermissions = $user->getDirectPermissions()->pluck('name')->toArray();
+
+        return Inertia::render('Admin/Users/Permissions', compact('user', 'permissions', 'currentPermissions'));
+    }
+
+    public function updatePermissions(UpdateUserPermissionsRequest $request, User $user)
+    {
+        $inputs = $request->validated();
+
+        $user->syncPermissions($inputs['currentPermissions']);
+
+        return redirect()->route('administration.users.show', $user->id);
     }
 }

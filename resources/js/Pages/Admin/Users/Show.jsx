@@ -29,6 +29,24 @@ export default function Show({ auth, user: { data: userDetails } }) {
                         <span>Edit</span>
                         <span className="hidden md:inline"> User</span>
                     </Link>
+                    <Link
+                        className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
+                        href={route(
+                            "administration.users.roles",
+                            userDetails.id
+                        )}
+                    >
+                        <span>Roles</span>
+                    </Link>
+                    <Link
+                        className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
+                        href={route(
+                            "administration.users.permissions",
+                            userDetails.id
+                        )}
+                    >
+                        <span>Permissions</span>
+                    </Link>
                     {userDetails.deleted_at || (
                         <DeleteButton onDelete={destroy}>
                             Delete User

@@ -24,7 +24,7 @@ class RoleSeeder extends Seeder
         $user->syncPermissions([16, 17, 18]);
 
         $contentManager = Role::whereName('content manager')->first();
-        $contentManager->syncPermissions([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+        $contentManager->syncPermissions([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18]);
 
         $master = Role::whereName('master')->first();
         $master->syncPermissions([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]);
