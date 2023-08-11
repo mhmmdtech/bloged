@@ -14,7 +14,7 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [];
-        $operations = ['browse', 'read', 'edit', 'update', 'delete'];
+        $operations = ['browse', 'read', 'edit', 'add', 'delete'];
         $sections = ['category', 'post', 'user'];
 
         foreach ($sections as $section) {
@@ -22,9 +22,6 @@ class PermissionSeeder extends Seeder
                 array_push($permissions, "{$operation} {$section}");
             }
         }
-
-        array_push($permissions, 'browse profile', 'edit profile', 'delete profile');
-
 
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);

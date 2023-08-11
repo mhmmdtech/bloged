@@ -19,6 +19,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        $this->authorize('browse category', Category::class);
+
         $categories = new CategoryCollection(Category::latest()->paginate(5));
 
         return Inertia::render('Admin/Categories/Index', compact('categories'));
@@ -29,6 +31,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
+        $this->authorize('add category', Category::class);
+
         $statuses = CategoryStatus::array();
 
         return Inertia::render('Admin/Categories/Create', compact('statuses'));
@@ -39,6 +43,8 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
+        $this->authorize('add category', Category::class);
+
         $inputs = $request->validated();
 
         $inputs['thumbnail'] = Storage::disk('public')->putFile('categories', $request->file('thumbnail'));
@@ -53,6 +59,8 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
+        $this->authorize('read category', $category);
+
         $category->load('creator');
 
         $category = new CategoryResource($category);
@@ -65,6 +73,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        $this->authorize('edit category', $category);
+
         $statuses = CategoryStatus::array();
 
         $category = new CategoryResource($category);
@@ -77,6 +87,8 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
+        $this->authorize('edit category', $category);
+
         $inputs = removeNullFromArray($request->validated());
 
         $category->update($inputs);
@@ -89,6 +101,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        $this->authorize('delete category', $category);
+
         $category->delete();
 
         return redirect()->route('administration.categories.index');

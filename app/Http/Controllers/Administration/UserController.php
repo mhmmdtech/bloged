@@ -26,6 +26,8 @@ class UserController extends Controller
      */
     public function index()
     {
+        $this->authorize('browse user', User::class);
+
         $users = new UserCollection(User::with('roles')->latest()->paginate(5));
 
         return Inertia::render('Admin/Users/Index', compact('users'));
@@ -36,6 +38,8 @@ class UserController extends Controller
      */
     public function create()
     {
+        $this->authorize('add user', User::class);
+
         $genders = GenderStatus::array();
         $militaryStatuses = MilitaryStatus::array();
 
@@ -47,6 +51,8 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request, ImageService $imageService)
     {
+        $this->authorize('add user', User::class);
+
         $inputs = $request->validated();
 
         if ($inputs['gender'] != GenderStatus::Male->value)
@@ -72,6 +78,8 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $this->authorize('read user', $user);
+
         $user->load('creator');
 
         $user = new UserResource($user);
@@ -84,6 +92,8 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        $this->authorize('edit user', $user);
+
         $genders = GenderStatus::array();
         $militaryStatuses = MilitaryStatus::array();
 
@@ -97,6 +107,8 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, ImageService $imageService, User $user)
     {
+        $this->authorize('edit user', $user);
+
         $inputs = removeNullFromArray($request->validated());
 
         if ($inputs['gender'] != GenderStatus::Male->value)
@@ -125,6 +137,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $this->authorize('delete user', $user);
+
         $user->delete();
 
         return redirect()->route('administration.users.index');
@@ -135,6 +149,8 @@ class UserController extends Controller
      */
     public function roles(User $user)
     {
+        $this->authorize('edit user', $user);
+
         $roles = Role::all();
         $user = new UserResource($user);
         $currentRoles = $user->getRoleNames()->toArray();
@@ -144,6 +160,8 @@ class UserController extends Controller
 
     public function updateRoles(UpdateUserRolesRequest $request, User $user)
     {
+        $this->authorize('edit user', $user);
+
         $inputs = $request->validated();
 
         $user->syncRoles($inputs['currentRoles']);
@@ -156,6 +174,8 @@ class UserController extends Controller
      */
     public function permissions(User $user)
     {
+        $this->authorize('edit user', $user);
+
         $permissions = Permission::all();
         $user = new UserResource($user);
         $currentPermissions = $user->getDirectPermissions()->pluck('name')->toArray();
@@ -165,6 +185,8 @@ class UserController extends Controller
 
     public function updatePermissions(UpdateUserPermissionsRequest $request, User $user)
     {
+        $this->authorize('edit user', $user);
+
         $inputs = $request->validated();
 
         $user->syncPermissions($inputs['currentPermissions']);

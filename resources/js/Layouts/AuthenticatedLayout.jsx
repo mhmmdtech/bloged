@@ -3,9 +3,9 @@ import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 
-export default function Authenticated({ user, header, children }) {
+export default function Authenticated({ user, abilities, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
@@ -30,32 +30,42 @@ export default function Authenticated({ user, header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
-                                <NavLink
-                                    href={route(
-                                        "administration.categories.index"
-                                    )}
-                                    active={route().current(
-                                        "administration.categories.index"
-                                    )}
-                                >
-                                    Categories
-                                </NavLink>
-                                <NavLink
-                                    href={route("administration.posts.index")}
-                                    active={route().current(
-                                        "administration.posts.index"
-                                    )}
-                                >
-                                    Posts
-                                </NavLink>
-                                <NavLink
-                                    href={route("administration.users.index")}
-                                    active={route().current(
-                                        "administration.users.index"
-                                    )}
-                                >
-                                    Users
-                                </NavLink>
+                                {abilities.browse_category && (
+                                    <NavLink
+                                        href={route(
+                                            "administration.categories.index"
+                                        )}
+                                        active={route().current(
+                                            "administration.categories.index"
+                                        )}
+                                    >
+                                        Categories
+                                    </NavLink>
+                                )}
+                                {abilities.browse_post && (
+                                    <NavLink
+                                        href={route(
+                                            "administration.posts.index"
+                                        )}
+                                        active={route().current(
+                                            "administration.posts.index"
+                                        )}
+                                    >
+                                        Posts
+                                    </NavLink>
+                                )}
+                                {abilities.browse_user && (
+                                    <NavLink
+                                        href={route(
+                                            "administration.users.index"
+                                        )}
+                                        active={route().current(
+                                            "administration.users.index"
+                                        )}
+                                    >
+                                        Users
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -160,30 +170,36 @@ export default function Authenticated({ user, header, children }) {
                         >
                             Dashboard
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            href={route("administration.categories.index")}
-                            active={route().current(
-                                "administration.categories.index"
-                            )}
-                        >
-                            Categories
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            href={route("administration.posts.index")}
-                            active={route().current(
-                                "administration.posts.index"
-                            )}
-                        >
-                            Posts
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            href={route("administration.users.index")}
-                            active={route().current(
-                                "administration.users.index"
-                            )}
-                        >
-                            Users
-                        </ResponsiveNavLink>
+                        {abilities.browse_category && (
+                            <ResponsiveNavLink
+                                href={route("administration.categories.index")}
+                                active={route().current(
+                                    "administration.categories.index"
+                                )}
+                            >
+                                Categories
+                            </ResponsiveNavLink>
+                        )}
+                        {abilities.browse_post && (
+                            <ResponsiveNavLink
+                                href={route("administration.posts.index")}
+                                active={route().current(
+                                    "administration.posts.index"
+                                )}
+                            >
+                                Posts
+                            </ResponsiveNavLink>
+                        )}
+                        {abilities.browse_user && (
+                            <ResponsiveNavLink
+                                href={route("administration.users.index")}
+                                active={route().current(
+                                    "administration.users.index"
+                                )}
+                            >
+                                Users
+                            </ResponsiveNavLink>
+                        )}
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-gray-200">

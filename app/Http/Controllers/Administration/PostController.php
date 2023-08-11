@@ -21,6 +21,8 @@ class PostController extends Controller
      */
     public function index()
     {
+        $this->authorize('browse post', Post::class);
+
         $posts = new PostCollection(Post::with('author', 'category')->latest()->paginate(5));
 
         return Inertia::render('Admin/Posts/Index', compact('posts'));
@@ -31,6 +33,8 @@ class PostController extends Controller
      */
     public function create()
     {
+        $this->authorize('add post', Post::class);
+
         $statuses = PostStatus::array();
 
         $activeCategories = Category::where('status', CategoryStatus::Active->value)->get(['id', 'title']);
@@ -43,6 +47,8 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
+        $this->authorize('add post', Post::class);
+
         $inputs = $request->validated();
 
         $inputs['thumbnail'] = Storage::disk('public')->putFile('posts', $request->file('thumbnail'));
@@ -57,6 +63,8 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        $this->authorize('read post', $post);
+
         $post->load('author', 'category');
 
         $post = new PostResource($post);
@@ -69,6 +77,8 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        $this->authorize('edit post', $post);
+
         $post->load('category');
 
         $statuses = PostStatus::array();
@@ -85,6 +95,8 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
+        $this->authorize('edit post', $post);
+
         $inputs = removeNullFromArray($request->validated());
 
         $post->update($inputs);
@@ -97,6 +109,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        $this->authorize('delete post', $post);
+
         $post->delete();
 
         return redirect()->route('administration.posts.index');
@@ -104,6 +118,8 @@ class PostController extends Controller
 
     public function toggleFeatured(Post $post)
     {
+        $this->authorize('edit post', $post);
+
         if ($post->is_featured) {
             $post->update(['is_featured' => false]);
             return;
