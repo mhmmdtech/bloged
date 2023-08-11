@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Administration;
 use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AdvancedSearchUserRequest;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserPasswordRequest;
 use App\Http\Requests\Admin\UpdateUserPermissionsRequest;
@@ -19,6 +20,7 @@ use Inertia\Inertia;
 use Illuminate\Auth\Events\Registered;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserController extends Controller
 {
@@ -219,5 +221,33 @@ class UserController extends Controller
         $user->update(['password' => $inputs['password']]);
 
         return redirect()->route('administration.users.index');
+    }
+
+    /**
+     * Display a listing of the searched resource.
+     */
+    public function advancedSearch()
+    {
+        $this->authorize('browse user', User::class);
+
+        $results = [];
+        $allowedColumns = ['first_name', 'last_name', 'national_code', 'mobile_number', 'email', 'username', 'creator_id', 'birthday', 'gender', 'military_status'];
+        $userInputs = removeNullFromArray(request()->input());
+        $allowedInputs = array_intersect_key($userInputs, array_flip($allowedColumns));
+
+        $creators = User::whereHas('roles.permissions', function (Builder $query) {
+            $query->where('name', 'add user');
+        })->get(['id', 'username']);
+
+        $genders = GenderStatus::array();
+
+        $militaryStatuses = MilitaryStatus::array();
+
+        if (count($allowedInputs) > 0) {
+            $results = new UserCollection(User::with('roles')->where($allowedInputs)->latest()->paginate(5));
+            return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses'));
+        }
+        $results = new UserCollection(User::with('roles')->latest()->paginate(5));
+        return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses'));
     }
 }

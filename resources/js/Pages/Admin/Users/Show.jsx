@@ -95,7 +95,8 @@ export default function Show({ auth, user: { data: userDetails } }) {
                             new Date(userDetails.created_at),
                             new Date(),
                             { addSuffix: true }
-                        ) ?? "Unknown"}
+                        ) ?? "Unknown"}{" "}
+                        at {userDetails.farsi_created_at_string}
                     </li>
                 </ul>
             </div>

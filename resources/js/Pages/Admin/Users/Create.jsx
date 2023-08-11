@@ -67,7 +67,7 @@ export default function Create({ auth, genders, militaryStatuses }) {
                                 onChange={(e) =>
                                     setData("first_name", e.target.value)
                                 }
-                                errors={errors.title}
+                                errors={errors.first_name}
                             />
 
                             <InputError

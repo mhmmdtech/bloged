@@ -30,6 +30,12 @@ export default function Index({ auth, users }) {
                         <span>Create</span>
                         <span className="hidden md:inline"> User</span>
                     </Link>
+                    <Link
+                        className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
+                        href={route("administration.users.advanced-search")}
+                    >
+                        <span>Advanced Search</span>
+                    </Link>
                 </div>
                 <div className="overflow-x-auto bg-white rounded shadow">
                     <table className="w-full whitespace-nowrap">

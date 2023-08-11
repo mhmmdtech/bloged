@@ -21,3 +21,11 @@ export function syncArray(array, item) {
     // Item does not exist in the array, so add it
     array.push(item);
 }
+
+export function removeNullFromArray(data) {
+    return Object.fromEntries(
+        Object.entries(data).filter(
+            ([key, value]) => value !== null && value !== ""
+        )
+    );
+}

@@ -15,6 +15,7 @@ Route::prefix('terminator')->name('administration.')->middleware(['auth', 'verif
     Route::put('users/{user}/permissions', [UserController::class, 'updatePermissions'])->name('users.permissions.update');
     Route::get('users/{user}/pasasword', [UserController::class, 'editPassword'])->name('users.password.edit');
     Route::put('users/{user}/pasasword', [UserController::class, 'updatePassword'])->name('users.password.update');
+    Route::get('users/advanced-search', [UserController::class, 'advancedSearch'])->name('users.advanced-search');
     Route::resource('users', UserController::class);
 
     Route::resource('categories', CategoryController::class);

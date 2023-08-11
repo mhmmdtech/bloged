@@ -29,6 +29,7 @@ class UserResource extends JsonResource
             'birthday' => $this->birthday,
             'military_status' => $this->military_status ? ['key' => $this->military_status->value, 'value' => $this->military_status->label()] : $this->military_status,
             'created_at' => $this->created_at,
+            'farsi_created_at_string' => $this->created_at->jdate('F Y'),
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
         ];
