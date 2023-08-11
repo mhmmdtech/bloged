@@ -5,9 +5,11 @@ import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, usePage } from "@inertiajs/react";
 
-export default function Authenticated({ user, abilities, header, children }) {
+export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+
+    const authenticatedUserAbilities = usePage().props.auth.can;
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -30,7 +32,7 @@ export default function Authenticated({ user, abilities, header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
-                                {abilities.browse_category && (
+                                {authenticatedUserAbilities.browse_category && (
                                     <NavLink
                                         href={route(
                                             "administration.categories.index"
@@ -42,7 +44,7 @@ export default function Authenticated({ user, abilities, header, children }) {
                                         Categories
                                     </NavLink>
                                 )}
-                                {abilities.browse_post && (
+                                {authenticatedUserAbilities.browse_post && (
                                     <NavLink
                                         href={route(
                                             "administration.posts.index"
@@ -54,7 +56,7 @@ export default function Authenticated({ user, abilities, header, children }) {
                                         Posts
                                     </NavLink>
                                 )}
-                                {abilities.browse_user && (
+                                {authenticatedUserAbilities.browse_user && (
                                     <NavLink
                                         href={route(
                                             "administration.users.index"
@@ -170,7 +172,7 @@ export default function Authenticated({ user, abilities, header, children }) {
                         >
                             Dashboard
                         </ResponsiveNavLink>
-                        {abilities.browse_category && (
+                        {authenticatedUserAbilities.browse_category && (
                             <ResponsiveNavLink
                                 href={route("administration.categories.index")}
                                 active={route().current(
@@ -180,7 +182,7 @@ export default function Authenticated({ user, abilities, header, children }) {
                                 Categories
                             </ResponsiveNavLink>
                         )}
-                        {abilities.browse_post && (
+                        {authenticatedUserAbilities.browse_post && (
                             <ResponsiveNavLink
                                 href={route("administration.posts.index")}
                                 active={route().current(
@@ -190,7 +192,7 @@ export default function Authenticated({ user, abilities, header, children }) {
                                 Posts
                             </ResponsiveNavLink>
                         )}
-                        {abilities.browse_user && (
+                        {authenticatedUserAbilities.browse_user && (
                             <ResponsiveNavLink
                                 href={route("administration.users.index")}
                                 active={route().current(

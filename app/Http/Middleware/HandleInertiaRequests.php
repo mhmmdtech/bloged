@@ -2,6 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Category;
+use App\Models\Post;
+use App\Models\User;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -34,6 +37,11 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user() === null ? $request->user() : new UserResource($request->user()),
+                'can' => [
+                    'browse_category' => $request->user() && $request->user()->can('browse category', Category::class),
+                    'browse_post' => $request->user() && $request->user()->can('browse post', Post::class),
+                    'browse_user' => $request->user() && $request->user()->can('browse user', User::class),
+                ],
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [

@@ -6,6 +6,7 @@ use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
+use App\Http\Requests\Admin\UpdateUserPasswordRequest;
 use App\Http\Requests\Admin\UpdateUserPermissionsRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Http\Requests\Admin\UpdateUserRolesRequest;
@@ -192,5 +193,31 @@ class UserController extends Controller
         $user->syncPermissions($inputs['currentPermissions']);
 
         return redirect()->route('administration.users.show', $user->id);
+    }
+
+    /**
+     * Show the form for editing the specified user password.
+     */
+    public function editPassword(User $user)
+    {
+        $this->authorize('edit user', $user);
+
+        $user = new UserResource($user);
+
+        return Inertia::render('Admin/Users/EditPassword', compact('user'));
+    }
+
+    /**
+     * Update the specified user password in storage.
+     */
+    public function updatePassword(UpdateUserPasswordRequest $request, User $user)
+    {
+        $this->authorize('edit user', $user);
+
+        $inputs = $request->validated();
+
+        $user->update(['password' => $inputs['password']]);
+
+        return redirect()->route('administration.users.index');
     }
 }

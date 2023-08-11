@@ -3,7 +3,7 @@ import FileInput from "@/Components/FileInput";
 import SelectInput from "@/Components/SelectInput";
 import LoadingButton from "@/Components/LoadingButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import { useForm } from "@inertiajs/react";
 import InputLabel from "@/Components/InputLabel";
 import InputError from "@/Components/InputError";
@@ -46,6 +46,18 @@ export default function Edit({
                 <title>{userDetails.username}</title>
             </Head>
             <div className="max-w-5xl my-6 mx-auto py-6 px-4 sm:px-6 lg:px-8 overflow-hidden bg-white rounded shadow">
+                <div className="flex items-center justify-between mb-6">
+                    <Link
+                        className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
+                        href={route(
+                            "administration.users.password.edit",
+                            userDetails.id
+                        )}
+                    >
+                        <span>Edit</span>
+                        <span className="hidden md:inline"> Password</span>
+                    </Link>
+                </div>
                 <form onSubmit={handleSubmit}>
                     <div className="flex flex-wrap justify-evenly p-8 -mb-8 -mr-6 gap-4">
                         <div className="w-full">

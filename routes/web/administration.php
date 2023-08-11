@@ -13,6 +13,8 @@ Route::prefix('terminator')->name('administration.')->middleware(['auth', 'verif
     Route::put('users/{user}/roles', [UserController::class, 'updateRoles'])->name('users.roles.update');
     Route::get('users/{user}/permissions', [UserController::class, 'permissions'])->name('users.permissions');
     Route::put('users/{user}/permissions', [UserController::class, 'updatePermissions'])->name('users.permissions.update');
+    Route::get('users/{user}/pasasword', [UserController::class, 'editPassword'])->name('users.password.edit');
+    Route::put('users/{user}/pasasword', [UserController::class, 'updatePassword'])->name('users.password.update');
     Route::resource('users', UserController::class);
 
     Route::resource('categories', CategoryController::class);
