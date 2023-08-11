@@ -15,7 +15,7 @@ class PermissionSeeder extends Seeder
     {
         $permissions = [];
         $operations = ['browse', 'read', 'edit', 'add', 'delete'];
-        $sections = ['category', 'post', 'user'];
+        $sections = ['category', 'post', 'user', 'log'];
 
         foreach ($sections as $section) {
             foreach ($operations as $operation) {

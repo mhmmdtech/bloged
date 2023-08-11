@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\UserModified;
+use App\Listeners\RegisterModificationLogInDatabase;
 use App\Models;
 use App\Observers;
 use Illuminate\Auth\Events\Registered;
@@ -19,6 +21,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        UserModified::class => [
+            RegisterModificationLogInDatabase::class,
         ],
     ];
 

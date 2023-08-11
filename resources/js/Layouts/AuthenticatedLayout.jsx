@@ -100,6 +100,11 @@ export default function Authenticated({ user, header, children }) {
 
                                     <Dropdown.Content>
                                         <Dropdown.Link
+                                            href={route("application.home")}
+                                        >
+                                            Application
+                                        </Dropdown.Link>
+                                        <Dropdown.Link
                                             href={route("profile.edit")}
                                         >
                                             Profile
@@ -215,6 +220,9 @@ export default function Authenticated({ user, header, children }) {
                         </div>
 
                         <div className="mt-3 space-y-1">
+                            <ResponsiveNavLink href={route("application.home")}>
+                                Application
+                            </ResponsiveNavLink>
                             <ResponsiveNavLink href={route("profile.edit")}>
                                 Profile
                             </ResponsiveNavLink>

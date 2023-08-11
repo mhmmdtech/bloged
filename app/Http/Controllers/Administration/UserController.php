@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Administration;
 
 use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
+use App\Events\UserModified;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdvancedSearchUserRequest;
 use App\Http\Requests\Admin\StoreUserRequest;
@@ -73,6 +74,8 @@ class UserController extends Controller
 
         event(new Registered($user));
 
+        event(new UserModified(auth()->id(), 'create', User::class, $user->id, [], $user->toArray()));
+
         return redirect()->route('administration.users.index');
     }
 
@@ -125,12 +128,15 @@ class UserController extends Controller
             $inputs['avatar'] = $imageService->fitAndSave($inputs['avatar'], 400, 400);
         }
 
-        $request->user()->fill($inputs);
+        $oldUser = clone $user;
+        $user->fill($inputs);
 
-        if ($request->user()->isDirty('email'))
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email'))
+            $user->email_verified_at = null;
 
-        $request->user()->save();
+        $user->save();
+
+        event(new UserModified(auth()->id(), 'update', User::class, $user->id, $oldUser->toArray(), $user->toArray()));
 
         return redirect()->route('administration.users.index');
     }
@@ -143,6 +149,8 @@ class UserController extends Controller
         $this->authorize('delete user', $user);
 
         $user->delete();
+
+        event(new UserModified(auth()->id(), 'destroy', User::class, $user->id, $user->toArray(), []));
 
         return redirect()->route('administration.users.index');
     }
@@ -167,7 +175,13 @@ class UserController extends Controller
 
         $inputs = $request->validated();
 
+        $oldRoles = $user->getRoleNames();
+
         $user->syncRoles($inputs['currentRoles']);
+
+        $newRoles = $user->getRoleNames();
+
+        event(new UserModified(auth()->id(), 'update roles', User::class, $user->id, $oldRoles->toArray(), $newRoles->toArray()));
 
         return redirect()->route('administration.users.show', $user->id);
     }
@@ -192,7 +206,13 @@ class UserController extends Controller
 
         $inputs = $request->validated();
 
+        $oldPermissions = $user->getPermissionNames();
+
         $user->syncPermissions($inputs['currentPermissions']);
+
+        $newPermissions = $user->getPermissionNames();
+
+        event(new UserModified(auth()->id(), 'update permissions', User::class, $user->id, $oldPermissions->toArray(), $newPermissions->toArray()));
 
         return redirect()->route('administration.users.show', $user->id);
     }
@@ -219,6 +239,8 @@ class UserController extends Controller
         $inputs = $request->validated();
 
         $user->update(['password' => $inputs['password']]);
+
+        event(new UserModified(auth()->id(), 'update password', User::class, $user->id, $user->toArray(), $user->toArray()));
 
         return redirect()->route('administration.users.index');
     }

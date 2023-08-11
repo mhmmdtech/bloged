@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('national_code');
+            $table->string('national_code')->unique();
             $table->string('mobile_number');
             $table->tinyInteger('gender')->comment('1 => male, 2 => female');
             $table->string('email')->unique();
