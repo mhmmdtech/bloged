@@ -120,4 +120,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(UserVerificationCode::class);
     }
+
+    /**
+     * Get the provinces that created by user.
+     */
+    public function provinces(): HasMany
+    {
+        return $this->hasMany(Province::class, 'creator_id');
+    }
 }

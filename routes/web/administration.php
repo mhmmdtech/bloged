@@ -5,6 +5,7 @@ use App\Http\Controllers\Administration\CategoryController;
 use App\Http\Controllers\Administration\PostController;
 use App\Http\Controllers\Administration\UserController;
 use App\Http\Controllers\Administration\LogController;
+use App\Http\Controllers\Administration\ProvinceController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('terminator')->name('administration.')->middleware(['auth', 'verified'])->group(function () {
@@ -25,4 +26,6 @@ Route::prefix('terminator')->name('administration.')->middleware(['auth', 'verif
     Route::resource('posts', PostController::class);
 
     Route::resource('logs', LogController::class)->only(['index', 'show']);
+
+    Route::resource('provinces', ProvinceController::class);
 });

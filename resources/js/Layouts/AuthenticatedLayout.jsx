@@ -80,6 +80,18 @@ export default function Authenticated({ user, header, children }) {
                                         Logs
                                     </NavLink>
                                 )}
+                                {authenticatedUserAbilities.browse_province && (
+                                    <NavLink
+                                        href={route(
+                                            "administration.provinces.index"
+                                        )}
+                                        active={route().current(
+                                            "administration.provinces.index"
+                                        )}
+                                    >
+                                        Provinces
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -227,6 +239,16 @@ export default function Authenticated({ user, header, children }) {
                                 )}
                             >
                                 Logs
+                            </ResponsiveNavLink>
+                        )}
+                        {authenticatedUserAbilities.browse_province && (
+                            <ResponsiveNavLink
+                                href={route("administration.provinces.index")}
+                                active={route().current(
+                                    "administration.provinces.index"
+                                )}
+                            >
+                                Provinces
                             </ResponsiveNavLink>
                         )}
                     </div>
