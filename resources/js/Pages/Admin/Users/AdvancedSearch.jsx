@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, useForm, router } from "@inertiajs/react";
 import Icons from "@/Components/Icons";
@@ -9,7 +10,16 @@ import InputError from "@/Components/InputError";
 import SelectInput from "@/Components/SelectInput";
 import { removeNullFromArray } from "@/utils/functions";
 
-export default ({ auth, results, creators, genders, militaryStatuses }) => {
+export default ({
+    auth,
+    results,
+    creators,
+    genders,
+    militaryStatuses,
+    provinces,
+}) => {
+    let [cities, setCities] = useState([]);
+
     const {
         data: usersResults,
         meta: { links },
@@ -26,7 +36,18 @@ export default ({ auth, results, creators, genders, militaryStatuses }) => {
         birthday: "",
         gender: "",
         military_status: "",
+        province_id: "",
+        city_id: "",
     });
+    useEffect(() => {
+        if (data.province_id === "" || data.province_id === null) return;
+
+        const province = provinces.find(
+            (province) => province.id === +data.province_id
+        );
+
+        setCities(province.cities);
+    }, [data.province_id]);
     function handleSubmit(e) {
         e.preventDefault();
         router.get(
@@ -293,6 +314,67 @@ export default ({ auth, results, creators, genders, militaryStatuses }) => {
 
                             <InputError
                                 message={errors.birthday}
+                                className="mt-2"
+                            />
+                        </div>
+                        <div className="">
+                            <InputLabel
+                                htmlFor="province_id"
+                                value="Province"
+                            />
+
+                            <SelectInput
+                                id="province_id"
+                                name="province_id"
+                                value={data.province_id}
+                                className="mt-1 block w-full"
+                                autoComplete="username"
+                                isFocused={false}
+                                onChange={(e) =>
+                                    setData("province_id", e.target.value)
+                                }
+                            >
+                                <option value="">Choose</option>
+                                {Object.values(provinces).map((province) => (
+                                    <option
+                                        key={province.id}
+                                        value={province.id}
+                                    >
+                                        {province.local_name}
+                                    </option>
+                                ))}
+                            </SelectInput>
+
+                            <InputError
+                                message={errors.province_id}
+                                className="mt-2"
+                            />
+                        </div>
+                        <div className="">
+                            <InputLabel htmlFor="city_id" value="City" />
+
+                            <SelectInput
+                                id="city_id"
+                                name="city_id"
+                                value={data.city_id}
+                                className="mt-1 block w-full"
+                                autoComplete="username"
+                                isFocused={false}
+                                onChange={(e) => {
+                                    setData("city_id", e.target.value);
+                                }}
+                                disabled={data.province_id === ""}
+                            >
+                                <option value="">Choose</option>
+                                {Object.values(cities).map((city) => (
+                                    <option key={city.id} value={city.id}>
+                                        {city.local_name}
+                                    </option>
+                                ))}
+                            </SelectInput>
+
+                            <InputError
+                                message={errors.city_id}
                                 className="mt-2"
                             />
                         </div>

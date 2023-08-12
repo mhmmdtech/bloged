@@ -260,7 +260,7 @@ class UserController extends Controller
         $this->authorize('browse user', User::class);
 
         $results = [];
-        $allowedColumns = ['first_name', 'last_name', 'national_code', 'mobile_number', 'email', 'username', 'creator_id', 'birthday', 'gender', 'military_status'];
+        $allowedColumns = ['first_name', 'last_name', 'national_code', 'mobile_number', 'email', 'username', 'creator_id', 'birthday', 'gender', 'military_status', 'province_id', 'city_id'];
         $userInputs = removeNullFromArray(request()->input());
         $allowedInputs = array_intersect_key($userInputs, array_flip($allowedColumns));
 
@@ -272,11 +272,13 @@ class UserController extends Controller
 
         $militaryStatuses = MilitaryStatus::array();
 
+        $provinces = Province::with('cities')->get(['id', 'local_name']);
+
         if (count($allowedInputs) > 0) {
             $results = new UserCollection(User::with('roles')->where($allowedInputs)->latest()->paginate(5));
-            return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses'));
+            return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses', 'provinces'));
         }
         $results = new UserCollection(User::with('roles')->latest()->paginate(5));
-        return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses'));
+        return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses', 'provinces'));
     }
 }
