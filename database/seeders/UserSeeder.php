@@ -15,6 +15,10 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->count(5)->create();
+        match (app()->environment()) {
+            'local' => User::factory()->count(5)->create(),
+            'production' => User::factory()->create(['username' => 'temporary']),
+            default => exit ,
+        };
     }
 }

@@ -5,6 +5,7 @@ import TextInput from "@/Components/TextInput";
 import { Link, useForm, usePage } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
 import SelectInput from "@/Components/SelectInput";
+import FileInput from "@/Components/FileInput";
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -13,22 +14,33 @@ export default function UpdateProfileInformation({
 }) {
     const user = usePage().props.auth.user?.data;
     const genders = usePage().props.genders;
+    const militaryStatuses = usePage().props.militaryStatuses;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
-        useForm({
-            first_name: user.first_name,
-            last_name: user.last_name,
-            national_code: user.national_code,
-            mobile_number: user.mobile_number,
-            gender: user.gender?.key || "",
-            email: user.email,
-            username: user.username,
-        });
+    const {
+        data,
+        setData,
+        post,
+        errors,
+        processing,
+        recentlySuccessful,
+        progress,
+    } = useForm({
+        first_name: user.first_name,
+        last_name: user.last_name,
+        national_code: user.national_code,
+        mobile_number: user.mobile_number,
+        gender: user.gender?.key || "",
+        email: user.email,
+        username: user.username,
+        avatar: "",
+        birthday: new Date(user.birthday).toJSON().slice(0, 10) || "",
+        military_status: user.military_status?.key || "",
+        _method: "PATCH",
+    });
 
     const submit = (e) => {
         e.preventDefault();
-
-        patch(route("profile.update"));
+        post(route("profile.update"));
     };
 
     return (
@@ -60,7 +72,7 @@ export default function UpdateProfileInformation({
                     <InputError className="mt-2" message={errors.first_name} />
                 </div>
 
-                <div>
+                <div className="mt-4">
                     <InputLabel htmlFor="last_name" value="Last Name *" />
 
                     <TextInput
@@ -76,7 +88,7 @@ export default function UpdateProfileInformation({
                     <InputError className="mt-2" message={errors.last_name} />
                 </div>
 
-                <div>
+                <div className="mt-4">
                     <InputLabel
                         htmlFor="national_code"
                         value="National Code *"
@@ -101,7 +113,7 @@ export default function UpdateProfileInformation({
                     />
                 </div>
 
-                <div>
+                <div className="mt-4">
                     <InputLabel
                         htmlFor="mobile_number"
                         value="Mobile Number *"
@@ -168,7 +180,7 @@ export default function UpdateProfileInformation({
                     <InputError message={errors.gender} className="mt-2" />
                 </div>
 
-                <div>
+                <div className="mt-4">
                     <InputLabel htmlFor="username" value="Username *" />
 
                     <TextInput
@@ -183,6 +195,77 @@ export default function UpdateProfileInformation({
                     />
 
                     <InputError message={errors.username} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="avatar" value="Avatar" />
+
+                    <FileInput
+                        name="avatar"
+                        accept=".jpg, .jpeg, .png"
+                        onChange={(e) => setData("avatar", e.target.files[0])}
+                        progress={progress}
+                        className="my-1"
+                    />
+
+                    <InputError message={errors.avatar} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="birthday" value="Birthday" />
+                    <TextInput
+                        type="date"
+                        id="birthday"
+                        name="birthday"
+                        value={data.birthday}
+                        className="mt-1 block w-full"
+                        autoComplete="birthday"
+                        isFocused={false}
+                        onChange={(e) => setData("birthday", e.target.value)}
+                        max={new Date(
+                            new Date().getUTCFullYear() - 10,
+                            new Date().getUTCMonth(),
+                            new Date().getUTCDate() + 1
+                        )
+                            .toJSON()
+                            .slice(0, 10)}
+                    />
+
+                    <InputError message={errors.birthday} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel
+                        htmlFor="military_status"
+                        value="Military Status"
+                    />
+
+                    <SelectInput
+                        id="military_status"
+                        name="military_status"
+                        value={data.military_status}
+                        className="mt-1 block w-full"
+                        autoComplete="username"
+                        isFocused={false}
+                        onChange={(e) =>
+                            setData("military_status", e.target.value)
+                        }
+                        disabled={data.gender != 1}
+                    >
+                        <option value="">Choose</option>
+                        {Object.entries(militaryStatuses).map(
+                            ([key, value]) => (
+                                <option key={key} value={key}>
+                                    {value}
+                                </option>
+                            )
+                        )}
+                    </SelectInput>
+
+                    <InputError
+                        message={errors.military_status}
+                        className="mt-2"
+                    />
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (

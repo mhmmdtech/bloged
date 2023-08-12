@@ -8,9 +8,9 @@ enum {{ name }}: int
 {
     use HasEnum;
 
-    case DRAFT = 1;
-    case PUBLISHED = 2;
-    case ARCHIVED = 3;
+    case Draft = 1;
+    case Published = 2;
+    case Archived = 3;
 
     public function label(): string
     {
@@ -20,9 +20,9 @@ enum {{ name }}: int
     public static function getLabel(self $value): string
     {
         return match ($value) {
-            self::DRAFT => 'draft',
-            self::PUBLISHED => 'published',
-            self::ARCHIVED => 'archived',
+            self::Draft => 'draft',
+            self::Published => 'published',
+            self::Archived => 'archived',
         };
     }
 }

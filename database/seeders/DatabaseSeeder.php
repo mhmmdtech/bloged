@@ -12,6 +12,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([UserSeeder::class, CategorySeeder::class, PostSeeder::class]);
+        $seeds = [
+            'local' => [
+                UserSeeder::class,
+                CategorySeeder::class,
+                PostSeeder::class,
+                PermissionSeeder::class,
+                RoleSeeder::class
+            ],
+            'production' => [
+                UserSeeder::class,
+                PermissionSeeder::class,
+                RoleSeeder::class
+            ],
+        ][app()->environment()];
+
+        $this->call($seeds);
     }
 }

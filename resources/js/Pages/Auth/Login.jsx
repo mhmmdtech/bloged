@@ -12,6 +12,7 @@ export default function Login({ status, canResetPassword }) {
         username: "",
         password: "",
         remember: false,
+        captcha_code: "",
     });
 
     useEffect(() => {
@@ -47,7 +48,6 @@ export default function Login({ status, canResetPassword }) {
                         autoComplete="username"
                         isFocused={false}
                         onChange={(e) => setData("username", e.target.value)}
-                        required
                     />
                     <InputError message={errors.username} className="mt-2" />{" "}
                 </div>
@@ -66,6 +66,32 @@ export default function Login({ status, canResetPassword }) {
                     />
 
                     <InputError message={errors.password} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <img src={route("captcha")} />
+                    <div>
+                        <InputLabel
+                            htmlFor="captcha_code"
+                            value="Captcha Code *"
+                        />
+
+                        <TextInput
+                            id="captcha_code"
+                            name="captcha_code"
+                            value={data.captcha_code}
+                            className="mt-1 block w-full"
+                            autoComplete="captcha_code"
+                            onChange={(e) =>
+                                setData("captcha_code", e.target.value)
+                            }
+                        />
+
+                        <InputError
+                            message={errors.captcha_code}
+                            className="mt-2"
+                        />
+                    </div>
                 </div>
 
                 <div className="block mt-4">

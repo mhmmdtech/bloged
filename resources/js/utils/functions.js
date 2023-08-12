@@ -8,3 +8,24 @@ export function shortenText(text, length = 100, suffix = "...") {
 
     return shortText.trim() + suffix;
 }
+
+export function syncArray(array, item) {
+    const index = array.indexOf(item);
+
+    if (index !== -1) {
+        // Item exists in the array, so remove it
+        array.splice(index, 1);
+        return;
+    }
+
+    // Item does not exist in the array, so add it
+    array.push(item);
+}
+
+export function removeNullFromArray(data) {
+    return Object.fromEntries(
+        Object.entries(data).filter(
+            ([key, value]) => value !== null && value !== ""
+        )
+    );
+}

@@ -6,19 +6,25 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
 import SelectInput from "@/Components/SelectInput";
+import FileInput from "@/Components/FileInput";
 
-export default function Register({ genders }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        first_name: "",
-        last_name: "",
-        national_code: "",
-        mobile_number: "",
-        gender: "",
-        email: "",
-        username: "",
-        password: "",
-        password_confirmation: "",
-    });
+export default function Register({ genders, militaryStatuses }) {
+    const { data, setData, post, processing, errors, reset, progress } =
+        useForm({
+            first_name: "",
+            last_name: "",
+            national_code: "",
+            mobile_number: "",
+            gender: "",
+            email: "",
+            username: "",
+            password: "",
+            password_confirmation: "",
+            avatar: "",
+            birthday: "",
+            military_status: "",
+            captcha_code: "",
+        });
 
     useEffect(() => {
         return () => {
@@ -28,7 +34,6 @@ export default function Register({ genders }) {
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route("register"));
     };
 
@@ -48,7 +53,6 @@ export default function Register({ genders }) {
                         autoComplete="first_name"
                         isFocused={true}
                         onChange={(e) => setData("first_name", e.target.value)}
-                        required
                     />
 
                     <InputError message={errors.first_name} className="mt-2" />
@@ -65,7 +69,6 @@ export default function Register({ genders }) {
                         autoComplete="last_name"
                         isFocused={false}
                         onChange={(e) => setData("last_name", e.target.value)}
-                        required
                     />
 
                     <InputError message={errors.last_name} className="mt-2" />
@@ -87,7 +90,6 @@ export default function Register({ genders }) {
                         onChange={(e) =>
                             setData("national_code", e.target.value)
                         }
-                        required
                     />
 
                     <InputError
@@ -112,7 +114,6 @@ export default function Register({ genders }) {
                         onChange={(e) =>
                             setData("mobile_number", e.target.value)
                         }
-                        required
                     />
 
                     <InputError
@@ -130,10 +131,9 @@ export default function Register({ genders }) {
                         name="email"
                         value={data.email}
                         className="mt-1 block w-full"
-                        autoComplete="username"
+                        autoComplete="email"
                         isFocused={false}
                         onChange={(e) => setData("email", e.target.value)}
-                        required
                     />
 
                     <InputError message={errors.email} className="mt-2" />
@@ -150,7 +150,6 @@ export default function Register({ genders }) {
                         autoComplete="username"
                         isFocused={false}
                         onChange={(e) => setData("gender", e.target.value)}
-                        required
                     >
                         <option value="">Choose</option>
                         {Object.entries(genders).map(([key, value]) => (
@@ -174,7 +173,6 @@ export default function Register({ genders }) {
                         autoComplete="username"
                         isFocused={false}
                         onChange={(e) => setData("username", e.target.value)}
-                        required
                     />
 
                     <InputError message={errors.username} className="mt-2" />
@@ -192,7 +190,6 @@ export default function Register({ genders }) {
                         autoComplete="new-password"
                         isFocused={false}
                         onChange={(e) => setData("password", e.target.value)}
-                        required
                     />
 
                     <InputError message={errors.password} className="mt-2" />
@@ -215,13 +212,109 @@ export default function Register({ genders }) {
                         onChange={(e) =>
                             setData("password_confirmation", e.target.value)
                         }
-                        required
                     />
 
                     <InputError
                         message={errors.password_confirmation}
                         className="mt-2"
                     />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="avatar" value="Avatar" />
+
+                    <FileInput
+                        name="avatar"
+                        accept=".jpg, .jpeg, .png"
+                        onChange={(e) => setData("avatar", e.target.files[0])}
+                        progress={progress}
+                        className="my-1"
+                    />
+
+                    <InputError message={errors.avatar} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="birthday" value="Birthday" />
+                    <TextInput
+                        type="date"
+                        id="birthday"
+                        name="birthday"
+                        value={data.birthday}
+                        className="mt-1 block w-full"
+                        autoComplete="birthday"
+                        isFocused={false}
+                        onChange={(e) => setData("birthday", e.target.value)}
+                        max={new Date(
+                            new Date().getUTCFullYear() - 10,
+                            new Date().getUTCMonth(),
+                            new Date().getUTCDate() + 1
+                        )
+                            .toJSON()
+                            .slice(0, 10)}
+                    />
+
+                    <InputError message={errors.birthday} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel
+                        htmlFor="military_status"
+                        value="Military Status"
+                    />
+
+                    <SelectInput
+                        id="military_status"
+                        name="military_status"
+                        value={data.military_status}
+                        className="mt-1 block w-full"
+                        autoComplete="username"
+                        isFocused={false}
+                        onChange={(e) =>
+                            setData("military_status", e.target.value)
+                        }
+                        disabled={data.gender != 1}
+                    >
+                        <option value="">Choose</option>
+                        {Object.entries(militaryStatuses).map(
+                            ([key, value]) => (
+                                <option key={key} value={key}>
+                                    {value}
+                                </option>
+                            )
+                        )}
+                    </SelectInput>
+
+                    <InputError
+                        message={errors.military_status}
+                        className="mt-2"
+                    />
+                </div>
+
+                <div className="mt-4">
+                    <img src={route("captcha")} />
+                    <div>
+                        <InputLabel
+                            htmlFor="captcha_code"
+                            value="Captcha Code *"
+                        />
+
+                        <TextInput
+                            id="captcha_code"
+                            name="captcha_code"
+                            value={data.captcha_code}
+                            className="mt-1 block w-full"
+                            autoComplete="captcha_code"
+                            onChange={(e) =>
+                                setData("captcha_code", e.target.value)
+                            }
+                        />
+
+                        <InputError
+                            message={errors.captcha_code}
+                            className="mt-2"
+                        />
+                    </div>
                 </div>
 
                 <div className="flex items-center justify-end mt-4">

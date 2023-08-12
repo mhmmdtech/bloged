@@ -3,11 +3,13 @@ import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+
+    const authenticatedUserAbilities = usePage().props.auth.can;
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -30,24 +32,54 @@ export default function Authenticated({ user, header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
-                                <NavLink
-                                    href={route(
-                                        "administration.categories.index"
-                                    )}
-                                    active={route().current(
-                                        "administration.categories.index"
-                                    )}
-                                >
-                                    Categories
-                                </NavLink>
-                                <NavLink
-                                    href={route("administration.posts.index")}
-                                    active={route().current(
-                                        "administration.posts.index"
-                                    )}
-                                >
-                                    Posts
-                                </NavLink>
+                                {authenticatedUserAbilities.browse_category && (
+                                    <NavLink
+                                        href={route(
+                                            "administration.categories.index"
+                                        )}
+                                        active={route().current(
+                                            "administration.categories.index"
+                                        )}
+                                    >
+                                        Categories
+                                    </NavLink>
+                                )}
+                                {authenticatedUserAbilities.browse_post && (
+                                    <NavLink
+                                        href={route(
+                                            "administration.posts.index"
+                                        )}
+                                        active={route().current(
+                                            "administration.posts.index"
+                                        )}
+                                    >
+                                        Posts
+                                    </NavLink>
+                                )}
+                                {authenticatedUserAbilities.browse_user && (
+                                    <NavLink
+                                        href={route(
+                                            "administration.users.index"
+                                        )}
+                                        active={route().current(
+                                            "administration.users.index"
+                                        )}
+                                    >
+                                        Users
+                                    </NavLink>
+                                )}
+                                {authenticatedUserAbilities.browse_log && (
+                                    <NavLink
+                                        href={route(
+                                            "administration.logs.index"
+                                        )}
+                                        active={route().current(
+                                            "administration.logs.index"
+                                        )}
+                                    >
+                                        Logs
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -79,6 +111,11 @@ export default function Authenticated({ user, header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
+                                        <Dropdown.Link
+                                            href={route("application.home")}
+                                        >
+                                            Application
+                                        </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route("profile.edit")}
                                         >
@@ -152,22 +189,46 @@ export default function Authenticated({ user, header, children }) {
                         >
                             Dashboard
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            href={route("administration.categories.index")}
-                            active={route().current(
-                                "administration.categories.index"
-                            )}
-                        >
-                            Categories
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            href={route("administration.posts.index")}
-                            active={route().current(
-                                "administration.posts.index"
-                            )}
-                        >
-                            Posts
-                        </ResponsiveNavLink>
+                        {authenticatedUserAbilities.browse_category && (
+                            <ResponsiveNavLink
+                                href={route("administration.categories.index")}
+                                active={route().current(
+                                    "administration.categories.index"
+                                )}
+                            >
+                                Categories
+                            </ResponsiveNavLink>
+                        )}
+                        {authenticatedUserAbilities.browse_post && (
+                            <ResponsiveNavLink
+                                href={route("administration.posts.index")}
+                                active={route().current(
+                                    "administration.posts.index"
+                                )}
+                            >
+                                Posts
+                            </ResponsiveNavLink>
+                        )}
+                        {authenticatedUserAbilities.browse_user && (
+                            <ResponsiveNavLink
+                                href={route("administration.users.index")}
+                                active={route().current(
+                                    "administration.users.index"
+                                )}
+                            >
+                                Users
+                            </ResponsiveNavLink>
+                        )}
+                        {authenticatedUserAbilities.browse_log && (
+                            <ResponsiveNavLink
+                                href={route("administration.logs.index")}
+                                active={route().current(
+                                    "administration.logs.index"
+                                )}
+                            >
+                                Logs
+                            </ResponsiveNavLink>
+                        )}
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-gray-200">
@@ -181,6 +242,9 @@ export default function Authenticated({ user, header, children }) {
                         </div>
 
                         <div className="mt-3 space-y-1">
+                            <ResponsiveNavLink href={route("application.home")}>
+                                Application
+                            </ResponsiveNavLink>
                             <ResponsiveNavLink href={route("profile.edit")}>
                                 Profile
                             </ResponsiveNavLink>
