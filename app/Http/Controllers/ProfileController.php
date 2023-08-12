@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Resources\UserResource;
+use App\Models\Province;
 use App\Services\Image\ImageService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -26,6 +28,8 @@ class ProfileController extends Controller
             'status' => session('status'),
             'genders' => GenderStatus::array(),
             'militaryStatuses' => MilitaryStatus::array(),
+            'provinces' => Province::with('cities')->get(['id', 'local_name']),
+            'user' => new UserResource($request->user()->load('province', 'city')),
         ]);
     }
 

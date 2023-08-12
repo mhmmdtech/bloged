@@ -6,7 +6,6 @@ use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
 use App\Events\UserModified;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\AdvancedSearchUserRequest;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserPasswordRequest;
 use App\Http\Requests\Admin\UpdateUserPermissionsRequest;
@@ -14,9 +13,9 @@ use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Http\Requests\Admin\UpdateUserRolesRequest;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
+use App\Models\Province;
 use App\Models\User;
 use App\Services\Image\ImageService;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Auth\Events\Registered;
 use Spatie\Permission\Models\Role;
@@ -46,8 +45,9 @@ class UserController extends Controller
 
         $genders = GenderStatus::array();
         $militaryStatuses = MilitaryStatus::array();
+        $provinces = Province::with('cities')->get(['id', 'local_name']);
 
-        return Inertia::render('Admin/Users/Create', compact('genders', 'militaryStatuses'));
+        return Inertia::render('Admin/Users/Create', compact('genders', 'militaryStatuses', 'provinces'));
     }
 
     /**
@@ -88,7 +88,7 @@ class UserController extends Controller
     {
         $this->authorize('read user', $user);
 
-        $user->load('creator');
+        $user->load('creator', 'province', 'city');
 
         $user = new UserResource($user);
 
@@ -102,12 +102,15 @@ class UserController extends Controller
     {
         $this->authorize('edit user', $user);
 
+        $user->load('province', 'city');
+
         $genders = GenderStatus::array();
         $militaryStatuses = MilitaryStatus::array();
+        $provinces = Province::with('cities')->get(['id', 'local_name']);
 
         $user = new UserResource($user);
 
-        return Inertia::render('Admin/Users/Edit', compact('user', 'genders', 'militaryStatuses'));
+        return Inertia::render('Admin/Users/Edit', compact('user', 'genders', 'militaryStatuses', 'provinces'));
     }
 
     /**

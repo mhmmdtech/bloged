@@ -130,10 +130,26 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the province that user belongs to.
+     */
+    public function province()
+    {
+        return $this->belongsTo(Province::class, 'province_id');
+    }
+
+    /**
      * Get the cities that created by user.
      */
     public function cities(): HasMany
     {
         return $this->hasMany(City::class, 'creator_id');
+    }
+
+    /**
+     * Get the city that user belongs to.
+     */
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id');
     }
 }
