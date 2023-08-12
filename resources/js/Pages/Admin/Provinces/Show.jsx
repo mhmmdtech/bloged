@@ -36,6 +36,17 @@ export default function Show({ auth, province: { data: provinceDetails } }) {
                         <span>Edit</span>
                         <span className="hidden md:inline"> Province</span>
                     </Link>
+                    {auth.can.browse_city && (
+                        <Link
+                            className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
+                            href={route(
+                                "administration.provinces.cities.index",
+                                provinceDetails.id
+                            )}
+                        >
+                            <span>Cities</span>
+                        </Link>
+                    )}
                     {provinceDetails.deleted_at || (
                         <DeleteButton onDelete={destroy}>
                             Delete Province

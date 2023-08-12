@@ -1,38 +1,38 @@
 import TextInput from "@/Components/TextInput";
 import SelectInput from "@/Components/SelectInput";
 import LoadingButton from "@/Components/LoadingButton";
+import InputLabel from "@/Components/InputLabel";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { useForm } from "@inertiajs/react";
-import InputLabel from "@/Components/InputLabel";
 import InputError from "@/Components/InputError";
 
-export default function Edit({
+export default function Create({
     auth,
-    province: { data: provinceDetails },
     statuses,
+    province: { data: province },
 }) {
-    const { data, setData, put, processing, errors } = useForm({
-        local_name: provinceDetails.local_name || "",
-        latin_name: provinceDetails.latin_name || "",
-        status: provinceDetails.status?.key || "",
+    const { data, setData, post, processing, errors } = useForm({
+        local_name: "",
+        latin_name: "",
+        status: "",
     });
-
     function handleSubmit(e) {
         e.preventDefault();
-        put(route("administration.provinces.update", provinceDetails.id));
+        post(route("administration.provinces.cities.store", province.id));
     }
+
     return (
         <AuthenticatedLayout
             user={auth?.user?.data}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Edit Province
+                    Create City
                 </h2>
             }
         >
             <Head>
-                <title>{provinceDetails.local_name}</title>
+                <title>Create new City</title>
             </Head>
 
             <div className="max-w-5xl my-6 mx-auto py-6 px-4 sm:px-6 lg:px-8 overflow-hidden bg-white rounded shadow">
@@ -67,7 +67,7 @@ export default function Edit({
                         <div className="w-full">
                             <InputLabel
                                 htmlFor="latin_name"
-                                value="Latin Name"
+                                value="latin Name"
                             />
 
                             <TextInput
@@ -122,7 +122,7 @@ export default function Edit({
                             type="submit"
                             className="bg-indigo-500 p-2 rounded-md text-white"
                         >
-                            Update Province
+                            Create City
                         </LoadingButton>
                     </div>
                 </form>

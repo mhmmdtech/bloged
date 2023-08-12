@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Administration\DashboardController;
 use App\Http\Controllers\Administration\CategoryController;
+use App\Http\Controllers\Administration\CityController;
 use App\Http\Controllers\Administration\PostController;
 use App\Http\Controllers\Administration\UserController;
 use App\Http\Controllers\Administration\LogController;
@@ -28,4 +29,6 @@ Route::prefix('terminator')->name('administration.')->middleware(['auth', 'verif
     Route::resource('logs', LogController::class)->only(['index', 'show']);
 
     Route::resource('provinces', ProvinceController::class);
+
+    Route::resource('provinces.cities', CityController::class)->shallow();
 });

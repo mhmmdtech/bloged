@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use App\Enums\ProvinceStatus;
+use App\Enums\CityStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Province extends Model
+class City extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -26,7 +25,7 @@ class Province extends Model
      * @var array
      */
     protected $casts = [
-        'status' => ProvinceStatus::class,
+        'status' => CityStatus::class,
     ];
 
     /**
@@ -38,10 +37,10 @@ class Province extends Model
     }
 
     /**
-     * Get the cities for the province.
+     * Get the province that owns the city.
      */
-    public function cities(): HasMany
+    public function province(): BelongsTo
     {
-        return $this->hasMany(City::class, 'province_id');
+        return $this->belongsTo(Province::class, 'province_id');
     }
 }

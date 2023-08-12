@@ -7,32 +7,28 @@ import { useForm } from "@inertiajs/react";
 import InputLabel from "@/Components/InputLabel";
 import InputError from "@/Components/InputError";
 
-export default function Edit({
-    auth,
-    province: { data: provinceDetails },
-    statuses,
-}) {
+export default function Edit({ auth, city: { data: cityDetails }, statuses }) {
     const { data, setData, put, processing, errors } = useForm({
-        local_name: provinceDetails.local_name || "",
-        latin_name: provinceDetails.latin_name || "",
-        status: provinceDetails.status?.key || "",
+        local_name: cityDetails.local_name || "",
+        latin_name: cityDetails.latin_name || "",
+        status: cityDetails.status?.key || "",
     });
 
     function handleSubmit(e) {
         e.preventDefault();
-        put(route("administration.provinces.update", provinceDetails.id));
+        put(route("administration.cities.update", cityDetails.id));
     }
     return (
         <AuthenticatedLayout
             user={auth?.user?.data}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Edit Province
+                    Edit City
                 </h2>
             }
         >
             <Head>
-                <title>{provinceDetails.local_name}</title>
+                <title>{cityDetails.local_name}</title>
             </Head>
 
             <div className="max-w-5xl my-6 mx-auto py-6 px-4 sm:px-6 lg:px-8 overflow-hidden bg-white rounded shadow">
@@ -122,7 +118,7 @@ export default function Edit({
                             type="submit"
                             className="bg-indigo-500 p-2 rounded-md text-white"
                         >
-                            Update Province
+                            Update City
                         </LoadingButton>
                     </div>
                 </form>
