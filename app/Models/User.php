@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
+use App\Notifications\SendEmailVerificationNotification;
+// use Illuminate\Auth\Listeners\SendEmailVerificationNotification as ListenersSendEmailVerificationNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -96,5 +98,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function users(): HasMany
     {
         return $this->hasMany(User::class, 'creator_id');
+    }
+
+    /**
+     * Send the customized email verification to registered user
+     * 
+     * https://laraveldaily.com/post/laravel-breeze-user-name-auth-email-templates
+     * https://dev.to/frknasir/laravel-easily-customize-email-verification-url-58f9
+     * https://techvblogs.com/blog/laravel-9-custom-email-verification-tutorial
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new SendEmailVerificationNotification());
     }
 }
