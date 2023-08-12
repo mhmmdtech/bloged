@@ -68,6 +68,18 @@ export default function Authenticated({ user, header, children }) {
                                         Users
                                     </NavLink>
                                 )}
+                                {authenticatedUserAbilities.browse_log && (
+                                    <NavLink
+                                        href={route(
+                                            "administration.logs.index"
+                                        )}
+                                        active={route().current(
+                                            "administration.logs.index"
+                                        )}
+                                    >
+                                        Logs
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -205,6 +217,16 @@ export default function Authenticated({ user, header, children }) {
                                 )}
                             >
                                 Users
+                            </ResponsiveNavLink>
+                        )}
+                        {authenticatedUserAbilities.browse_log && (
+                            <ResponsiveNavLink
+                                href={route("administration.logs.index")}
+                                active={route().current(
+                                    "administration.logs.index"
+                                )}
+                            >
+                                Logs
                             </ResponsiveNavLink>
                         )}
                     </div>

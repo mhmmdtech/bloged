@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(User::class, 'actioner_id')->comment('who performed the action')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('action');
-            $table->nullableMorphs('modelable');
+            $table->morphs('modelable');
             $table->json('old_model')->comment('the old structure of model');
             $table->json('new_model')->comment('the new structure of model');
             $table->timestamps();

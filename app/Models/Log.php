@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Log extends Model
 {
@@ -25,4 +26,12 @@ class Log extends Model
         'old_model' => 'array',
         'new_model' => 'array',
     ];
+
+    /**
+     * Get the user that do the action.
+     */
+    public function actioner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'actioner_id');
+    }
 }

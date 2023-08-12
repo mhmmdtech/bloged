@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use App\Http\Resources\UserResource;
+use App\Models\Log;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
@@ -41,6 +42,7 @@ class HandleInertiaRequests extends Middleware
                     'browse_category' => $request->user() && $request->user()->can('browse category', Category::class),
                     'browse_post' => $request->user() && $request->user()->can('browse post', Post::class),
                     'browse_user' => $request->user() && $request->user()->can('browse user', User::class),
+                    'browse_log' => $request->user() && $request->user()->can('browse log', Log::class),
                 ],
             ],
             'ziggy' => function () use ($request) {
