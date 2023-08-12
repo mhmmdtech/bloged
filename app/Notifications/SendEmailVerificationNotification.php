@@ -18,7 +18,7 @@ class SendEmailVerificationNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public readonly string $token)
     {
         //
     }
@@ -50,10 +50,12 @@ class SendEmailVerificationNotification extends Notification
         return
             (new MailMessage)
                 ->subject(Lang::get('Verify Email Address'))
-                ->line(Lang::get('Hey ' . $notifiable->username . ' , Welcome to ' . config('app.name') . '!'))
-                ->line(Lang::get('Please click the buttonn below to verify your email address.'))
-                ->action(Lang::get('Verify Email Address'), $url)
-                ->line(Lang::get('If you did not create an account, no further action is required.'));
+                ->markdown('mail.auth.verify-account', [
+                    'username' => $notifiable->username,
+                    'automaticAccountVerificationUrl' => $url,
+                    'manualAccountVerificationUrl' => route('verification-code.show'),
+                    'token' => $this->token,
+                ]);
     }
 
     /**
