@@ -41,6 +41,8 @@ class RegisteredUserController extends Controller
 
         $user = User::create($inputs);
 
+        $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
+
         if (isset($inputs['avatar'])) {
             $imageService->setExclusiveDirectory('images');
             $imageService->setImageDirectory('users' . DIRECTORY_SEPARATOR . 'avatars');

@@ -53,3 +53,17 @@ if (!function_exists('removeNullFromArray')) {
         return array_filter($array, fn($value) => $value !== null);
     }
 }
+
+if (!function_exists('generateRandomCode')) {
+
+    /**
+     * Generate random token
+     */
+    function generateRandomCode($minDigits = 5, $maxDigits = 8)
+    {
+        $minValue = pow(10, $minDigits);
+        $maxValue = pow(10, $maxDigits) - 1;
+
+        return random_int($minValue, $maxValue);
+    }
+}

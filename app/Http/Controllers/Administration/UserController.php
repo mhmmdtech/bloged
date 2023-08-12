@@ -64,6 +64,8 @@ class UserController extends Controller
 
         $user = auth()->user()->users()->create($inputs);
 
+        $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
+
         if (isset($inputs['avatar'])) {
             $imageService->setExclusiveDirectory('images');
             $imageService->setImageDirectory('users' . DIRECTORY_SEPARATOR . 'avatars');
@@ -131,8 +133,10 @@ class UserController extends Controller
         $oldUser = clone $user;
         $user->fill($inputs);
 
-        if ($user->isDirty('email'))
+        if ($user->isDirty('email')) {
             $user->email_verified_at = null;
+            $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
+        }
 
         $user->save();
 

@@ -49,8 +49,10 @@ class ProfileController extends Controller
 
         $request->user()->fill($inputs);
 
-        if ($request->user()->isDirty('email'))
+        if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
+            $request->user()->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
+        }
 
         $request->user()->save();
 

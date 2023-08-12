@@ -111,4 +111,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->notify(new SendEmailVerificationNotification());
     }
+
+    /**
+     * Get the verification codes issue for the user.
+     */
+    public function verificationCodes(): HasMany
+    {
+        return $this->hasMany(UserVerificationCode::class);
+    }
 }
