@@ -128,12 +128,16 @@ export default ({ auth, results = {}, genders }) => {
                 <div className="flex flex-col gap-4 overflow-x-auto rounded shadow mt-4">
                     {usersResults.length > 0 && (
                         <div className="flex justify-between items-center gap-4">
-                            <button
-                                type="button"
+                            <a
+                                href={route(
+                                    "administration.users.report.print",
+                                    removeNullFromArray(data)
+                                )}
+                                target="_blank"
                                 className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
                             >
                                 Print
-                            </button>
+                            </a>
 
                             <a
                                 href={route(

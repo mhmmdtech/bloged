@@ -20,6 +20,7 @@ Route::prefix('terminator')->name('administration.')->middleware(['auth', 'verif
     Route::put('users/{user}/pasasword', [UserController::class, 'updatePassword'])->name('users.password.update');
     Route::get('users/advanced-search', [UserController::class, 'advancedSearch'])->name('users.advanced-search');
     Route::get('users/report', [UserController::class, 'report'])->name('users.report');
+    Route::get('users/report/print', [UserController::class, 'printReport'])->name('users.report.print');
     Route::get('users/report/excel', [UserController::class, 'excelReport'])->name('users.report.excel');
     Route::get('users/report/csv', [UserController::class, 'csvReport'])->name('users.report.csv');
     Route::resource('users', UserController::class);
