@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->foreignIdFor(Province::class, 'province_id')->nullable()->after('military_status')->constrained('provinces')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignIdFor(City::class, 'city_id')->nullable()->after('city_id')->constrained('cities')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(City::class, 'city_id')->nullable()->after('province_id')->constrained('cities')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

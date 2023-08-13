@@ -23,6 +23,8 @@ class PermissionSeeder extends Seeder
             }
         }
 
+        array_push($permissions, 'browse analytic');
+
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);
         }
