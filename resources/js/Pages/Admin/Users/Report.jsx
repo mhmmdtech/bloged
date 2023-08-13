@@ -141,6 +141,17 @@ export default ({ auth, results = {}, genders }) => {
 
                             <a
                                 href={route(
+                                    "administration.users.report.pdf",
+                                    removeNullFromArray(data)
+                                )}
+                                target="_blank"
+                                className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
+                            >
+                                PDF
+                            </a>
+
+                            <a
+                                href={route(
                                     "administration.users.report.excel",
                                     removeNullFromArray(data)
                                 )}
