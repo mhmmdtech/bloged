@@ -281,4 +281,42 @@ class UserController extends Controller
         $results = new UserCollection(User::with('roles')->latest()->paginate(5));
         return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses', 'provinces'));
     }
+
+    public function report()
+    {
+        $this->authorize('browse analytic', User::class);
+        $results = [];
+        $allowedColumns = ['province', 'city', 'gender',];
+        $userInputs = removeNullFromArray(request()->input());
+        $reportParameters = array_intersect_key($userInputs, array_flip($allowedColumns));
+        $genders = GenderStatus::array();
+
+        if (count($reportParameters) === 0) {
+            return Inertia::render('Admin/Users/Report', compact('genders'));
+        }
+
+        $query = User::query();
+
+        if (array_key_exists('gender', $reportParameters)) {
+            $query->where('gender', request()->query('gender'));
+        }
+
+        if (array_key_exists('province', $reportParameters)) {
+            $province = request()->query('province');
+            $query->whereHas('province', function ($query) use ($province) {
+                $query->where('local_name', $province)->orWhere('latin_name', $province);
+            });
+        }
+
+        if (array_key_exists('city', $reportParameters)) {
+            $city = request()->query('city');
+            $query->whereHas('city', function ($query) use ($city) {
+                $query->where('local_name', $city)->orWhere('latin_name', $city);
+            });
+        }
+        $results = $query->get();
+        $resultsCount = $results->count();
+        $results = new UserCollection($query->get());
+        return Inertia::render('Admin/Users/Report', compact('results', 'resultsCount', 'genders', 'reportParameters'));
+    }
 }

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import * as echarts from "echarts/core";
 import { GridComponent } from "echarts/components";
 import { BarChart } from "echarts/charts";
@@ -84,6 +84,16 @@ export default ({ auth, usersByProvince }) => {
                                     className="w-full max-w-screen-md"
                                     style={{ height: "400px" }}
                                 ></div>
+                            </div>
+                        )}
+                        {auth.can.browse_analytic && (
+                            <div className="flex justify-center items-center w-full">
+                                <Link
+                                    className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
+                                    href={route("administration.users.report")}
+                                >
+                                    <span>Get Users Report</span>
+                                </Link>
                             </div>
                         )}
                     </div>
