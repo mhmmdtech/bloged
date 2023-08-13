@@ -29,3 +29,15 @@ export function removeNullFromArray(data) {
         )
     );
 }
+
+export function parseQueryString(queryString) {
+    const params = {};
+    const keyValuePairs = queryString.split("&");
+
+    for (let i = 0; i < keyValuePairs.length; i++) {
+        const [key, value] = keyValuePairs[i].split("=");
+        params[key] = decodeURIComponent(value);
+    }
+
+    return params;
+}

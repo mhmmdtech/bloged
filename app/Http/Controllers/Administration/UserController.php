@@ -314,9 +314,8 @@ class UserController extends Controller
                 $query->where('local_name', $city)->orWhere('latin_name', $city);
             });
         }
-        $results = $query->get();
-        $resultsCount = $results->count();
-        $results = new UserCollection($query->get());
-        return Inertia::render('Admin/Users/Report', compact('results', 'resultsCount', 'genders', 'reportParameters'));
+        $results = $query->paginate(5)->withQueryString();
+        $results = new UserCollection($results);
+        return Inertia::render('Admin/Users/Report', compact('results', 'genders'));
     }
 }

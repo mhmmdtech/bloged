@@ -6,20 +6,18 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
 import SelectInput from "@/Components/SelectInput";
-import { removeNullFromArray } from "@/utils/functions";
+import { parseQueryString, removeNullFromArray } from "@/utils/functions";
+import Pagination from "@/Components/Pagination";
 
-export default ({
-    auth,
-    results = {},
-    resultsCount = 0,
-    genders,
-    reportParameters = {},
-}) => {
-    const usersResults = results?.data ?? [];
+export default ({ auth, results = {}, genders }) => {
+    const { data: dataResults, meta } = results;
+    const links = meta?.links ?? [];
+    const usersResults = dataResults ?? [];
+    const queryParams = parseQueryString(window.location.search.substring(1));
     const { data, setData, processing, errors } = useForm({
-        gender: "",
-        province: "",
-        city: "",
+        gender: queryParams?.gender || "",
+        province: queryParams?.province || "",
+        city: queryParams?.city || "",
     });
 
     function handleSubmit(e) {
@@ -32,6 +30,7 @@ export default ({
             }
         );
     }
+
     return (
         <AuthenticatedLayout
             user={auth?.user?.data}
@@ -116,41 +115,37 @@ export default ({
                             />
                         </div>
                     </div>
-                    <div className="flex flex-wrap justify-center mt-4">
+                    <div className="flex flex-wrap justify-center mt-4 gap-4">
                         <LoadingButton
                             loading={processing}
                             type="submit"
                             className="bg-indigo-500 p-2 rounded-md text-white"
                         >
-                            Search
+                            Show Result
                         </LoadingButton>
                     </div>
                 </form>
-                {resultsCount > 0 && (
-                    <div className="flex flex-wrap justify-between gap-4 px-6 pt-6 print:hidden">
-                        <button className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none">
-                            Print
-                        </button>
-                        <button>PDF</button>
-                        <button>Excel</button>
-                        <button>CSV</button>
-                    </div>
-                )}
                 <div className="flex flex-col gap-4 overflow-x-auto rounded shadow mt-4">
-                    {Object.keys(reportParameters).length > 0 && (
-                        <ul className="px-6 pt-6">
-                            {Object.entries(reportParameters).map(
-                                ([key, value], index) => (
-                                    <li key={index}>
-                                        {key}: {value}
-                                    </li>
-                                )
-                            )}
-                        </ul>
-                    )}
-                    {resultsCount > 0 && (
-                        <div className="px-6 pt-6">
-                            Total result: {resultsCount}
+                    {usersResults.length > 0 && (
+                        <div className="flex justify-between items-center gap-4">
+                            <button
+                                type="button"
+                                className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
+                            >
+                                Print
+                            </button>
+                            <button
+                                type="button"
+                                className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
+                            >
+                                Excel
+                            </button>
+                            <button
+                                type="button"
+                                className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
+                            >
+                                CSV
+                            </button>
                         </div>
                     )}
                     <table className="w-full whitespace-nowrap">
@@ -220,6 +215,7 @@ export default ({
                         </tbody>
                     </table>
                 </div>
+                <Pagination links={links} />
             </div>
         </AuthenticatedLayout>
     );
