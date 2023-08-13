@@ -134,18 +134,25 @@ export default ({ auth, results = {}, genders }) => {
                             >
                                 Print
                             </button>
-                            <button
-                                type="button"
+
+                            <a
+                                href={route(
+                                    "administration.users.report.excel",
+                                    removeNullFromArray(data)
+                                )}
                                 className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
                             >
                                 Excel
-                            </button>
-                            <button
-                                type="button"
+                            </a>
+                            <a
+                                href={route(
+                                    "administration.users.report.csv",
+                                    removeNullFromArray(data)
+                                )}
                                 className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
                             >
                                 CSV
-                            </button>
+                            </a>
                         </div>
                     )}
                     <table className="w-full whitespace-nowrap">

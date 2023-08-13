@@ -21,6 +21,7 @@ use Illuminate\Auth\Events\Registered;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Eloquent\Builder;
+use App\Exports\UsersExport;
 
 class UserController extends Controller
 {
@@ -314,8 +315,82 @@ class UserController extends Controller
                 $query->where('local_name', $city)->orWhere('latin_name', $city);
             });
         }
+
         $results = $query->paginate(5)->withQueryString();
         $results = new UserCollection($results);
         return Inertia::render('Admin/Users/Report', compact('results', 'genders'));
+    }
+
+    public function excelReport()
+    {
+        // https://docs.laravel-excel.com/
+        $this->authorize('browse analytic', User::class);
+        $allowedColumns = ['province', 'city', 'gender',];
+        $userInputs = removeNullFromArray(request()->input());
+        $reportParameters = array_intersect_key($userInputs, array_flip($allowedColumns));
+
+        if (count($reportParameters) === 0) {
+            return redirect()->route('administration.users.report');
+        }
+
+        $query = User::query();
+
+        if (array_key_exists('gender', $reportParameters)) {
+            $query->where('gender', request()->query('gender'));
+        }
+
+        if (array_key_exists('province', $reportParameters)) {
+            $province = request()->query('province');
+            $query->whereHas('province', function ($query) use ($province) {
+                $query->where('local_name', $province)->orWhere('latin_name', $province);
+            });
+        }
+
+        if (array_key_exists('city', $reportParameters)) {
+            $city = request()->query('city');
+            $query->whereHas('city', function ($query) use ($city) {
+                $query->where('local_name', $city)->orWhere('latin_name', $city);
+            });
+        }
+
+        return (new UsersExport($query))->download('users.xlsx');
+
+    }
+    public function csvReport()
+    {
+        // https://github.com/vitorccs/laravel-csv
+        $this->authorize('browse analytic', User::class);
+        $allowedColumns = ['province', 'city', 'gender',];
+        $userInputs = removeNullFromArray(request()->input());
+        $reportParameters = array_intersect_key($userInputs, array_flip($allowedColumns));
+
+        if (count($reportParameters) === 0) {
+            return redirect()->route('administration.users.report');
+        }
+
+        $query = User::query();
+
+        if (array_key_exists('gender', $reportParameters)) {
+            $query->where('gender', request()->query('gender'));
+        }
+
+        if (array_key_exists('province', $reportParameters)) {
+            $province = request()->query('province');
+            $query->whereHas('province', function ($query) use ($province) {
+                $query->where('local_name', $province)->orWhere('latin_name', $province);
+            });
+        }
+
+        if (array_key_exists('city', $reportParameters)) {
+            $city = request()->query('city');
+            $query->whereHas('city', function ($query) use ($city) {
+                $query->where('local_name', $city)->orWhere('latin_name', $city);
+            });
+        }
+
+        return (new UsersExport($query))->download('users.csv', \Maatwebsite\Excel\Excel::CSV, [
+            'Content-Type' => 'text/csv',
+        ]);
+
     }
 }
