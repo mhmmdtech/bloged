@@ -292,8 +292,7 @@ class UserController extends Controller
             $results = new UserCollection(User::with('roles')->where($allowedInputs)->latest()->paginate(5));
             return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses', 'provinces'));
         }
-        $results = new UserCollection(User::with('roles')->latest()->paginate(5));
-        return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses', 'provinces'));
+        return Inertia::render('Admin/Users/AdvancedSearch', compact('creators', 'genders', 'militaryStatuses', 'provinces'));
     }
 
     /**

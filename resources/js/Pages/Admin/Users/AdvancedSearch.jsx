@@ -8,36 +8,35 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
 import SelectInput from "@/Components/SelectInput";
-import { removeNullFromArray } from "@/utils/functions";
+import { parseQueryString, removeNullFromArray } from "@/utils/functions";
 
 export default ({
     auth,
-    results,
+    results = {},
     creators,
     genders,
     militaryStatuses,
     provinces,
 }) => {
+    const { data: dataResults, meta } = results;
+    const links = meta?.links ?? [];
+    const usersResults = dataResults ?? [];
+    const queryParams = parseQueryString(window.location.search.substring(1));
     let [cities, setCities] = useState([]);
 
-    const {
-        data: usersResults,
-        meta: { links },
-    } = results;
-
     const { data, setData, processing, errors, reset, progress } = useForm({
-        first_name: "",
-        last_name: "",
-        national_code: "",
-        mobile_number: "",
-        email: "",
-        username: "",
-        creator_id: "",
-        birthday: "",
-        gender: "",
-        military_status: "",
-        province_id: "",
-        city_id: "",
+        first_name: queryParams?.first_name || "",
+        last_name: queryParams?.last_name || "",
+        national_code: queryParams?.national_code || "",
+        mobile_number: queryParams?.mobile_number || "",
+        email: queryParams?.email || "",
+        username: queryParams?.username || "",
+        creator_id: queryParams?.creator_id || "",
+        birthday: queryParams?.birthday || "",
+        gender: queryParams?.gender || "",
+        military_status: queryParams?.military_status || "",
+        province_id: queryParams?.province_id || "",
+        city_id: queryParams?.city_id || "",
     });
     useEffect(() => {
         if (data.province_id === "" || data.province_id === null) return;
