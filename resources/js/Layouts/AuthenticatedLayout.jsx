@@ -23,7 +23,7 @@ export default function Authenticated({ user, header, children }) {
                                 </Link>
                             </div>
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex print:hidden">
                                 <NavLink
                                     href={route("administration.dashboard")}
                                     active={route().current(
@@ -80,10 +80,22 @@ export default function Authenticated({ user, header, children }) {
                                         Logs
                                     </NavLink>
                                 )}
+                                {authenticatedUserAbilities.browse_province && (
+                                    <NavLink
+                                        href={route(
+                                            "administration.provinces.index"
+                                        )}
+                                        active={route().current(
+                                            "administration.provinces.index"
+                                        )}
+                                    >
+                                        Provinces
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
-                        <div className="hidden sm:flex sm:items-center sm:ml-6">
+                        <div className="hidden sm:flex sm:items-center sm:ml-6 print:hidden">
                             <div className="ml-3 relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
@@ -133,7 +145,7 @@ export default function Authenticated({ user, header, children }) {
                             </div>
                         </div>
 
-                        <div className="-mr-2 flex items-center sm:hidden">
+                        <div className="-mr-2 flex items-center sm:hidden print:hidden">
                             <button
                                 onClick={() =>
                                     setShowingNavigationDropdown(
@@ -227,6 +239,16 @@ export default function Authenticated({ user, header, children }) {
                                 )}
                             >
                                 Logs
+                            </ResponsiveNavLink>
+                        )}
+                        {authenticatedUserAbilities.browse_province && (
+                            <ResponsiveNavLink
+                                href={route("administration.provinces.index")}
+                                active={route().current(
+                                    "administration.provinces.index"
+                                )}
+                            >
+                                Provinces
                             </ResponsiveNavLink>
                         )}
                     </div>

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
@@ -8,7 +8,8 @@ import SelectInput from "@/Components/SelectInput";
 import FileInput from "@/Components/FileInput";
 import LoadingButton from "@/Components/LoadingButton";
 
-export default function Create({ auth, genders, militaryStatuses }) {
+export default function Create({ auth, genders, militaryStatuses, provinces }) {
+    let [cities, setCities] = useState([]);
     const { data, setData, post, processing, errors, reset, progress } =
         useForm({
             first_name: "",
@@ -23,12 +24,24 @@ export default function Create({ auth, genders, militaryStatuses }) {
             avatar: "",
             birthday: "",
             military_status: "",
+            province_id: "",
+            city_id: "",
         });
     useEffect(() => {
         return () => {
             reset("password", "password_confirmation");
         };
     }, []);
+
+    useEffect(() => {
+        if (data.province_id === "" || data.province_id === null) return;
+
+        const province = provinces.find(
+            (province) => province.id === +data.province_id
+        );
+
+        setCities(province.cities);
+    }, [data.province_id]);
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -335,6 +348,67 @@ export default function Create({ auth, genders, militaryStatuses }) {
 
                             <InputError
                                 message={errors.military_status}
+                                className="mt-2"
+                            />
+                        </div>
+                        <div className="w-full mt-4">
+                            <InputLabel
+                                htmlFor="province_id"
+                                value="Province"
+                            />
+
+                            <SelectInput
+                                id="province_id"
+                                name="province_id"
+                                value={data.province_id}
+                                className="mt-1 block w-full"
+                                autoComplete="username"
+                                isFocused={false}
+                                onChange={(e) =>
+                                    setData("province_id", e.target.value)
+                                }
+                            >
+                                <option value="">Choose</option>
+                                {Object.values(provinces).map((province) => (
+                                    <option
+                                        key={province.id}
+                                        value={province.id}
+                                    >
+                                        {province.local_name}
+                                    </option>
+                                ))}
+                            </SelectInput>
+
+                            <InputError
+                                message={errors.province_id}
+                                className="mt-2"
+                            />
+                        </div>
+                        <div className="w-full mt-4">
+                            <InputLabel htmlFor="city_id" value="City" />
+
+                            <SelectInput
+                                id="city_id"
+                                name="city_id"
+                                value={data.city_id}
+                                className="mt-1 block w-full"
+                                autoComplete="username"
+                                isFocused={false}
+                                onChange={(e) => {
+                                    setData("city_id", e.target.value);
+                                }}
+                                disabled={data.province_id === ""}
+                            >
+                                <option value="">Choose</option>
+                                {Object.values(cities).map((city) => (
+                                    <option key={city.id} value={city.id}>
+                                        {city.local_name}
+                                    </option>
+                                ))}
+                            </SelectInput>
+
+                            <InputError
+                                message={errors.city_id}
                                 className="mt-2"
                             />
                         </div>

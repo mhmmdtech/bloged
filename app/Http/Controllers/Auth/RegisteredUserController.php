@@ -6,6 +6,7 @@ use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterationRequest;
+use App\Models\Province;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use App\Services\Image\ImageService;
@@ -24,7 +25,8 @@ class RegisteredUserController extends Controller
     {
         $genders = GenderStatus::array();
         $militaryStatuses = MilitaryStatus::array();
-        return Inertia::render('Auth/Register', compact('genders', 'militaryStatuses'));
+        $provinces = Province::with('cities')->get(['id', 'local_name']);
+        return Inertia::render('Auth/Register', compact('genders', 'militaryStatuses', 'provinces'));
     }
 
     /**

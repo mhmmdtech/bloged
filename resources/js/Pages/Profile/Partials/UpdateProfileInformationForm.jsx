@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -12,10 +13,12 @@ export default function UpdateProfileInformation({
     status,
     className = "",
 }) {
+    let [cities, setCities] = useState([]);
+
     const user = usePage().props.auth.user?.data;
     const genders = usePage().props.genders;
     const militaryStatuses = usePage().props.militaryStatuses;
-
+    const provinces = usePage().props.provinces;
     const {
         data,
         setData,
@@ -35,6 +38,8 @@ export default function UpdateProfileInformation({
         avatar: "",
         birthday: new Date(user.birthday).toJSON().slice(0, 10) || "",
         military_status: user.military_status?.key || "",
+        province_id: user?.province?.id || "",
+        city_id: user?.city?.id || "",
         _method: "PATCH",
     });
 
@@ -42,6 +47,16 @@ export default function UpdateProfileInformation({
         e.preventDefault();
         post(route("profile.update"));
     };
+
+    useEffect(() => {
+        if (data.province_id === "" || data.province_id === null) return;
+
+        const province = provinces.find(
+            (province) => province.id === +data.province_id
+        );
+
+        setCities(province.cities);
+    }, [data.province_id]);
 
     return (
         <section className={className}>
@@ -266,6 +281,55 @@ export default function UpdateProfileInformation({
                         message={errors.military_status}
                         className="mt-2"
                     />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="province_id" value="Province" />
+
+                    <SelectInput
+                        id="province_id"
+                        name="province_id"
+                        value={data.province_id}
+                        className="mt-1 block w-full"
+                        autoComplete="username"
+                        isFocused={false}
+                        onChange={(e) => setData("province_id", e.target.value)}
+                    >
+                        <option value="">Choose</option>
+                        {Object.values(provinces).map((province) => (
+                            <option key={province.id} value={province.id}>
+                                {province.local_name}
+                            </option>
+                        ))}
+                    </SelectInput>
+
+                    <InputError message={errors.province_id} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="city_id" value="City" />
+
+                    <SelectInput
+                        id="city_id"
+                        name="city_id"
+                        value={data.city_id}
+                        className="mt-1 block w-full"
+                        autoComplete="username"
+                        isFocused={false}
+                        onChange={(e) => {
+                            setData("city_id", e.target.value);
+                        }}
+                        disabled={data.province_id === ""}
+                    >
+                        <option value="">Choose</option>
+                        {Object.values(cities).map((city) => (
+                            <option key={city.id} value={city.id}>
+                                {city.local_name}
+                            </option>
+                        ))}
+                    </SelectInput>
+
+                    <InputError message={errors.city_id} className="mt-2" />
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (

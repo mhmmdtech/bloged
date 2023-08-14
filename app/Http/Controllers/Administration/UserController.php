@@ -6,7 +6,6 @@ use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
 use App\Events\UserModified;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\AdvancedSearchUserRequest;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserPasswordRequest;
 use App\Http\Requests\Admin\UpdateUserPermissionsRequest;
@@ -14,14 +13,16 @@ use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Http\Requests\Admin\UpdateUserRolesRequest;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
+use App\Models\Province;
 use App\Models\User;
 use App\Services\Image\ImageService;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Auth\Events\Registered;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Eloquent\Builder;
+use App\Exports\UsersExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class UserController extends Controller
 {
@@ -46,8 +47,9 @@ class UserController extends Controller
 
         $genders = GenderStatus::array();
         $militaryStatuses = MilitaryStatus::array();
+        $provinces = Province::with('cities')->get(['id', 'local_name']);
 
-        return Inertia::render('Admin/Users/Create', compact('genders', 'militaryStatuses'));
+        return Inertia::render('Admin/Users/Create', compact('genders', 'militaryStatuses', 'provinces'));
     }
 
     /**
@@ -88,7 +90,7 @@ class UserController extends Controller
     {
         $this->authorize('read user', $user);
 
-        $user->load('creator');
+        $user->load('creator', 'province', 'city');
 
         $user = new UserResource($user);
 
@@ -102,12 +104,15 @@ class UserController extends Controller
     {
         $this->authorize('edit user', $user);
 
+        $user->load('province', 'city');
+
         $genders = GenderStatus::array();
         $militaryStatuses = MilitaryStatus::array();
+        $provinces = Province::with('cities')->get(['id', 'local_name']);
 
         $user = new UserResource($user);
 
-        return Inertia::render('Admin/Users/Edit', compact('user', 'genders', 'militaryStatuses'));
+        return Inertia::render('Admin/Users/Edit', compact('user', 'genders', 'militaryStatuses', 'provinces'));
     }
 
     /**
@@ -257,7 +262,7 @@ class UserController extends Controller
         $this->authorize('browse user', User::class);
 
         $results = [];
-        $allowedColumns = ['first_name', 'last_name', 'national_code', 'mobile_number', 'email', 'username', 'creator_id', 'birthday', 'gender', 'military_status'];
+        $allowedColumns = ['first_name', 'last_name', 'national_code', 'mobile_number', 'email', 'username', 'creator_id', 'birthday', 'gender', 'military_status', 'province_id', 'city_id'];
         $userInputs = removeNullFromArray(request()->input());
         $allowedInputs = array_intersect_key($userInputs, array_flip($allowedColumns));
 
@@ -269,11 +274,199 @@ class UserController extends Controller
 
         $militaryStatuses = MilitaryStatus::array();
 
+        $provinces = Province::with('cities')->get(['id', 'local_name']);
+
         if (count($allowedInputs) > 0) {
             $results = new UserCollection(User::with('roles')->where($allowedInputs)->latest()->paginate(5));
-            return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses'));
+            return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses', 'provinces'));
         }
         $results = new UserCollection(User::with('roles')->latest()->paginate(5));
-        return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses'));
+        return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses', 'provinces'));
+    }
+
+    public function report()
+    {
+        $this->authorize('browse analytic', User::class);
+        $results = [];
+        $allowedColumns = ['province', 'city', 'gender',];
+        $userInputs = removeNullFromArray(request()->input());
+        $reportParameters = array_intersect_key($userInputs, array_flip($allowedColumns));
+        $genders = GenderStatus::array();
+
+        if (count($reportParameters) === 0) {
+            return Inertia::render('Admin/Users/Report', compact('genders'));
+        }
+
+        $query = User::query();
+
+        if (array_key_exists('gender', $reportParameters)) {
+            $query->where('gender', request()->query('gender'));
+        }
+
+        if (array_key_exists('province', $reportParameters)) {
+            $province = request()->query('province');
+            $query->whereHas('province', function ($query) use ($province) {
+                $query->where('local_name', $province)->orWhere('latin_name', $province);
+            });
+        }
+
+        if (array_key_exists('city', $reportParameters)) {
+            $city = request()->query('city');
+            $query->whereHas('city', function ($query) use ($city) {
+                $query->where('local_name', $city)->orWhere('latin_name', $city);
+            });
+        }
+
+        $results = $query->paginate(5)->withQueryString();
+        $results = new UserCollection($results);
+        return Inertia::render('Admin/Users/Report', compact('results', 'genders'));
+    }
+
+    public function downloadReport(string $format)
+    {
+        $this->authorize('browse analytic', User::class);
+
+        $allowedFormats = ['print', 'pdf', 'excel', 'csv'];
+
+        if (!in_array($format, $allowedFormats)) {
+            return redirect()->route('administration.users.report', request()->query());
+        }
+
+        $allowedColumns = ['province', 'city', 'gender',];
+        $userInputs = removeNullFromArray(request()->input());
+        $reportParameters = array_intersect_key($userInputs, array_flip($allowedColumns));
+
+        if (count($reportParameters) === 0) {
+            return redirect()->route('administration.users.report');
+        }
+
+        $reportMethods = [
+            'print' => 'printReport',
+            'pdf' => 'pdfReport',
+            'excel' => 'excelReport',
+            'csv' => 'csvReport',
+        ];
+
+        $result = NULL;
+
+        if (isset($reportMethods[$format])) {
+            $methodName = $reportMethods[$format];
+            $result = $this->$methodName($reportParameters);
+        }
+
+        return $result;
+    }
+
+    private function printReport($reportParameters)
+    {
+        $query = User::query();
+
+        if (array_key_exists('gender', $reportParameters)) {
+            $query->where('gender', request()->query('gender'));
+        }
+
+        if (array_key_exists('province', $reportParameters)) {
+            $province = request()->query('province');
+            $query->whereHas('province', function ($query) use ($province) {
+                $query->where('local_name', $province)->orWhere('latin_name', $province);
+            });
+        }
+
+        if (array_key_exists('city', $reportParameters)) {
+            $city = request()->query('city');
+            $query->whereHas('city', function ($query) use ($city) {
+                $query->where('local_name', $city)->orWhere('latin_name', $city);
+            });
+        }
+
+        $users = $query->get();
+        $users = new UserCollection($users);
+        return Inertia::render('Admin/Users/PrintableReport', compact('users'));
+    }
+
+    private function pdfReport($reportParameters)
+    {
+        $query = User::query();
+
+        if (array_key_exists('gender', $reportParameters)) {
+            $query->where('gender', request()->query('gender'));
+        }
+
+        if (array_key_exists('province', $reportParameters)) {
+            $province = request()->query('province');
+            $query->whereHas('province', function ($query) use ($province) {
+                $query->where('local_name', $province)->orWhere('latin_name', $province);
+            });
+        }
+
+        if (array_key_exists('city', $reportParameters)) {
+            $city = request()->query('city');
+            $query->whereHas('city', function ($query) use ($city) {
+                $query->where('local_name', $city)->orWhere('latin_name', $city);
+            });
+        }
+        $users = $query->get();
+        $users = new UserCollection($users);
+        $pdf = Pdf::loadView('reports.users', compact('users'));
+        return $pdf->download('users-report.pdf');
+    }
+
+    private function excelReport($reportParameters)
+    {
+        // https://docs.laravel-excel.com/
+        $query = User::query();
+
+        if (array_key_exists('gender', $reportParameters)) {
+            $query->where('gender', request()->query('gender'));
+        }
+
+        if (array_key_exists('province', $reportParameters)) {
+            $province = request()->query('province');
+            $query->whereHas('province', function ($query) use ($province) {
+                $query->where('local_name', $province)->orWhere('latin_name', $province);
+            });
+        }
+
+        if (array_key_exists('city', $reportParameters)) {
+            $city = request()->query('city');
+            $query->whereHas('city', function ($query) use ($city) {
+                $query->where('local_name', $city)->orWhere('latin_name', $city);
+            });
+        }
+
+        $result = $query->get();
+
+        return (new UsersExport($result))->download('users.xlsx');
+    }
+
+    private function csvReport($reportParameters)
+    {
+        // https://github.com/vitorccs/laravel-csv
+        $query = User::query();
+
+        if (array_key_exists('gender', $reportParameters)) {
+            $query->where('gender', request()->query('gender'));
+        }
+
+        if (array_key_exists('province', $reportParameters)) {
+            $province = request()->query('province');
+            $query->whereHas('province', function ($query) use ($province) {
+                $query->where('local_name', $province)->orWhere('latin_name', $province);
+            });
+        }
+
+        if (array_key_exists('city', $reportParameters)) {
+            $city = request()->query('city');
+            $query->whereHas('city', function ($query) use ($city) {
+                $query->where('local_name', $city)->orWhere('latin_name', $city);
+            });
+        }
+
+        $result = $query->get();
+
+        return (new UsersExport($result))->download('users.csv', \Maatwebsite\Excel\Excel::CSV, [
+            'Content-Type' => 'text/csv',
+        ]);
+
     }
 }

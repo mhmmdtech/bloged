@@ -81,6 +81,11 @@ export default function Show({ auth, user: { data: userDetails } }) {
                             "Female don't need to do military service"}
                     </li>
                     <li>
+                        Province:{" "}
+                        {userDetails?.province?.local_name || "Unknown"}
+                    </li>
+                    <li>City: {userDetails?.city?.local_name || "Unknown"}</li>
+                    <li>
                         Birthday:{" "}
                         {new Date(userDetails.birthday).toDateString() ??
                             "Unknown"}

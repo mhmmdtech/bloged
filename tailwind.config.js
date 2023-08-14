@@ -13,6 +13,7 @@ export default {
     theme: {
         extend: {
             screens: {
+                print: { raw: "print" },
                 "3xs": "250px",
                 "2xs": "320px",
                 xs: "475px",

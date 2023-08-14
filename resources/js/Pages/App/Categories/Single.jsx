@@ -3,10 +3,9 @@ import AppLayout from "@/Layouts/AppLayout";
 import { Link, Head } from "@inertiajs/react";
 
 export default ({ auth, category: { data: category }, posts }) => {
-    console.log(posts);
     const { data, links } = posts;
     return (
-        <AppLayout user={auth?.user?.data}>
+        <AppLayout auth={auth}>
             <Head>
                 <title>{category.seo_title}</title>
                 <meta name="description" content={category.seo_description} />

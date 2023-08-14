@@ -15,13 +15,15 @@ class PermissionSeeder extends Seeder
     {
         $permissions = [];
         $operations = ['browse', 'read', 'edit', 'add', 'delete'];
-        $sections = ['category', 'post', 'user', 'log'];
+        $sections = ['category', 'post', 'user', 'log', 'province', 'city'];
 
         foreach ($sections as $section) {
             foreach ($operations as $operation) {
                 array_push($permissions, "{$operation} {$section}");
             }
         }
+
+        array_push($permissions, 'browse analytic');
 
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);

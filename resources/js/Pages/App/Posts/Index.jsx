@@ -8,7 +8,7 @@ export default ({ auth, posts }) => {
         meta: { links },
     } = posts;
     return (
-        <AppLayout user={auth?.user?.data}>
+        <AppLayout auth={auth}>
             <Head>
                 <title>Posts</title>
                 <meta name="description" content="List of all our posts" />

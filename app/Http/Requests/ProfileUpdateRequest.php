@@ -41,6 +41,8 @@ class ProfileUpdateRequest extends FormRequest
             'avatar' => ['nullable', Rules\File::image()->max(200)],
             'birthday' => ['nullable', 'date', 'before_or_equal:' . Carbon::now()->subYears(10)->toDateString()],
             'military_status' => ['nullable', 'required_if:gender,' . GenderStatus::Male->value, new Rules\Enum(MilitaryStatus::class)],
+            'province_id' => ['nullable', 'exists:provinces,id'],
+            'city_id' => ['nullable', 'required_with:province_id', 'exists:cities,id'],
         ];
     }
 
@@ -53,6 +55,19 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'military_status.required_if' => 'The military status field is required when gender is male.',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'province_id' => 'province',
+            'city_id' => 'city',
         ];
     }
 }

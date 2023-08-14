@@ -63,7 +63,7 @@ export default function Welcome({
         latestPostsSlider.current.initialize();
     }, []);
     return (
-        <AppLayout user={auth?.user?.data}>
+        <AppLayout auth={auth}>
             <Head>
                 <title>Home</title>
                 <meta

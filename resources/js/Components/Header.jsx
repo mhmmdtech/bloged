@@ -1,7 +1,7 @@
 import Icons from "@/Components/Icons";
 import { Link } from "@inertiajs/react";
 
-export default ({ user }) => {
+export default ({ auth }) => {
     return (
         <>
             <header className="container flex flex-wrap justify-between mx-auto p-2">
@@ -29,7 +29,7 @@ export default ({ user }) => {
                     </Link>
                 </div>
                 <div className="flex items-center gap-2">
-                    {/* {user === null && (
+                    {!auth?.user?.data && (
                         <Link
                             href={route("login")}
                             className="hover:text-[#f93f04] transition-colors"
@@ -37,7 +37,7 @@ export default ({ user }) => {
                             Login
                         </Link>
                     )}
-                    {user === null && (
+                    {!auth?.user?.data && (
                         <Link
                             href={route("register")}
                             className="hover:text-[#f93f04] transition-colors"
@@ -45,19 +45,8 @@ export default ({ user }) => {
                             Register
                         </Link>
                     )}
-                    {user?.type === 1 && (
-                        <Link
-                            href={route("user-panel.dashboard")}
-                            className="hover:text-[#f93f04] transition-colors"
-                        >
-                            <Icons
-                                name="user"
-                                className="w-9 h-9 hover:fill-[#f93f04] transition-colors"
-                            />
-                        </Link>
-                    )}
 
-                    {user?.type === 2 && (
+                    {auth?.user?.data && (
                         <Link
                             href={route("administration.dashboard")}
                             className="hover:text-[#f93f04] transition-colors"
@@ -67,7 +56,7 @@ export default ({ user }) => {
                                 className="w-9 h-9 hover:fill-[#f93f04] transition-colors"
                             />
                         </Link>
-                    )} */}
+                    )}
                 </div>
             </header>
         </>

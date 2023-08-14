@@ -4,7 +4,7 @@ import { formatDistance } from "date-fns";
 
 export default ({ auth, post: { data: post } }) => {
     return (
-        <AppLayout user={auth?.user?.data}>
+        <AppLayout auth={auth}>
             <Head>
                 <title>{post.seo_title}</title>
                 <meta name="description" content={post.seo_description} />
