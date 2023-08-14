@@ -1,13 +1,12 @@
 import Header from "@/Components/Header";
 import Footer from "@/Components/Footer";
-import { Head } from "@inertiajs/react";
 
-export default function Welcome({ user, children }) {
+export default ({ auth, children }) => {
     return (
         <>
-            <Header user={user} />
+            <Header auth={auth} />
             <main>{children}</main>
             <Footer />
         </>
     );
-}
+};

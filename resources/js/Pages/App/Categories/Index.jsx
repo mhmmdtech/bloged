@@ -4,7 +4,7 @@ import { Link, Head } from "@inertiajs/react";
 
 export default ({ auth, categories: { data: categories } }) => {
     return (
-        <AppLayout user={auth?.user?.data}>
+        <AppLayout auth={auth}>
             <Head>
                 <title>Categories</title>
                 <meta name="description" content="List of all our categories" />
