@@ -322,19 +322,43 @@ class UserController extends Controller
         return Inertia::render('Admin/Users/Report', compact('results', 'genders'));
     }
 
-    public function printReport()
+    public function downloadReport(string $format)
     {
         $this->authorize('browse analytic', User::class);
-        $results = [];
+
+        $allowedFormats = ['print', 'pdf', 'excel', 'csv'];
+
+        if (!in_array($format, $allowedFormats)) {
+            return redirect()->route('administration.users.report', request()->query());
+        }
+
         $allowedColumns = ['province', 'city', 'gender',];
         $userInputs = removeNullFromArray(request()->input());
         $reportParameters = array_intersect_key($userInputs, array_flip($allowedColumns));
-        $genders = GenderStatus::array();
 
         if (count($reportParameters) === 0) {
-            return Inertia::render('Admin/Users/Report', compact('genders'));
+            return redirect()->route('administration.users.report');
         }
 
+        $reportMethods = [
+            'print' => 'printReport',
+            'pdf' => 'pdfReport',
+            'excel' => 'excelReport',
+            'csv' => 'csvReport',
+        ];
+
+        $result = NULL;
+
+        if (isset($reportMethods[$format])) {
+            $methodName = $reportMethods[$format];
+            $result = $this->$methodName($reportParameters);
+        }
+
+        return $result;
+    }
+
+    private function printReport($reportParameters)
+    {
         $query = User::query();
 
         if (array_key_exists('gender', $reportParameters)) {
@@ -354,23 +378,14 @@ class UserController extends Controller
                 $query->where('local_name', $city)->orWhere('latin_name', $city);
             });
         }
+
         $users = $query->get();
         $users = new UserCollection($users);
         return Inertia::render('Admin/Users/PrintableReport', compact('users'));
     }
-    public function pdfReport()
+
+    private function pdfReport($reportParameters)
     {
-        $this->authorize('browse analytic', User::class);
-        $results = [];
-        $allowedColumns = ['province', 'city', 'gender',];
-        $userInputs = removeNullFromArray(request()->input());
-        $reportParameters = array_intersect_key($userInputs, array_flip($allowedColumns));
-        $genders = GenderStatus::array();
-
-        if (count($reportParameters) === 0) {
-            return Inertia::render('Admin/Users/Report', compact('genders'));
-        }
-
         $query = User::query();
 
         if (array_key_exists('gender', $reportParameters)) {
@@ -396,18 +411,9 @@ class UserController extends Controller
         return $pdf->download('users-report.pdf');
     }
 
-    public function excelReport()
+    private function excelReport($reportParameters)
     {
         // https://docs.laravel-excel.com/
-        $this->authorize('browse analytic', User::class);
-        $allowedColumns = ['province', 'city', 'gender',];
-        $userInputs = removeNullFromArray(request()->input());
-        $reportParameters = array_intersect_key($userInputs, array_flip($allowedColumns));
-
-        if (count($reportParameters) === 0) {
-            return redirect()->route('administration.users.report');
-        }
-
         $query = User::query();
 
         if (array_key_exists('gender', $reportParameters)) {
@@ -429,20 +435,11 @@ class UserController extends Controller
         }
 
         return (new UsersExport($query))->download('users.xlsx');
-
     }
-    public function csvReport()
+
+    private function csvReport($reportParameters)
     {
         // https://github.com/vitorccs/laravel-csv
-        $this->authorize('browse analytic', User::class);
-        $allowedColumns = ['province', 'city', 'gender',];
-        $userInputs = removeNullFromArray(request()->input());
-        $reportParameters = array_intersect_key($userInputs, array_flip($allowedColumns));
-
-        if (count($reportParameters) === 0) {
-            return redirect()->route('administration.users.report');
-        }
-
         $query = User::query();
 
         if (array_key_exists('gender', $reportParameters)) {

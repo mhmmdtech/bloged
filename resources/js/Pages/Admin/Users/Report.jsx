@@ -130,8 +130,11 @@ export default ({ auth, results = {}, genders }) => {
                         <div className="flex justify-between items-center gap-4">
                             <a
                                 href={route(
-                                    "administration.users.report.print",
-                                    removeNullFromArray(data)
+                                    "administration.users.report.download",
+                                    {
+                                        format: "print",
+                                        ...removeNullFromArray(data),
+                                    }
                                 )}
                                 target="_blank"
                                 className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
@@ -141,8 +144,11 @@ export default ({ auth, results = {}, genders }) => {
 
                             <a
                                 href={route(
-                                    "administration.users.report.pdf",
-                                    removeNullFromArray(data)
+                                    "administration.users.report.download",
+                                    {
+                                        format: "pdf",
+                                        ...removeNullFromArray(data),
+                                    }
                                 )}
                                 target="_blank"
                                 className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
@@ -152,8 +158,11 @@ export default ({ auth, results = {}, genders }) => {
 
                             <a
                                 href={route(
-                                    "administration.users.report.excel",
-                                    removeNullFromArray(data)
+                                    "administration.users.report.download",
+                                    {
+                                        format: "excel",
+                                        ...removeNullFromArray(data),
+                                    }
                                 )}
                                 className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
                             >
@@ -161,8 +170,11 @@ export default ({ auth, results = {}, genders }) => {
                             </a>
                             <a
                                 href={route(
-                                    "administration.users.report.csv",
-                                    removeNullFromArray(data)
+                                    "administration.users.report.download",
+                                    {
+                                        format: "csv",
+                                        ...removeNullFromArray(data),
+                                    }
                                 )}
                                 className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
                             >

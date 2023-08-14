@@ -4,6 +4,7 @@ import DeleteButton from "@/Components/DeleteButton";
 import { useEffect } from "react";
 
 export default function Show({ users: { data: users } }) {
+    console.log(users);
     useEffect(() => {
         window.print();
         return () => {
