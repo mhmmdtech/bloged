@@ -43,7 +43,12 @@ export default ({ auth, post: { data: post } }) => {
                     </li>
                 </ul>
 
-                <div className="mt-4">{post.body}</div>
+                <div
+                    className="mt-4"
+                    dangerouslySetInnerHTML={{
+                        __html: post.htmlContent,
+                    }}
+                ></div>
             </div>
         </AppLayout>
     );

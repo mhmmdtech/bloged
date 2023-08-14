@@ -4,6 +4,7 @@ import DeleteButton from "@/Components/DeleteButton";
 import { router } from "@inertiajs/react";
 import { formatDistance } from "date-fns";
 import { convertUtcToLocalDate } from "@/utils/functions";
+import * as DOMPurify from "dompurify";
 
 export default function Show({ auth, post: { data: postDetails } }) {
     function destroy() {
@@ -68,6 +69,11 @@ export default function Show({ auth, post: { data: postDetails } }) {
                         ) ?? "Unknown"}
                     </li>
                 </ul>
+                <div
+                    dangerouslySetInnerHTML={{
+                        __html: postDetails.htmlContent,
+                    }}
+                ></div>
             </div>
         </AuthenticatedLayout>
     );

@@ -8,6 +8,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { useForm } from "@inertiajs/react";
 import InputError from "@/Components/InputError";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default function Edit({
     auth,
@@ -23,11 +25,16 @@ export default function Edit({
         status: postDetails.status?.key || "",
         thumbnail: "",
         body: postDetails.body || "",
+        htmlContent: postDetails.htmlContent || "",
         category_id: postDetails.category?.id || "",
         _method: "PUT",
     });
     function handleSubmit(e) {
         e.preventDefault();
+        data.body = new DOMParser().parseFromString(
+            data.htmlContent,
+            "text/html"
+        ).documentElement.textContent;
         post(route("administration.posts.update", postDetails.id));
     }
     return (
@@ -229,16 +236,13 @@ export default function Edit({
                         <div className="w-full">
                             <InputLabel htmlFor="body" value="Body *" />
 
-                            <Textarea
-                                name="body"
-                                isFocused={false}
-                                className="mt-1 block w-full"
-                                value={data.body}
-                                onChange={(e) =>
-                                    setData("body", e.target.value)
-                                }
-                                required
-                                errors={errors.body}
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data={data.htmlContent}
+                                onChange={(event, editor) => {
+                                    const data = editor.getData();
+                                    setData("htmlContent", data);
+                                }}
                             />
 
                             <InputError

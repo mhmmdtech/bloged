@@ -21,6 +21,7 @@ class PostFactory extends Factory
     {
         $title = fake()->unique()->sentence();
         $description = fake()->text();
+        $body = fake()->paragraphs(3, true);
         $authors = collect(User::all()->modelKeys());
         $categories = collect(Category::all()->modelKeys());
 
@@ -30,7 +31,8 @@ class PostFactory extends Factory
             'seo_title' => $title,
             'description' => $description,
             'seo_description' => $description,
-            'body' => fake()->paragraphs(3, true),
+            'body' => $body,
+            'htmlContent' => $body,
             'reading_time' => fake()->randomDigitNotNull(),
             'status' => fake()->randomElement([PostStatus::Draft, PostStatus::Published, PostStatus::Archived]),
             'author_id' => $authors->random(),

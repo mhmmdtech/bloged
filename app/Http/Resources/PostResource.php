@@ -22,6 +22,7 @@ class PostResource extends JsonResource
             'description' => $this->description,
             'seo_description' => $this->seo_description,
             'body' => $this->body,
+            'htmlContent' => $this->htmlContent,
             'is_featured' => $this->is_featured ? true : false,
             'author' => $this->whenLoaded('author'),
             'category' => $this->whenLoaded('category'),
