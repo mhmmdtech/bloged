@@ -62,6 +62,8 @@ class UserController extends Controller
 
         $inputs = $request->validated();
 
+        $inputs['mobile_number'] = convertToIrMobileFormat($inputs['mobile_number']);
+
         if ($inputs['gender'] != GenderStatus::Male->value)
             $inputs['military_status'] = null;
 
@@ -132,6 +134,8 @@ class UserController extends Controller
         $this->authorize('edit user', $user);
 
         $inputs = removeNullFromArray($request->validated());
+
+        $inputs['mobile_number'] = convertToIrMobileFormat($inputs['mobile_number']);
 
         if ($inputs['gender'] != GenderStatus::Male->value)
             $inputs['military_status'] = null;
