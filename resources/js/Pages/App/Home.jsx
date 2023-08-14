@@ -13,6 +13,7 @@ import MicrosoftLogo from "../../../app-assets/images/logos/microsoft-logo.png";
 import SamsungLogo from "../../../app-assets/images/logos/samsung-logo.png";
 import SonyLogo from "../../../app-assets/images/logos/sony-logo.png";
 import { formatDistance } from "date-fns";
+import { convertUtcToLocalDate } from "@/utils/functions";
 
 register();
 
@@ -92,7 +93,9 @@ export default function Welcome({
                             <div className="hidden xs:flex flex-col">
                                 <span>
                                     {formatDistance(
-                                        new Date(featuredPost.data.created_at),
+                                        convertUtcToLocalDate(
+                                            featuredPost.data.created_at
+                                        ),
                                         new Date(),
                                         { addSuffix: true }
                                     ) ?? "Unknown"}

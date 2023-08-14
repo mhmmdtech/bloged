@@ -1,4 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { convertUtcToLocalDate } from "@/utils/functions";
 import { Head } from "@inertiajs/react";
 import { formatDistance } from "date-fns";
 
@@ -18,8 +19,9 @@ export default function Show({ auth, log: { data: logDetails } }) {
                     <li>Model ID: {logDetails.model_id ?? "Unknown"}</li>
                     <li>
                         Happend At:{" "}
-                        {new Date(logDetails.created_at).toString() ??
-                            "Unknown"}
+                        {convertUtcToLocalDate(
+                            logDetails.created_at
+                        ).toString() ?? "Unknown"}
                     </li>
                     <li>
                         Old Model Structure:{" "}
