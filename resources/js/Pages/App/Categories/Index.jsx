@@ -19,10 +19,10 @@ export default ({ auth, categories: { data: categories } }) => {
                     {categories.map((category) => (
                         <Link
                             key={category.id}
-                            href={route(
-                                "application.categories.show",
-                                category.id
-                            )}
+                            href={route("application.categories.show", {
+                                category: category.id,
+                                slug: category.slug,
+                            })}
                             className="rounded-md "
                         >
                             <img

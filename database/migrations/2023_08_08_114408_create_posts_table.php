@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('seo_title');
             $table->string('description');
             $table->string('seo_description');
+            $table->string('slug')->nullable();
             $table->text('body');
             $table->text('htmlContent');
             $table->boolean('is_featured')->default(0);

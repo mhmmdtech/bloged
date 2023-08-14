@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Post;
+use Illuminate\Support\Str;
 
 class PostObserver
 {
@@ -12,6 +13,7 @@ class PostObserver
     public function creating(Post $post): void
     {
         $post->reading_time = estimateReadingTime($post->body);
+        $post->slug = Str::slug($post->seo_title);
     }
 
     /**
@@ -29,6 +31,10 @@ class PostObserver
     {
         if ($post->isDirty('body')) {
             $post->reading_time = estimateReadingTime($post->body);
+        }
+
+        if ($post->isDirty('seo_title')) {
+            $post->slug = Str::slug($post->seo_title);
         }
     }
 

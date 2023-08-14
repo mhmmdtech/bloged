@@ -10,8 +10,8 @@ use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Services\Image\ImageService;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -50,7 +50,7 @@ class CategoryController extends Controller
 
         $imageService->setExclusiveDirectory('images');
         $imageService->setImageDirectory('categories' . DIRECTORY_SEPARATOR . 'thumbnails');
-        $imageService->setImageName($inputs['seo_title']);
+        $imageService->setImageName(Str::slug($inputs['seo_title']));
         $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
 
         auth()->user()->categories()->create($inputs);
@@ -99,7 +99,7 @@ class CategoryController extends Controller
             $imageService->deleteIndex($category->thumbnail);
             $imageService->setExclusiveDirectory('images');
             $imageService->setImageDirectory('categories' . DIRECTORY_SEPARATOR . 'thumbnails');
-            $imageService->setImageName($inputs['seo_title']);
+            $imageService->setImageName(Str::slug($inputs['seo_title']));
             $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
         }
 

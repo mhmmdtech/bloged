@@ -21,6 +21,7 @@ class CategoryResource extends JsonResource
             'seo_title' => $this->seo_title,
             'description' => $this->description,
             'seo_description' => $this->seo_description,
+            'slug' => $this->slug,
             'creator' => $this->whenLoaded('creator'),
             'status' => ['key' => $this->status->value, 'value' => $this->status->label()],
             'created_at' => $this->created_at,

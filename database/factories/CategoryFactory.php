@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Enums\CategoryStatus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Category>
@@ -28,6 +29,7 @@ class CategoryFactory extends Factory
             'seo_title' => $title,
             'description' => $description,
             'seo_description' => $description,
+            'slug' => Str::slug($title),
             'status' => fake()->randomElement([CategoryStatus::Active, CategoryStatus::Disable]),
             'creator_id' => $creators->random(),
         ];

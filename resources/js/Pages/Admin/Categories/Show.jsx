@@ -53,6 +53,7 @@ export default function Show({ auth, category: { data: categoryDetails } }) {
                 </div>
                 <div className="">{categoryDetails.description}</div>
                 <ul className="list-disc list-inside my-4 text-black/75">
+                    <li>Slug: {categoryDetails.slug ?? "Unknown"}</li>
                     <li>
                         User: {categoryDetails.creator?.username ?? "Unknown"}
                     </li>

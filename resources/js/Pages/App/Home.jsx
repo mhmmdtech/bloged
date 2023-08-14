@@ -75,10 +75,10 @@ export default function Welcome({
             <div className="container flex flex-col items-center justify-center mx-auto p-2">
                 {featuredPost.data && (
                     <Link
-                        href={route(
-                            "application.posts.show",
-                            featuredPost.data.id
-                        )}
+                        href={route("application.posts.show", {
+                            post: featuredPost.data.id,
+                            slug: featuredPost.data.slug,
+                        })}
                         className="relative rounded-md"
                     >
                         <img
@@ -141,7 +141,11 @@ export default function Welcome({
                                 <Link
                                     href={route(
                                         "application.posts.show",
-                                        latestPost.id
+
+                                        {
+                                            post: latestPost.id,
+                                            slug: latestPost.slug,
+                                        }
                                     )}
                                     className="rounded-md "
                                 >
@@ -188,10 +192,10 @@ export default function Welcome({
                     {categories.map((category) => (
                         <Link
                             key={category.id}
-                            href={route(
-                                "application.categories.show",
-                                category.id
-                            )}
+                            href={route("application.categories.show", {
+                                category: category.id,
+                                slug: category.slug,
+                            })}
                             className="rounded-md "
                         >
                             <img

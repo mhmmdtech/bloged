@@ -51,6 +51,7 @@ export default function Show({ auth, post: { data: postDetails } }) {
                 </div>
                 <div className="">{postDetails.description}</div>
                 <ul className="list-disc list-inside my-4 text-black/75">
+                    <li>Slug: {postDetails.slug ?? "Unknown"}</li>
                     <li>
                         Category: {postDetails.category?.title ?? "Unknown"}
                     </li>

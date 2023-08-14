@@ -12,8 +12,8 @@ use App\Http\Resources\PostResource;
 use App\Models\Category;
 use App\Models\Post;
 use App\Services\Image\ImageService;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -54,7 +54,7 @@ class PostController extends Controller
 
         $imageService->setExclusiveDirectory('images');
         $imageService->setImageDirectory('posts' . DIRECTORY_SEPARATOR . 'thumbnails');
-        $imageService->setImageName($inputs['seo_title']);
+        $imageService->setImageName(Str::slug($inputs['seo_title']));
         $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
 
         auth()->user()->posts()->create($inputs);
@@ -107,7 +107,7 @@ class PostController extends Controller
             $imageService->deleteIndex($post->thumbnail);
             $imageService->setExclusiveDirectory('images');
             $imageService->setImageDirectory('posts' . DIRECTORY_SEPARATOR . 'thumbnails');
-            $imageService->setImageName($inputs['seo_title']);
+            $imageService->setImageName(Str::slug($inputs['seo_title']));
             $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
         }
 
