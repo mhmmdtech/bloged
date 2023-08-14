@@ -47,7 +47,6 @@ export default function Index({ auth, categories }) {
                                 >
                                     <td className="border-t">
                                         <Link
-                                            tabIndex="-1"
                                             href={route(
                                                 "administration.categories.show",
                                                 id

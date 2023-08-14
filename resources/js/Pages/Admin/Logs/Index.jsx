@@ -47,7 +47,6 @@ export default ({ auth, logs }) => {
                                     >
                                         <td className="border-t">
                                             <Link
-                                                tabIndex="-1"
                                                 href={route(
                                                     "administration.logs.show",
                                                     id

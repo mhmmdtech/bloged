@@ -53,7 +53,6 @@ export default function Index({ auth, province: { data: province }, cities }) {
                                     >
                                         <td className="border-t">
                                             <Link
-                                                tabIndex="-1"
                                                 href={route(
                                                     "administration.cities.show",
                                                     id
