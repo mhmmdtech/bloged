@@ -434,7 +434,9 @@ class UserController extends Controller
             });
         }
 
-        return (new UsersExport($query))->download('users.xlsx');
+        $result = $query->get();
+
+        return (new UsersExport($result))->download('users.xlsx');
     }
 
     private function csvReport($reportParameters)
@@ -460,7 +462,9 @@ class UserController extends Controller
             });
         }
 
-        return (new UsersExport($query))->download('users.csv', \Maatwebsite\Excel\Excel::CSV, [
+        $result = $query->get();
+
+        return (new UsersExport($result))->download('users.csv', \Maatwebsite\Excel\Excel::CSV, [
             'Content-Type' => 'text/csv',
         ]);
 
