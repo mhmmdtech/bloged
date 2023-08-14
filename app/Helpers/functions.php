@@ -67,3 +67,26 @@ if (!function_exists('generateRandomCode')) {
         return random_int($minValue, $maxValue);
     }
 }
+
+if (!function_exists('convertToIrMobileFormat')) {
+
+    /**
+     * convert given iranian mobile number to international iranian phone number
+     */
+    function convertToIrMobileFormat($mobileNumber)
+    {
+        if (preg_match('/^(\+989\d{9})$/', $mobileNumber)) {
+            return $mobileNumber;
+        }
+
+        if (preg_match('/^(09\d{9})$/', $mobileNumber)) {
+            return "+98" . substr($mobileNumber, 1);
+        }
+
+        if (preg_match('/^(9\d{9})$/', $mobileNumber)) {
+            return "+98" . $mobileNumber;
+        }
+
+        return $mobileNumber;
+    }
+}
