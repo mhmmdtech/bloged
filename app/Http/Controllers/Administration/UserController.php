@@ -23,6 +23,7 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Eloquent\Builder;
 use App\Exports\UsersExport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -64,16 +65,24 @@ class UserController extends Controller
         if ($inputs['gender'] != GenderStatus::Male->value)
             $inputs['military_status'] = null;
 
-        $user = auth()->user()->users()->create($inputs);
+        DB::beginTransaction();
 
-        $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
+        try {
+            $user = auth()->user()->users()->create($inputs);
 
-        if (isset($inputs['avatar'])) {
-            $imageService->setExclusiveDirectory('images');
-            $imageService->setImageDirectory('users' . DIRECTORY_SEPARATOR . 'avatars');
-            $imageService->setImageName($user->username);
-            $user->avatar = $imageService->fitAndSave($inputs['avatar'], 400, 400);
-            $user->save();
+            $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
+
+            if (isset($inputs['avatar'])) {
+                $imageService->setExclusiveDirectory('images');
+                $imageService->setImageDirectory('users' . DIRECTORY_SEPARATOR . 'avatars');
+                $imageService->setImageName($user->username);
+                $user->avatar = $imageService->fitAndSave($inputs['avatar'], 400, 400);
+                $user->save();
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
         }
 
         event(new Registered($user));
@@ -178,6 +187,9 @@ class UserController extends Controller
         return Inertia::render('Admin/Users/Roles', compact('user', 'roles', 'currentRoles'));
     }
 
+    /**
+     * Update the specified resource routes.
+     */
     public function updateRoles(UpdateUserRolesRequest $request, User $user)
     {
         $this->authorize('edit user', $user);
@@ -284,6 +296,9 @@ class UserController extends Controller
         return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses', 'provinces'));
     }
 
+    /**
+     * Display a report based on province, city and gender parameters.
+     */
     public function report()
     {
         $this->authorize('browse analytic', User::class);
@@ -322,6 +337,9 @@ class UserController extends Controller
         return Inertia::render('Admin/Users/Report', compact('results', 'genders'));
     }
 
+    /**
+     * handle downloading report file
+     */
     public function downloadReport(string $format)
     {
         $this->authorize('browse analytic', User::class);
@@ -357,6 +375,9 @@ class UserController extends Controller
         return $result;
     }
 
+    /**
+     *  generate printable report file
+     */
     private function printReport($reportParameters)
     {
         $query = User::query();
@@ -384,6 +405,9 @@ class UserController extends Controller
         return Inertia::render('Admin/Users/PrintableReport', compact('users'));
     }
 
+    /**
+     *  genrate pdf report file
+     */
     private function pdfReport($reportParameters)
     {
         $query = User::query();
@@ -411,6 +435,9 @@ class UserController extends Controller
         return $pdf->download('users-report.pdf');
     }
 
+    /**
+     *  genrate excel report file
+     */
     private function excelReport($reportParameters)
     {
         // https://docs.laravel-excel.com/
@@ -439,6 +466,9 @@ class UserController extends Controller
         return (new UsersExport($result))->download('users.xlsx');
     }
 
+    /**
+     *  genrate csv report file
+     */
     private function csvReport($reportParameters)
     {
         // https://github.com/vitorccs/laravel-csv

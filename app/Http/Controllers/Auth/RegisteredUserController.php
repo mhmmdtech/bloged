@@ -15,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\DB;
 
 class RegisteredUserController extends Controller
 {
@@ -41,16 +42,22 @@ class RegisteredUserController extends Controller
         if ($inputs['gender'] != GenderStatus::Male->value)
             $inputs['military_status'] = null;
 
-        $user = User::create($inputs);
 
-        $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
-
-        if (isset($inputs['avatar'])) {
-            $imageService->setExclusiveDirectory('images');
-            $imageService->setImageDirectory('users' . DIRECTORY_SEPARATOR . 'avatars');
-            $imageService->setImageName($user->username);
-            $user->avatar = $imageService->fitAndSave($inputs['avatar'], 400, 400);
-            $user->save();
+        DB::beginTransaction();
+        try {
+            $user = User::create($inputs);
+            $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
+            if (isset($inputs['avatar'])) {
+                $imageService->setExclusiveDirectory('images');
+                $imageService->setImageDirectory('users' . DIRECTORY_SEPARATOR . 'avatars');
+                $imageService->setImageName($user->username);
+                $user->avatar = $imageService->fitAndSave($inputs['avatar'], 400, 400);
+                $user->save();
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
         }
 
         event(new Registered($user));
