@@ -74,7 +74,6 @@ export default function Index({ auth, posts }) {
                                         </td>
                                         <td className="border-t">
                                             <Link
-                                                tabIndex="-1"
                                                 href={route(
                                                     "administration.posts.show",
                                                     id

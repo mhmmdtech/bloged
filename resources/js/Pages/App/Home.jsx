@@ -13,6 +13,7 @@ import MicrosoftLogo from "../../../app-assets/images/logos/microsoft-logo.png";
 import SamsungLogo from "../../../app-assets/images/logos/samsung-logo.png";
 import SonyLogo from "../../../app-assets/images/logos/sony-logo.png";
 import { formatDistance } from "date-fns";
+import { convertUtcToLocalDate } from "@/utils/functions";
 
 register();
 
@@ -74,14 +75,14 @@ export default function Welcome({
             <div className="container flex flex-col items-center justify-center mx-auto p-2">
                 {featuredPost.data && (
                     <Link
-                        href={route(
-                            "application.posts.show",
-                            featuredPost.data.id
-                        )}
+                        href={route("application.posts.show", {
+                            post: featuredPost.data.id,
+                            slug: featuredPost.data.slug,
+                        })}
                         className="relative rounded-md"
                     >
                         <img
-                            src={featuredPost.data.thumbnail}
+                            src={featuredPost.data.thumbnail["medium"]}
                             alt={featuredPost.data.seo_title}
                             className="rounded-md"
                         />
@@ -92,7 +93,9 @@ export default function Welcome({
                             <div className="hidden xs:flex flex-col">
                                 <span>
                                     {formatDistance(
-                                        new Date(featuredPost.data.created_at),
+                                        convertUtcToLocalDate(
+                                            featuredPost.data.created_at
+                                        ),
                                         new Date(),
                                         { addSuffix: true }
                                     ) ?? "Unknown"}
@@ -138,12 +141,16 @@ export default function Welcome({
                                 <Link
                                     href={route(
                                         "application.posts.show",
-                                        latestPost.id
+
+                                        {
+                                            post: latestPost.id,
+                                            slug: latestPost.slug,
+                                        }
                                     )}
                                     className="rounded-md "
                                 >
                                     <img
-                                        src={latestPost.thumbnail}
+                                        src={latestPost.thumbnail["small"]}
                                         className="object-cover h-72 rounded-md"
                                         alt={latestPost.seo_title}
                                     />
@@ -185,14 +192,14 @@ export default function Welcome({
                     {categories.map((category) => (
                         <Link
                             key={category.id}
-                            href={route(
-                                "application.categories.show",
-                                category.id
-                            )}
+                            href={route("application.categories.show", {
+                                category: category.id,
+                                slug: category.slug,
+                            })}
                             className="rounded-md "
                         >
                             <img
-                                src={category.thumbnail}
+                                src={category.thumbnail["small"]}
                                 className="object-cover h-72 rounded-md"
                                 alt={category.seo_title}
                             />

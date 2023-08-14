@@ -11,8 +11,9 @@ use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
 use App\Models\Category;
 use App\Models\Post;
-use Illuminate\Support\Facades\Storage;
+use App\Services\Image\ImageService;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -45,13 +46,16 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePostRequest $request)
+    public function store(StorePostRequest $request, ImageService $imageService)
     {
         $this->authorize('add post', Post::class);
 
         $inputs = $request->validated();
 
-        $inputs['thumbnail'] = Storage::disk('public')->putFile('posts', $request->file('thumbnail'));
+        $imageService->setExclusiveDirectory('images');
+        $imageService->setImageDirectory('posts' . DIRECTORY_SEPARATOR . 'thumbnails');
+        $imageService->setImageName(Str::slug($inputs['seo_title']));
+        $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
 
         auth()->user()->posts()->create($inputs);
 
@@ -93,11 +97,19 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, Post $post)
+    public function update(UpdatePostRequest $request, ImageService $imageService, Post $post)
     {
         $this->authorize('edit post', $post);
 
         $inputs = removeNullFromArray($request->validated());
+
+        if (isset($inputs['thumbnail'])) {
+            $imageService->deleteIndex($post->thumbnail);
+            $imageService->setExclusiveDirectory('images');
+            $imageService->setImageDirectory('posts' . DIRECTORY_SEPARATOR . 'thumbnails');
+            $imageService->setImageName(Str::slug($inputs['seo_title']));
+            $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
+        }
 
         $post->update($inputs);
 

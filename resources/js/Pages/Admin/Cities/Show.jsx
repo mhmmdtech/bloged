@@ -3,6 +3,7 @@ import { Head, Link } from "@inertiajs/react";
 import DeleteButton from "@/Components/DeleteButton";
 import { router } from "@inertiajs/react";
 import { formatDistance } from "date-fns";
+import { convertUtcToLocalDate } from "@/utils/functions";
 
 export default function Show({ auth, city: { data: cityDetails } }) {
     function destroy() {
@@ -51,7 +52,7 @@ export default function Show({ auth, city: { data: cityDetails } }) {
                     <li>
                         Created:{" "}
                         {formatDistance(
-                            new Date(cityDetails.created_at),
+                            convertUtcToLocalDate(cityDetails.created_at),
                             new Date(),
                             { addSuffix: true }
                         ) ?? "Unknown"}

@@ -8,36 +8,35 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
 import SelectInput from "@/Components/SelectInput";
-import { removeNullFromArray } from "@/utils/functions";
+import { parseQueryString, removeNullFromArray } from "@/utils/functions";
 
 export default ({
     auth,
-    results,
+    results = {},
     creators,
     genders,
     militaryStatuses,
     provinces,
 }) => {
+    const { data: dataResults, meta } = results;
+    const links = meta?.links ?? [];
+    const usersResults = dataResults ?? [];
+    const queryParams = parseQueryString(window.location.search.substring(1));
     let [cities, setCities] = useState([]);
 
-    const {
-        data: usersResults,
-        meta: { links },
-    } = results;
-
     const { data, setData, processing, errors, reset, progress } = useForm({
-        first_name: "",
-        last_name: "",
-        national_code: "",
-        mobile_number: "",
-        email: "",
-        username: "",
-        creator_id: "",
-        birthday: "",
-        gender: "",
-        military_status: "",
-        province_id: "",
-        city_id: "",
+        first_name: queryParams?.first_name || "",
+        last_name: queryParams?.last_name || "",
+        national_code: queryParams?.national_code || "",
+        mobile_number: queryParams?.mobile_number || "",
+        email: queryParams?.email || "",
+        username: queryParams?.username || "",
+        creator_id: queryParams?.creator_id || "",
+        birthday: queryParams?.birthday || "",
+        gender: queryParams?.gender || "",
+        military_status: queryParams?.military_status || "",
+        province_id: queryParams?.province_id || "",
+        city_id: queryParams?.city_id || "",
     });
     useEffect(() => {
         if (data.province_id === "" || data.province_id === null) return;
@@ -393,57 +392,71 @@ export default ({
                     <table className="w-full whitespace-nowrap">
                         <thead>
                             <tr className="font-bold text-left">
+                                <th className="px-6 pt-5 pb-4">Full Name</th>
                                 <th className="px-6 pt-5 pb-4">Username</th>
                                 <th className="px-6 pt-5 pb-4">Email</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {usersResults.map(({ id, username, email }) => (
-                                <tr
-                                    key={id}
-                                    className="hover:bg-gray-100 focus-within:bg-gray-100"
-                                >
-                                    <td className="border-t">
-                                        <Link
-                                            tabIndex="-1"
-                                            href={route(
-                                                "administration.users.show",
-                                                id
-                                            )}
-                                            className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                                        >
-                                            {username}
-                                        </Link>
-                                    </td>
-                                    <td className="border-t">
-                                        <Link
-                                            tabIndex="-1"
-                                            href={route(
-                                                "administration.users.show",
-                                                id
-                                            )}
-                                            className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                                        >
-                                            {email}
-                                        </Link>
-                                    </td>
-                                    <td className="w-px border-t">
-                                        <Link
-                                            tabIndex="-1"
-                                            href={route(
-                                                "administration.users.show",
-                                                id
-                                            )}
-                                            className="flex items-center px-4 focus:outline-none"
-                                        >
-                                            <Icons
-                                                name="cheveron-right"
-                                                className="block w-6 h-6 text-gray-400 fill-current"
-                                            />
-                                        </Link>
-                                    </td>
-                                </tr>
-                            ))}
+                            {usersResults.map(
+                                ({ id, full_name, username, email }) => (
+                                    <tr
+                                        key={id}
+                                        className="hover:bg-gray-100 focus-within:bg-gray-100"
+                                    >
+                                        <td className="border-t">
+                                            <Link
+                                                href={route(
+                                                    "administration.users.show",
+                                                    id
+                                                )}
+                                                className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
+                                            >
+                                                {full_name}
+                                            </Link>
+                                        </td>
+                                        <td className="border-t">
+                                            <Link
+                                                tabIndex="-1"
+                                                href={route(
+                                                    "administration.users.show",
+                                                    id
+                                                )}
+                                                className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
+                                            >
+                                                {username}
+                                            </Link>
+                                        </td>
+                                        <td className="border-t">
+                                            <Link
+                                                tabIndex="-1"
+                                                href={route(
+                                                    "administration.users.show",
+                                                    id
+                                                )}
+                                                className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
+                                            >
+                                                {email}
+                                            </Link>
+                                        </td>
+                                        <td className="w-px border-t">
+                                            <Link
+                                                tabIndex="-1"
+                                                href={route(
+                                                    "administration.users.show",
+                                                    id
+                                                )}
+                                                className="flex items-center px-4 focus:outline-none"
+                                            >
+                                                <Icons
+                                                    name="cheveron-right"
+                                                    className="block w-6 h-6 text-gray-400 fill-current"
+                                                />
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                )
+                            )}
                             {usersResults.length === 0 && (
                                 <tr>
                                     <td

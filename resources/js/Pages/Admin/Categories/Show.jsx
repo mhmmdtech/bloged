@@ -3,6 +3,7 @@ import { Head, Link } from "@inertiajs/react";
 import DeleteButton from "@/Components/DeleteButton";
 import { router } from "@inertiajs/react";
 import { formatDistance } from "date-fns";
+import { convertUtcToLocalDate } from "@/utils/functions";
 
 export default function Show({ auth, category: { data: categoryDetails } }) {
     function destroy() {
@@ -46,12 +47,13 @@ export default function Show({ auth, category: { data: categoryDetails } }) {
                 <div className="w-full my-4 rounded-md shadow-lg shadow-neutral-500">
                     <img
                         className="w-full object-cover rounded-md"
-                        src={categoryDetails.thumbnail}
+                        src={categoryDetails.thumbnail["medium"]}
                         alt={categoryDetails.title}
                     />
                 </div>
                 <div className="">{categoryDetails.description}</div>
                 <ul className="list-disc list-inside my-4 text-black/75">
+                    <li>Slug: {categoryDetails.slug ?? "Unknown"}</li>
                     <li>
                         User: {categoryDetails.creator?.username ?? "Unknown"}
                     </li>
@@ -61,7 +63,7 @@ export default function Show({ auth, category: { data: categoryDetails } }) {
                     <li>
                         Created:{" "}
                         {formatDistance(
-                            new Date(categoryDetails.created_at),
+                            convertUtcToLocalDate(categoryDetails.created_at),
                             new Date(),
                             { addSuffix: true }
                         ) ?? "Unknown"}

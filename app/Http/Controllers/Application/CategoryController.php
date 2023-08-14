@@ -7,6 +7,7 @@ use App\Enums\PostStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\PostCollection;
 use App\Models\Category;
 use Inertia\Inertia;
 
@@ -32,7 +33,7 @@ class CategoryController extends Controller
 
         $category = new CategoryResource($category);
 
-        $posts = $category->posts()->where('status', PostStatus::Published)->with('author')->latest()->paginate(10);
+        $posts = new PostCollection($category->posts()->where('status', PostStatus::Published)->with('author')->latest()->paginate(10));
 
         return Inertia::render('App/Categories/Single', compact('category', 'posts'));
     }

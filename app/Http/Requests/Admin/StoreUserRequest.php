@@ -5,6 +5,7 @@ namespace App\Http\Requests\Admin;
 use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
 use App\Models\User;
+use App\Rules\AlphaSpace;
 use App\Rules\DontStartWithNumbers;
 use App\Rules\IrMobileNumber;
 use App\Rules\IrNationalCode;
@@ -31,8 +32,8 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'string', 'alpha:ascii', 'min:2', 'max:100'],
-            'last_name' => ['required', 'string', 'alpha:ascii', 'min:2', 'max:100'],
+            'first_name' => ['required', 'string', new AlphaSpace, 'min:2', 'max:100'],
+            'last_name' => ['required', 'string', new AlphaSpace, 'min:2', 'max:100'],
             'national_code' => ['required', 'numeric', 'digits_between:5,100', new IrNationalCode, Rule::unique(User::class)],
             'mobile_number' => ['required', 'string', 'min:5', 'max:100', new IrMobileNumber],
             'gender' => ['required', new Rules\Enum(GenderStatus::class)],

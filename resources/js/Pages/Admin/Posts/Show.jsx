@@ -3,6 +3,8 @@ import { Head, Link } from "@inertiajs/react";
 import DeleteButton from "@/Components/DeleteButton";
 import { router } from "@inertiajs/react";
 import { formatDistance } from "date-fns";
+import { convertUtcToLocalDate } from "@/utils/functions";
+import * as DOMPurify from "dompurify";
 
 export default function Show({ auth, post: { data: postDetails } }) {
     function destroy() {
@@ -43,12 +45,13 @@ export default function Show({ auth, post: { data: postDetails } }) {
                 <div className="w-full my-4 rounded-md shadow-lg shadow-neutral-500">
                     <img
                         className="w-full object-cover rounded-md"
-                        src={postDetails.thumbnail}
+                        src={postDetails.thumbnail["medium"]}
                         alt={postDetails.seo_title}
                     />
                 </div>
                 <div className="">{postDetails.description}</div>
                 <ul className="list-disc list-inside my-4 text-black/75">
+                    <li>Slug: {postDetails.slug ?? "Unknown"}</li>
                     <li>
                         Category: {postDetails.category?.title ?? "Unknown"}
                     </li>
@@ -61,12 +64,17 @@ export default function Show({ auth, post: { data: postDetails } }) {
                     <li>
                         Created:{" "}
                         {formatDistance(
-                            new Date(postDetails.created_at),
+                            convertUtcToLocalDate(postDetails.created_at),
                             new Date(),
                             { addSuffix: true }
                         ) ?? "Unknown"}
                     </li>
                 </ul>
+                <div
+                    dangerouslySetInnerHTML={{
+                        __html: postDetails.htmlContent,
+                    }}
+                ></div>
             </div>
         </AuthenticatedLayout>
     );

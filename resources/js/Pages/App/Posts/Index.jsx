@@ -23,11 +23,14 @@ export default ({ auth, posts }) => {
                     {data.map((post) => (
                         <Link
                             key={post.id}
-                            href={route("application.posts.show", post.id)}
+                            href={route("application.posts.show", {
+                                post: post.id,
+                                slug: post.slug,
+                            })}
                             className="rounded-md "
                         >
                             <img
-                                src={post.thumbnail}
+                                src={post.thumbnail["small"]}
                                 className="object-cover h-72 rounded-md"
                                 alt={post.seo_title}
                             />

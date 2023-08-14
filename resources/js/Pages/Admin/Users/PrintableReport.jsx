@@ -28,7 +28,6 @@ export default function Show({ users: { data: users } }) {
                     >
                         <td className="border-t">
                             <Link
-                                tabIndex="-1"
                                 href={route("administration.users.show", id)}
                                 className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
                             >

@@ -16,11 +16,12 @@ class CategoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'thumbnail' => $this->thumbnail,
+            'thumbnail' => ['small' => getAsset($this->thumbnail['sizes']['small']), 'medium' => getAsset($this->thumbnail['sizes']['medium']), 'large' => getAsset($this->thumbnail['sizes']['large'])],
             'title' => $this->title,
             'seo_title' => $this->seo_title,
             'description' => $this->description,
             'seo_description' => $this->seo_description,
+            'slug' => $this->slug,
             'creator' => $this->whenLoaded('creator'),
             'status' => ['key' => $this->status->value, 'value' => $this->status->label()],
             'created_at' => $this->created_at,

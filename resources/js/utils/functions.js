@@ -41,3 +41,19 @@ export function parseQueryString(queryString) {
 
     return params;
 }
+
+export function convertUtcToLocalDate(utcDate) {
+    const utcMilliseconds = new Date(utcDate).getTime();
+    const timezoneOffsetMinutes = new Date(utcDate).getTimezoneOffset();
+    const timezoneOffsetMilliseconds =
+        Math.abs(timezoneOffsetMinutes) * 60 * 1000;
+    const localMilliseconds =
+        utcMilliseconds +
+        (timezoneOffsetMinutes < 0 ? 1 : -1) * timezoneOffsetMilliseconds;
+    return new Date(localMilliseconds);
+}
+
+export function getPublicAsset(path) {
+    path = path.replace(/\\/g, "/");
+    return `${window.location.origin}/storage/${path}`;
+}

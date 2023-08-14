@@ -16,12 +16,14 @@ class PostResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'thumbnail' => $this->thumbnail,
+            'thumbnail' => ['small' => getAsset($this->thumbnail['sizes']['small']), 'medium' => getAsset($this->thumbnail['sizes']['medium']), 'large' => getAsset($this->thumbnail['sizes']['large'])],
             'title' => $this->title,
             'seo_title' => $this->seo_title,
             'description' => $this->description,
             'seo_description' => $this->seo_description,
+            'slug' => $this->slug,
             'body' => $this->body,
+            'htmlContent' => $this->htmlContent,
             'is_featured' => $this->is_featured ? true : false,
             'author' => $this->whenLoaded('author'),
             'category' => $this->whenLoaded('category'),

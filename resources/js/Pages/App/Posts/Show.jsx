@@ -1,4 +1,5 @@
 import AppLayout from "@/Layouts/AppLayout";
+import { convertUtcToLocalDate } from "@/utils/functions";
 import { Head } from "@inertiajs/react";
 import { formatDistance } from "date-fns";
 
@@ -17,7 +18,7 @@ export default ({ auth, post: { data: post } }) => {
                 <div className="w-full my-4 rounded-md shadow-lg shadow-neutral-500">
                     <img
                         className="w-full object-cover rounded-md"
-                        src={post.thumbnail}
+                        src={post.thumbnail["medium"]}
                         alt={post.seo_title}
                     />
                 </div>
@@ -31,14 +32,23 @@ export default ({ auth, post: { data: post } }) => {
                         {post.reading_time === 1 ? "min" : "mins"} to read
                     </li>
                     <li>
-                        Created:{" "}
-                        {formatDistance(new Date(post.created_at), new Date(), {
-                            addSuffix: true,
-                        }) ?? "Unknown"}
+                        Created:
+                        {formatDistance(
+                            convertUtcToLocalDate(post.created_at),
+                            new Date(),
+                            {
+                                addSuffix: true,
+                            }
+                        ) ?? "Unknown"}
                     </li>
                 </ul>
 
-                <div className="mt-4">{post.body}</div>
+                <div
+                    className="mt-4"
+                    dangerouslySetInnerHTML={{
+                        __html: post.htmlContent,
+                    }}
+                ></div>
             </div>
         </AppLayout>
     );
