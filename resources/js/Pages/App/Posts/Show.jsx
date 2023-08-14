@@ -18,7 +18,7 @@ export default ({ auth, post: { data: post } }) => {
                 <div className="w-full my-4 rounded-md shadow-lg shadow-neutral-500">
                     <img
                         className="w-full object-cover rounded-md"
-                        src={post.thumbnail}
+                        src={post.thumbnail["medium"]}
                         alt={post.seo_title}
                     />
                 </div>

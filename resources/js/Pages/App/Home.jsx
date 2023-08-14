@@ -82,7 +82,7 @@ export default function Welcome({
                         className="relative rounded-md"
                     >
                         <img
-                            src={featuredPost.data.thumbnail}
+                            src={featuredPost.data.thumbnail["medium"]}
                             alt={featuredPost.data.seo_title}
                             className="rounded-md"
                         />
@@ -146,7 +146,7 @@ export default function Welcome({
                                     className="rounded-md "
                                 >
                                     <img
-                                        src={latestPost.thumbnail}
+                                        src={latestPost.thumbnail["small"]}
                                         className="object-cover h-72 rounded-md"
                                         alt={latestPost.seo_title}
                                     />
@@ -195,7 +195,7 @@ export default function Welcome({
                             className="rounded-md "
                         >
                             <img
-                                src={category.thumbnail}
+                                src={category.thumbnail["small"]}
                                 className="object-cover h-72 rounded-md"
                                 alt={category.seo_title}
                             />

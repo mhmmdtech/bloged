@@ -30,17 +30,9 @@ class Category extends Model
      */
     protected $casts = [
         'status' => CategoryStatus::class,
+        'thumbnail' => 'array',
     ];
 
-    /**
-     * Get the user's thumbnail.
-     */
-    protected function thumbnail(): Attribute
-    {
-        return Attribute::make(
-            get: fn(string $value) => Str::startsWith($value, 'https://') ? $value : Storage::url($value),
-        );
-    }
 
     /**
      * Get the user that owns the category.

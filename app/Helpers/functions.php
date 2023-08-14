@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Storage;
+
 if (!function_exists('estimateReadingTime')) {
     /**
      * Generate complete route based on user role.
@@ -88,5 +90,20 @@ if (!function_exists('convertToIrMobileFormat')) {
         }
 
         return $mobileNumber;
+    }
+}
+
+if (!function_exists('getAsset')) {
+
+    /**
+     * retrieve the asset path
+     */
+    function getAsset($path)
+    {
+        if (strpos($path, "https://") === 0) {
+            return $path;
+        }
+
+        return Storage::url($path);
     }
 }

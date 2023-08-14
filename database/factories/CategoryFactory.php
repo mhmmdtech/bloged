@@ -23,7 +23,7 @@ class CategoryFactory extends Factory
         $creators = collect(User::all()->modelKeys());
 
         return [
-            'thumbnail' => fake()->imageUrl(),
+            'thumbnail' => ['directory' => 'images/thumbnails', 'defaultSize' => 'medium', 'sizes' => ['small' => fake()->imageUrl(640, 640), 'medium' => fake()->imageUrl(1280, 720), 'large' => fake()->imageUrl(1920, 1080)]],
             'title' => $title,
             'seo_title' => $title,
             'description' => $description,

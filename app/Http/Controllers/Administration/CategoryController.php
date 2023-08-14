@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\UpdateCategoryRequest;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Services\Image\ImageService;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -41,13 +42,16 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCategoryRequest $request)
+    public function store(StoreCategoryRequest $request, ImageService $imageService)
     {
         $this->authorize('add category', Category::class);
 
         $inputs = $request->validated();
 
-        $inputs['thumbnail'] = Storage::disk('public')->putFile('categories', $request->file('thumbnail'));
+        $imageService->setExclusiveDirectory('images');
+        $imageService->setImageDirectory('categories' . DIRECTORY_SEPARATOR . 'thumbnails');
+        $imageService->setImageName($inputs['seo_title']);
+        $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
 
         auth()->user()->categories()->create($inputs);
 
@@ -85,11 +89,19 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, ImageService $imageService, Category $category)
     {
         $this->authorize('edit category', $category);
 
         $inputs = removeNullFromArray($request->validated());
+
+        if (isset($inputs['thumbnail'])) {
+            $imageService->deleteIndex($category->thumbnail);
+            $imageService->setExclusiveDirectory('images');
+            $imageService->setImageDirectory('categories' . DIRECTORY_SEPARATOR . 'thumbnails');
+            $imageService->setImageName($inputs['seo_title']);
+            $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
+        }
 
         $category->update($inputs);
 

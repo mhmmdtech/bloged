@@ -47,7 +47,7 @@ export default function Show({ auth, category: { data: categoryDetails } }) {
                 <div className="w-full my-4 rounded-md shadow-lg shadow-neutral-500">
                     <img
                         className="w-full object-cover rounded-md"
-                        src={categoryDetails.thumbnail}
+                        src={categoryDetails.thumbnail["medium"]}
                         alt={categoryDetails.title}
                     />
                 </div>

@@ -44,7 +44,7 @@ export default function Show({ auth, post: { data: postDetails } }) {
                 <div className="w-full my-4 rounded-md shadow-lg shadow-neutral-500">
                     <img
                         className="w-full object-cover rounded-md"
-                        src={postDetails.thumbnail}
+                        src={postDetails.thumbnail["medium"]}
                         alt={postDetails.seo_title}
                     />
                 </div>

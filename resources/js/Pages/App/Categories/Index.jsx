@@ -26,7 +26,7 @@ export default ({ auth, categories: { data: categories } }) => {
                             className="rounded-md "
                         >
                             <img
-                                src={category.thumbnail}
+                                src={category.thumbnail["small"]}
                                 className="object-cover h-72 rounded-md"
                                 alt={category.seo_title}
                             />
