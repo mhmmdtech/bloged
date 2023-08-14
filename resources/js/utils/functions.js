@@ -52,3 +52,8 @@ export function convertUtcToLocalDate(utcDate) {
         (timezoneOffsetMinutes < 0 ? 1 : -1) * timezoneOffsetMilliseconds;
     return new Date(localMilliseconds);
 }
+
+export function getPublicAsset(path) {
+    path = path.replace(/\\/g, "/");
+    return `${window.location.origin}/storage/${path}`;
+}
