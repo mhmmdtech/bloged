@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->tinyInteger('gender')->comment('1 => male, 2 => female');
             $table->string('email')->unique();
             $table->string('username')->unique();
+            $table->string('searchable_username');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->foreignIdFor(User::class, 'creator_id')->nullable()->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();

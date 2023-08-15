@@ -24,7 +24,7 @@ class PostController extends Controller
     {
         $this->authorize('browse post', Post::class);
 
-        $posts = new PostCollection(Post::with('author', 'category')->latest()->paginate(5));
+        $posts = new PostCollection(Post::with('author', 'category')->latest('id')->paginate(5));
 
         return Inertia::render('Admin/Posts/Index', compact('posts'));
     }
@@ -150,7 +150,7 @@ class PostController extends Controller
     {
         $this->authorize('delete post', Post::class);
 
-        $posts = new PostCollection(post::onlyTrashed()->latest()->paginate(5));
+        $posts = new PostCollection(post::onlyTrashed()->latest('id')->paginate(5));
 
         return Inertia::render('Admin/Posts/Trashed', compact('posts'));
     }

@@ -192,7 +192,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource routes.
+     * Update the specified resource roles.
      */
     public function updateRoles(UpdateUserRolesRequest $request, User $user)
     {
@@ -225,6 +225,9 @@ class UserController extends Controller
         return Inertia::render('Admin/Users/Permissions', compact('user', 'permissions', 'currentPermissions'));
     }
 
+    /**
+     * Update the specified resource permissions.
+     */
     public function updatePermissions(UpdateUserPermissionsRequest $request, User $user)
     {
         $this->authorize('edit user', $user);

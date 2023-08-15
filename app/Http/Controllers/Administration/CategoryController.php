@@ -22,7 +22,7 @@ class CategoryController extends Controller
     {
         $this->authorize('browse category', Category::class);
 
-        $categories = new CategoryCollection(Category::latest()->paginate(5));
+        $categories = new CategoryCollection(Category::latest('id')->paginate(5));
 
         return Inertia::render('Admin/Categories/Index', compact('categories'));
     }
@@ -127,7 +127,7 @@ class CategoryController extends Controller
     {
         $this->authorize('delete category', Category::class);
 
-        $categories = new CategoryCollection(Category::onlyTrashed()->latest()->paginate(5));
+        $categories = new CategoryCollection(Category::onlyTrashed()->latest('id')->paginate(5));
 
         return Inertia::render('Admin/Categories/Trashed', compact('categories'));
     }

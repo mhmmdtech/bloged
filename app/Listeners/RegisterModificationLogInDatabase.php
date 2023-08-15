@@ -25,8 +25,8 @@ class RegisterModificationLogInDatabase
         Log::create([
             'actioner_id' => $event->actioner_id,
             'action' => $event->action,
-            'modelable_type' => $event->model,
-            'modelable_id' => $event->model_id,
+            'model_type' => $event->model,
+            'model_id' => $event->model_id,
             'old_model' => $event->old_model,
             'new_model' => $event->new_model,
         ]);

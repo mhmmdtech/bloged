@@ -18,13 +18,15 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $username = fake()->unique()->userName();
         return [
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
             'national_code' => fake()->ssn(),
             'mobile_number' => fake()->e164PhoneNumber(),
             'gender' => fake()->randomElement([GenderStatus::Male, GenderStatus::Female]),
-            'username' => fake()->unique()->userName(),
+            'username' => $username,
+            'searchable_username' => $username,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => bcrypt('password'),
@@ -37,7 +39,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
