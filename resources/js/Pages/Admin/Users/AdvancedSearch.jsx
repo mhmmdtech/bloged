@@ -10,43 +10,19 @@ import InputError from "@/Components/InputError";
 import SelectInput from "@/Components/SelectInput";
 import { parseQueryString, removeNullFromArray } from "@/utils/functions";
 
-export default ({
-    auth,
-    results = {},
-    creators,
-    genders,
-    militaryStatuses,
-    provinces,
-}) => {
+export default ({ auth, results = {}, creators }) => {
     const { data: dataResults, meta } = results;
     const links = meta?.links ?? [];
     const usersResults = dataResults ?? [];
     const queryParams = parseQueryString(window.location.search.substring(1));
-    let [cities, setCities] = useState([]);
 
-    const { data, setData, processing, errors, reset, progress } = useForm({
-        first_name: queryParams?.first_name || "",
-        last_name: queryParams?.last_name || "",
+    const { data, setData, processing, errors } = useForm({
         national_code: queryParams?.national_code || "",
-        mobile_number: queryParams?.mobile_number || "",
         email: queryParams?.email || "",
         username: queryParams?.username || "",
         creator_id: queryParams?.creator_id || "",
-        birthday: queryParams?.birthday || "",
-        gender: queryParams?.gender || "",
-        military_status: queryParams?.military_status || "",
-        province_id: queryParams?.province_id || "",
-        city_id: queryParams?.city_id || "",
     });
-    useEffect(() => {
-        if (data.province_id === "" || data.province_id === null) return;
 
-        const province = provinces.find(
-            (province) => province.id === +data.province_id
-        );
-
-        setCities(province.cities);
-    }, [data.province_id]);
     function handleSubmit(e) {
         e.preventDefault();
         router.get(
@@ -74,50 +50,6 @@ export default ({
                     <div className="flex flex-wrap justify-between p-8 -mb-8 -mr-6 gap-4">
                         <div className="">
                             <InputLabel
-                                htmlFor="first_name"
-                                value="First Name"
-                            />
-
-                            <TextInput
-                                id="first_name"
-                                name="first_name"
-                                value={data.first_name}
-                                className="mt-1 block w-full"
-                                autoComplete="first_name"
-                                isFocused={true}
-                                onChange={(e) =>
-                                    setData("first_name", e.target.value)
-                                }
-                                errors={errors.first_name}
-                            />
-
-                            <InputError
-                                message={errors.first_name}
-                                className="mt-2"
-                            />
-                        </div>
-                        <div className="">
-                            <InputLabel htmlFor="last_name" value="Last Name" />
-
-                            <TextInput
-                                id="last_name"
-                                name="last_name"
-                                value={data.last_name}
-                                className="mt-1 block w-full"
-                                autoComplete="last_name"
-                                isFocused={false}
-                                onChange={(e) =>
-                                    setData("last_name", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.last_name}
-                                className="mt-2"
-                            />
-                        </div>
-                        <div className="">
-                            <InputLabel
                                 htmlFor="national_code"
                                 value="National Code"
                             />
@@ -136,29 +68,6 @@ export default ({
 
                             <InputError
                                 message={errors.national_code}
-                                className="mt-2"
-                            />
-                        </div>
-                        <div className="">
-                            <InputLabel
-                                htmlFor="mobile_number"
-                                value="Mobile Number"
-                            />
-
-                            <TextInput
-                                id="mobile_number"
-                                name="mobile_number"
-                                value={data.mobile_number}
-                                className="mt-1 block w-full"
-                                autoComplete="mobile_number"
-                                isFocused={false}
-                                onChange={(e) =>
-                                    setData("mobile_number", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.mobile_number}
                                 className="mt-2"
                             />
                         </div>
@@ -227,153 +136,6 @@ export default ({
 
                             <InputError
                                 message={errors.creator_id}
-                                className="mt-2"
-                            />
-                        </div>
-                        <div className="">
-                            <InputLabel htmlFor="gender" value="Gender" />
-
-                            <SelectInput
-                                id="gender"
-                                name="gender"
-                                value={data.gender}
-                                className="mt-1 block w-full"
-                                autoComplete="username"
-                                isFocused={false}
-                                onChange={(e) =>
-                                    setData("gender", e.target.value)
-                                }
-                            >
-                                <option value="">Choose</option>
-                                {Object.entries(genders).map(([key, value]) => (
-                                    <option key={key} value={key}>
-                                        {value}
-                                    </option>
-                                ))}
-                            </SelectInput>
-
-                            <InputError
-                                message={errors.gender}
-                                className="mt-2"
-                            />
-                        </div>
-                        <div className="">
-                            <InputLabel
-                                htmlFor="military_status"
-                                value="Military Status"
-                            />
-
-                            <SelectInput
-                                id="military_status"
-                                name="military_status"
-                                value={data.military_status}
-                                className="mt-1 block w-full"
-                                autoComplete="username"
-                                isFocused={false}
-                                onChange={(e) =>
-                                    setData("military_status", e.target.value)
-                                }
-                            >
-                                <option value="">Choose</option>
-                                {Object.entries(militaryStatuses).map(
-                                    ([key, value]) => (
-                                        <option key={key} value={key}>
-                                            {value}
-                                        </option>
-                                    )
-                                )}
-                            </SelectInput>
-
-                            <InputError
-                                message={errors.military_status}
-                                className="mt-2"
-                            />
-                        </div>
-                        <div className="">
-                            <InputLabel htmlFor="birthday" value="Birthday" />
-                            <TextInput
-                                type="date"
-                                id="birthday"
-                                name="birthday"
-                                value={data.birthday}
-                                className="mt-1 block w-full"
-                                autoComplete="birthday"
-                                isFocused={false}
-                                onChange={(e) =>
-                                    setData("birthday", e.target.value)
-                                }
-                                max={new Date(
-                                    new Date().getUTCFullYear() - 10,
-                                    new Date().getUTCMonth(),
-                                    new Date().getUTCDate() + 1
-                                )
-                                    .toJSON()
-                                    .slice(0, 10)}
-                            />
-
-                            <InputError
-                                message={errors.birthday}
-                                className="mt-2"
-                            />
-                        </div>
-                        <div className="">
-                            <InputLabel
-                                htmlFor="province_id"
-                                value="Province"
-                            />
-
-                            <SelectInput
-                                id="province_id"
-                                name="province_id"
-                                value={data.province_id}
-                                className="mt-1 block w-full"
-                                autoComplete="username"
-                                isFocused={false}
-                                onChange={(e) =>
-                                    setData("province_id", e.target.value)
-                                }
-                            >
-                                <option value="">Choose</option>
-                                {Object.values(provinces).map((province) => (
-                                    <option
-                                        key={province.id}
-                                        value={province.id}
-                                    >
-                                        {province.local_name}
-                                    </option>
-                                ))}
-                            </SelectInput>
-
-                            <InputError
-                                message={errors.province_id}
-                                className="mt-2"
-                            />
-                        </div>
-                        <div className="">
-                            <InputLabel htmlFor="city_id" value="City" />
-
-                            <SelectInput
-                                id="city_id"
-                                name="city_id"
-                                value={data.city_id}
-                                className="mt-1 block w-full"
-                                autoComplete="username"
-                                isFocused={false}
-                                onChange={(e) => {
-                                    setData("city_id", e.target.value);
-                                }}
-                                disabled={data.province_id === ""}
-                            >
-                                <option value="">Choose</option>
-                                {Object.values(cities).map((city) => (
-                                    <option key={city.id} value={city.id}>
-                                        {city.local_name}
-                                    </option>
-                                ))}
-                            </SelectInput>
-
-                            <InputError
-                                message={errors.city_id}
                                 className="mt-2"
                             />
                         </div>
