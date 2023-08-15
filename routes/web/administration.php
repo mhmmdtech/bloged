@@ -1,5 +1,6 @@
 <?php
 
+use App\CustomTest\UniqueIdTest;
 use App\Http\Controllers\Administration\DashboardController;
 use App\Http\Controllers\Administration\CategoryController;
 use App\Http\Controllers\Administration\CityController;

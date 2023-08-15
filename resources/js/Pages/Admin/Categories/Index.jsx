@@ -40,7 +40,7 @@ export default function Index({ auth, categories }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {data.map(({ id, title, status }) => (
+                            {data.map(({ id, title, status, unique_id }) => (
                                 <tr
                                     key={id}
                                     className="hover:bg-gray-100 focus-within:bg-gray-100"
@@ -49,7 +49,7 @@ export default function Index({ auth, categories }) {
                                         <Link
                                             href={route(
                                                 "administration.categories.show",
-                                                id
+                                                unique_id
                                             )}
                                             className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
                                         >
@@ -61,7 +61,7 @@ export default function Index({ auth, categories }) {
                                             tabIndex="-1"
                                             href={route(
                                                 "administration.categories.show",
-                                                id
+                                                unique_id
                                             )}
                                             className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
                                         >
@@ -73,7 +73,7 @@ export default function Index({ auth, categories }) {
                                             tabIndex="-1"
                                             href={route(
                                                 "administration.categories.show",
-                                                id
+                                                unique_id
                                             )}
                                             className="flex items-center px-4 focus:outline-none"
                                         >

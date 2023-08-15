@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Category;
+use App\Services\UniqueId\UniqueId;
 use Illuminate\Support\Str;
 
 class CategoryObserver
@@ -13,6 +14,7 @@ class CategoryObserver
     public function creating(Category $category): void
     {
         $category->slug = Str::slug($category->seo_title);
+        $category->unique_id = UniqueId::generateUniqueId($category->id);
     }
 
     /**

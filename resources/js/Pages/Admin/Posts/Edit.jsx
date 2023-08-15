@@ -35,7 +35,7 @@ export default function Edit({
             data.htmlContent,
             "text/html"
         ).documentElement.textContent;
-        post(route("administration.posts.update", postDetails.id));
+        post(route("administration.posts.update", postDetails.unique_id));
     }
     return (
         <AuthenticatedLayout

@@ -32,6 +32,7 @@ class PostFactory extends Factory
             'seo_title' => $title,
             'description' => $description,
             'seo_description' => $description,
+            'unique_id' => fake()->unique()->randomNumber(9, true) . "01",
             'slug' => Str::slug($title),
             'body' => $body,
             'htmlContent' => $body,

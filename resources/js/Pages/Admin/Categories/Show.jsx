@@ -8,7 +8,10 @@ import { convertUtcToLocalDate } from "@/utils/functions";
 export default function Show({ auth, category: { data: categoryDetails } }) {
     function destroy() {
         router.delete(
-            route("administration.categories.destroy", categoryDetails.id),
+            route(
+                "administration.categories.destroy",
+                categoryDetails.unique_id
+            ),
             {
                 onBefore: () =>
                     confirm("Are you sure you want to delete this category?"),
@@ -31,7 +34,7 @@ export default function Show({ auth, category: { data: categoryDetails } }) {
                         className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
                         href={route(
                             "administration.categories.edit",
-                            categoryDetails.id
+                            categoryDetails.unique_id
                         )}
                     >
                         <span>Edit</span>

@@ -33,6 +33,14 @@ class Post extends Model
     ];
 
     /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'unique_id';
+    }
+
+    /**
      * Get the user that owns the post.
      */
     public function author(): BelongsTo

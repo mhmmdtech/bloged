@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Post;
+use App\Services\UniqueId\UniqueId;
 use Illuminate\Support\Str;
 
 class PostObserver
@@ -14,6 +15,7 @@ class PostObserver
     {
         $post->reading_time = estimateReadingTime($post->body);
         $post->slug = Str::slug($post->seo_title);
+        $post->unique_id = UniqueId::generateUniqueId($post->id);
     }
 
     /**

@@ -20,7 +20,7 @@ export default ({ auth, categories: { data: categories } }) => {
                         <Link
                             key={category.id}
                             href={route("application.categories.show", {
-                                category: category.id,
+                                category: category.unique_id,
                                 slug: category.slug,
                             })}
                             className="rounded-md "

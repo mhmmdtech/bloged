@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('seo_title');
             $table->string('description');
             $table->string('seo_description');
+            $table->char('unique_id', 11)->unique();
             $table->string('slug')->nullable();
             $table->text('body');
             $table->text('htmlContent');

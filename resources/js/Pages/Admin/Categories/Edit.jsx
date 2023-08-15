@@ -25,7 +25,9 @@ export default function Edit({
 
     function handleSubmit(e) {
         e.preventDefault();
-        post(route("administration.categories.update", categoryDetails.id));
+        post(
+            route("administration.categories.update", categoryDetails.unique_id)
+        );
     }
     return (
         <AuthenticatedLayout

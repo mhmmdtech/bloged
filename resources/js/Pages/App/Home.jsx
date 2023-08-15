@@ -76,7 +76,7 @@ export default function Welcome({
                 {featuredPost.data && (
                     <Link
                         href={route("application.posts.show", {
-                            post: featuredPost.data.id,
+                            post: featuredPost.data.unique_id,
                             slug: featuredPost.data.slug,
                         })}
                         className="relative rounded-md"
@@ -193,7 +193,7 @@ export default function Welcome({
                         <Link
                             key={category.id}
                             href={route("application.categories.show", {
-                                category: category.id,
+                                category: category.unique_id,
                                 slug: category.slug,
                             })}
                             className="rounded-md "

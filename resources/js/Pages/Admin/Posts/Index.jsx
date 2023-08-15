@@ -11,8 +11,8 @@ export default function Index({ auth, posts }) {
         meta: { links },
     } = posts;
 
-    function toggleFeatured(id) {
-        router.patch(route("administration.posts.toggle-featured", id));
+    function toggleFeatured(unique_id) {
+        router.patch(route("administration.posts.toggle-featured", unique_id));
     }
 
     return (
@@ -57,6 +57,7 @@ export default function Index({ auth, posts }) {
                                     category,
                                     status,
                                     is_featured,
+                                    unique_id,
                                 }) => (
                                     <tr
                                         key={id}
@@ -67,7 +68,7 @@ export default function Index({ auth, posts }) {
                                                 type="checkbox"
                                                 checked={is_featured}
                                                 onChange={() =>
-                                                    toggleFeatured(id)
+                                                    toggleFeatured(unique_id)
                                                 }
                                                 id="is_featured"
                                             />
@@ -76,7 +77,7 @@ export default function Index({ auth, posts }) {
                                             <Link
                                                 href={route(
                                                     "administration.posts.show",
-                                                    id
+                                                    unique_id
                                                 )}
                                                 className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
                                             >
@@ -88,7 +89,7 @@ export default function Index({ auth, posts }) {
                                                 tabIndex="-1"
                                                 href={route(
                                                     "administration.posts.show",
-                                                    id
+                                                    unique_id
                                                 )}
                                                 className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
                                             >
@@ -100,7 +101,7 @@ export default function Index({ auth, posts }) {
                                                 tabIndex="-1"
                                                 href={route(
                                                     "administration.posts.show",
-                                                    id
+                                                    unique_id
                                                 )}
                                                 className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
                                             >
@@ -112,7 +113,7 @@ export default function Index({ auth, posts }) {
                                                 tabIndex="-1"
                                                 href={route(
                                                     "administration.posts.show",
-                                                    id
+                                                    unique_id
                                                 )}
                                                 className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
                                             >
@@ -124,7 +125,7 @@ export default function Index({ auth, posts }) {
                                                 tabIndex="-1"
                                                 href={route(
                                                     "administration.posts.show",
-                                                    id
+                                                    unique_id
                                                 )}
                                                 className="flex items-center px-4 focus:outline-none"
                                             >

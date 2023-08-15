@@ -8,10 +8,13 @@ import * as DOMPurify from "dompurify";
 
 export default function Show({ auth, post: { data: postDetails } }) {
     function destroy() {
-        router.delete(route("administration.posts.destroy", postDetails.id), {
-            onBefore: () =>
-                confirm("Are you sure you want to delete this post?"),
-        });
+        router.delete(
+            route("administration.posts.destroy", postDetails.unique_id),
+            {
+                onBefore: () =>
+                    confirm("Are you sure you want to delete this post?"),
+            }
+        );
     }
     return (
         <AuthenticatedLayout user={auth?.user?.data}>
@@ -29,7 +32,7 @@ export default function Show({ auth, post: { data: postDetails } }) {
                         className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
                         href={route(
                             "administration.posts.edit",
-                            postDetails.id
+                            postDetails.unique_id
                         )}
                     >
                         <span>Edit</span>

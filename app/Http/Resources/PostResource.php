@@ -21,6 +21,7 @@ class PostResource extends JsonResource
             'seo_title' => $this->seo_title,
             'description' => $this->description,
             'seo_description' => $this->seo_description,
+            'unique_id' => $this->unique_id,
             'slug' => $this->slug,
             'body' => $this->body,
             'htmlContent' => $this->htmlContent,

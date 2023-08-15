@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('seo_title');
             $table->string('description');
             $table->string('seo_description');
+            $table->char('unique_id', 11)->unique();
             $table->string('slug')->nullable();
             $table->foreignIdFor(User::class, 'creator_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->tinyInteger('status')->default(CategoryStatus::Disable->value)->comment('1 => active, 2 => disable');

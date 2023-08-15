@@ -24,7 +24,7 @@ export default ({ auth, posts }) => {
                         <Link
                             key={post.id}
                             href={route("application.posts.show", {
-                                post: post.id,
+                                post: post.unique_id,
                                 slug: post.slug,
                             })}
                             className="rounded-md "

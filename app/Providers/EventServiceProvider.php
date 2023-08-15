@@ -33,6 +33,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $observers = [
+        Models\Category::class => [Observers\CategoryObserver::class],
         Models\Post::class => [Observers\PostObserver::class],
     ];
 

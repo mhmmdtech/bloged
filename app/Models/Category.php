@@ -33,6 +33,13 @@ class Category extends Model
         'thumbnail' => 'array',
     ];
 
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'unique_id';
+    }
 
     /**
      * Get the user that owns the category.
