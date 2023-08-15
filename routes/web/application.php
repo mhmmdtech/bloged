@@ -12,6 +12,7 @@ Route::name('application.')->group(function () {
 
     Route::prefix('posts')->name('posts.')->group(function () {
         Route::get('/', [PostController::class, 'index'])->name('index');
+        Route::get('/search', [PostController::class, 'search'])->name('search');
         Route::get('/{post}/{slug?}', [PostController::class, 'show'])->name('show');
     });
 

@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, useForm, router } from "@inertiajs/react";
 import Icons from "@/Components/Icons";

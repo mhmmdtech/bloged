@@ -32,4 +32,15 @@ class PostController extends Controller
 
         return Inertia::render('App/Posts/Show', compact('post'));
     }
+
+    /**
+     * Search about specified resource.
+     */
+    public function search()
+    {
+        $query = trim(request()->query('query', ""));
+        $posts = Post::with('author', 'category')->whereRaw("MATCH(title, seo_title, description, seo_description, body) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$query])->paginate(5);
+        $posts = new PostCollection($posts);
+        return Inertia::render('App/Search', compact('posts', 'query'));
+    }
 }
