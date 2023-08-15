@@ -1,7 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
 import Pagination from "@/Components/Pagination";
-import { shortenText } from "@/utils/functions";
 import { router } from "@inertiajs/react";
 import DeleteButton from "@/Components/DeleteButton";
 
@@ -35,12 +34,13 @@ export default ({ auth, provinces }) => {
                 confirm("Are you sure you want to restore this province?"),
         });
     }
+
     return (
         <AuthenticatedLayout
             user={auth?.user?.data}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Province
+                    Trashed Provinces
                 </h2>
             }
         >

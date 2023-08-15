@@ -40,7 +40,7 @@ export default ({ auth, posts }) => {
             user={auth?.user?.data}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Posts
+                    Trashed Posts
                 </h2>
             }
         >

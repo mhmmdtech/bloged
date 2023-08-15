@@ -45,7 +45,7 @@ export default ({ auth, categories }) => {
             user={auth?.user?.data}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Categories
+                    Trashed Categories
                 </h2>
             }
         >

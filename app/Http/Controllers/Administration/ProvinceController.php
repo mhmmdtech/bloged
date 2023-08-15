@@ -125,8 +125,8 @@ class ProvinceController extends Controller
         $this->authorize('delete province', Province::class);
 
         if (is_null($provinceId)) {
-            $trashedCategories = Province::onlyTrashed()->get(['id'])->toArray();
-            Province::whereIn('id', array_flatten($trashedCategories))->forceDelete();
+            $trashedProvinces = Province::onlyTrashed()->get(['id'])->toArray();
+            Province::whereIn('id', array_flatten($trashedProvinces))->forceDelete();
             return redirect()->route('administration.provinces.trashed');
         }
 
