@@ -36,6 +36,16 @@ export default function Index({ auth, posts }) {
                         <span>Create</span>
                         <span className="hidden md:inline"> Post</span>
                     </Link>
+
+                    {auth?.can?.delete_post && (
+                        <Link
+                            className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
+                            href={route("administration.posts.trashed")}
+                        >
+                            <span>Trashed</span>
+                            <span className="hidden md:inline"> Posts</span>
+                        </Link>
+                    )}
                 </div>
                 <div className="overflow-x-auto bg-white rounded shadow">
                     <table className="w-full whitespace-nowrap">

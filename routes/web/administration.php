@@ -29,6 +29,9 @@ Route::prefix('terminator')->name('administration.')->middleware(['auth', 'verif
     Route::resource('categories', CategoryController::class);
 
     Route::patch('/posts/{post}/toggle-featured', [PostController::class, 'toggleFeatured'])->name('posts.toggle-featured');
+    Route::get('posts/trashed', [PostController::class, 'trashed'])->name('posts.trashed');
+    Route::delete('posts/force-delete/{post?}', [PostController::class, 'forceDelete'])->name('posts.force-delete');
+    Route::delete('posts/restore/{post}', [PostController::class, 'restore'])->name('posts.restore');
     Route::resource('posts', PostController::class);
 
     Route::resource('logs', LogController::class)->only(['index', 'show']);
