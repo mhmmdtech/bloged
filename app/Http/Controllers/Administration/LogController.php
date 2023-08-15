@@ -18,7 +18,7 @@ class LogController extends Controller
     {
         $this->authorize('browse log', Log::class);
 
-        $logs = new LogCollection(Log::with('actioner')->latest()->paginate(5));
+        $logs = new LogCollection(Log::with('actioner')->latest('id')->paginate(5));
 
         return Inertia::render('Admin/Logs/Index', compact('logs'));
     }

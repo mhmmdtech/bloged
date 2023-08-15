@@ -24,7 +24,7 @@ class PostController extends Controller
     {
         $this->authorize('browse post', Post::class);
 
-        $posts = new PostCollection(Post::with('author', 'category')->latest()->paginate(5));
+        $posts = new PostCollection(Post::with('author', 'category')->latest('id')->paginate(5));
 
         return Inertia::render('Admin/Posts/Index', compact('posts'));
     }
@@ -141,5 +141,47 @@ class PostController extends Controller
         Post::where('is_featured', true)->update(['is_featured' => false]);
 
         $post->update(['is_featured' => true]);
+    }
+
+    /**
+     * Display a listing of the soft deleted resource.
+     */
+    public function trashed()
+    {
+        $this->authorize('delete post', Post::class);
+
+        $posts = new PostCollection(post::onlyTrashed()->latest('id')->paginate(5));
+
+        return Inertia::render('Admin/Posts/Trashed', compact('posts'));
+    }
+
+    /**
+     * force delete the specified resource from storage.
+     */
+    public function forceDelete(ImageService $imageService, $postUniqueId = null)
+    {
+        $this->authorize('delete post', Post::class);
+
+        if (is_null($postUniqueId)) {
+            $trashedPosts = Post::onlyTrashed()->get(['id'])->toArray();
+            Post::whereIn('id', array_flatten($trashedPosts))->forceDelete();
+            return redirect()->route('administration.posts.trashed');
+        }
+
+        $post = Post::withTrashed()->where("unique_id", $postUniqueId)->first();
+        $imageService->deleteIndex($post->thumbnail);
+        $post->forceDelete();
+        return redirect()->route('administration.posts.trashed');
+    }
+
+    /**
+     * restore the specified resource from storage.
+     */
+    public function restore($postUniqueId)
+    {
+        $this->authorize('delete post', Post::class);
+        $post = Post::withTrashed()->where("unique_id", $postUniqueId)->first();
+        $post->restore();
+        return redirect()->route('administration.posts.trashed');
     }
 }

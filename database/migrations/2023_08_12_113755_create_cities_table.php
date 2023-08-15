@@ -21,7 +21,8 @@ return new class extends Migration {
             $table->foreignIdFor(User::class, 'creator_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->tinyInteger('status')->default(CityStatus::Active->value)->comment('1 => active, 2 => disable');
             $table->timestamps();
-            $table->softDeletes();
+
+            $table->fullText(['local_name', 'latin_name']);
         });
     }
 

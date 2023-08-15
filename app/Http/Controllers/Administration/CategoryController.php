@@ -22,7 +22,7 @@ class CategoryController extends Controller
     {
         $this->authorize('browse category', Category::class);
 
-        $categories = new CategoryCollection(Category::latest()->paginate(5));
+        $categories = new CategoryCollection(Category::latest('id')->paginate(5));
 
         return Inertia::render('Admin/Categories/Index', compact('categories'));
     }
@@ -118,5 +118,47 @@ class CategoryController extends Controller
         $category->delete();
 
         return redirect()->route('administration.categories.index');
+    }
+
+    /**
+     * Display a listing of the soft deleted resource.
+     */
+    public function trashed()
+    {
+        $this->authorize('delete category', Category::class);
+
+        $categories = new CategoryCollection(Category::onlyTrashed()->latest('id')->paginate(5));
+
+        return Inertia::render('Admin/Categories/Trashed', compact('categories'));
+    }
+
+    /**
+     * force delete the specified resource from storage.
+     */
+    public function forceDelete(ImageService $imageService, $categoryUniqueId = null)
+    {
+        $this->authorize('delete category', Category::class);
+
+        if (is_null($categoryUniqueId)) {
+            $trashedCategories = Category::onlyTrashed()->get(['id'])->toArray();
+            Category::whereIn('id', array_flatten($trashedCategories))->forceDelete();
+            return redirect()->route('administration.categories.trashed');
+        }
+
+        $category = Category::withTrashed()->where("unique_id", $categoryUniqueId)->first();
+        $imageService->deleteIndex($category->thumbnail);
+        $category->forceDelete();
+        return redirect()->route('administration.categories.trashed');
+    }
+
+    /**
+     * restore the specified resource from storage.
+     */
+    public function restore($categoryUniqueId)
+    {
+        $this->authorize('delete category', Category::class);
+        $category = Category::withTrashed()->where("unique_id", $categoryUniqueId)->first();
+        $category->restore();
+        return redirect()->route('administration.categories.trashed');
     }
 }

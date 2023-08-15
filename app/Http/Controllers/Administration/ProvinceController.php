@@ -104,4 +104,45 @@ class ProvinceController extends Controller
 
         return redirect()->route('administration.provinces.index');
     }
+
+    /**
+     * Display a listing of the soft deleted resource.
+     */
+    public function trashed()
+    {
+        $this->authorize('delete province', Province::class);
+
+        $provinces = new ProvinceCollection(Province::onlyTrashed()->latest()->paginate(5));
+
+        return Inertia::render('Admin/Provinces/Trashed', compact('provinces'));
+    }
+
+    /**
+     * force delete the specified resource from storage.
+     */
+    public function forceDelete($provinceId = null)
+    {
+        $this->authorize('delete province', Province::class);
+
+        if (is_null($provinceId)) {
+            $trashedProvinces = Province::onlyTrashed()->get(['id'])->toArray();
+            Province::whereIn('id', array_flatten($trashedProvinces))->forceDelete();
+            return redirect()->route('administration.provinces.trashed');
+        }
+
+        $province = Province::withTrashed()->findOrFail($provinceId);
+        $province->forceDelete();
+        return redirect()->route('administration.provinces.trashed');
+    }
+
+    /**
+     * restore the specified resource from storage.
+     */
+    public function restore($provinceId)
+    {
+        $this->authorize('delete province', Province::class);
+        $province = Province::withTrashed()->findOrFail($provinceId);
+        $province->restore();
+        return redirect()->route('administration.provinces.trashed');
+    }
 }

@@ -192,7 +192,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource routes.
+     * Update the specified resource roles.
      */
     public function updateRoles(UpdateUserRolesRequest $request, User $user)
     {
@@ -225,6 +225,9 @@ class UserController extends Controller
         return Inertia::render('Admin/Users/Permissions', compact('user', 'permissions', 'currentPermissions'));
     }
 
+    /**
+     * Update the specified resource permissions.
+     */
     public function updatePermissions(UpdateUserPermissionsRequest $request, User $user)
     {
         $this->authorize('edit user', $user);
@@ -278,7 +281,7 @@ class UserController extends Controller
         $this->authorize('browse user', User::class);
 
         $results = [];
-        $allowedColumns = ['first_name', 'last_name', 'national_code', 'mobile_number', 'email', 'username', 'creator_id', 'birthday', 'gender', 'military_status', 'province_id', 'city_id'];
+        $allowedColumns = ['national_code', 'email', 'username', 'creator_id',];
         $userInputs = removeNullFromArray(request()->input());
         $allowedInputs = array_intersect_key($userInputs, array_flip($allowedColumns));
 
@@ -286,17 +289,11 @@ class UserController extends Controller
             $query->where('name', 'add user');
         })->get(['id', 'username']);
 
-        $genders = GenderStatus::array();
-
-        $militaryStatuses = MilitaryStatus::array();
-
-        $provinces = Province::with('cities')->get(['id', 'local_name']);
-
         if (count($allowedInputs) > 0) {
-            $results = new UserCollection(User::with('roles')->where($allowedInputs)->latest()->paginate(5));
-            return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators', 'genders', 'militaryStatuses', 'provinces'));
+            $results = new UserCollection(User::with('roles')->where($allowedInputs)->latest('id')->paginate(5));
+            return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators'));
         }
-        return Inertia::render('Admin/Users/AdvancedSearch', compact('creators', 'genders', 'militaryStatuses', 'provinces'));
+        return Inertia::render('Admin/Users/AdvancedSearch', compact('creators'));
     }
 
     /**
@@ -324,14 +321,14 @@ class UserController extends Controller
         if (array_key_exists('province', $reportParameters)) {
             $province = request()->query('province');
             $query->whereHas('province', function ($query) use ($province) {
-                $query->where('local_name', $province)->orWhere('latin_name', $province);
+                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$province]);
             });
         }
 
         if (array_key_exists('city', $reportParameters)) {
             $city = request()->query('city');
             $query->whereHas('city', function ($query) use ($city) {
-                $query->where('local_name', $city)->orWhere('latin_name', $city);
+                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$city]);
             });
         }
 

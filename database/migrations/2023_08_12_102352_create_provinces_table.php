@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->tinyInteger('status')->default(ProvinceStatus::Active->value)->comment('1 => active, 2 => disable');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->fullText(['local_name', 'latin_name']);
         });
     }
 

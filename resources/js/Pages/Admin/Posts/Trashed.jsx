@@ -1,48 +1,57 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
-import Icons from "@/Components/Icons";
 import Pagination from "@/Components/Pagination";
 import { shortenText } from "@/utils/functions";
+import { router } from "@inertiajs/react";
+import DeleteButton from "@/Components/DeleteButton";
 
-export default function Index({ auth, categories }) {
+export default ({ auth, posts }) => {
     const {
         data,
         meta: { links },
-    } = categories;
+    } = posts;
+
+    function destroyAll() {
+        if (data.length === 0) {
+            alert("There is not any trashed post right now.");
+            return;
+        }
+        router.delete(route("administration.posts.force-delete", null), {
+            onBefore: () =>
+                confirm("Are you sure you want to delete all these posts?"),
+        });
+    }
+
+    function destroy(unique_id) {
+        router.delete(route("administration.posts.force-delete", unique_id), {
+            onBefore: () =>
+                confirm("Are you sure you want to delete this category?"),
+        });
+    }
+
+    function restore(unique_id) {
+        router.delete(route("administration.posts.restore", unique_id), {
+            onBefore: () =>
+                confirm("Are you sure you want to restore this category?"),
+        });
+    }
     return (
         <AuthenticatedLayout
             user={auth?.user?.data}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Categories
+                    Trashed Posts
                 </h2>
             }
         >
             <Head>
-                <title>List of Categories</title>
+                <title>List of Posts</title>
             </Head>
             <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between mb-6">
-                    <Link
-                        className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
-                        href={route("administration.categories.create")}
-                    >
-                        <span>Create</span>
-                        <span className="hidden md:inline"> Category</span>
-                    </Link>
-
-                    {auth?.can?.delete_category && (
-                        <Link
-                            className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
-                            href={route("administration.categories.trashed")}
-                        >
-                            <span>Trashed</span>
-                            <span className="hidden md:inline">
-                                {" "}
-                                Categories
-                            </span>
-                        </Link>
-                    )}
+                    <DeleteButton onDelete={destroyAll}>
+                        Delete Posts
+                    </DeleteButton>
                 </div>
                 <div className="overflow-x-auto bg-white rounded shadow">
                     <table className="w-full whitespace-nowrap">
@@ -61,7 +70,7 @@ export default function Index({ auth, categories }) {
                                     <td className="border-t">
                                         <Link
                                             href={route(
-                                                "administration.categories.show",
+                                                "administration.posts.show",
                                                 unique_id
                                             )}
                                             className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
@@ -73,7 +82,7 @@ export default function Index({ auth, categories }) {
                                         <Link
                                             tabIndex="-1"
                                             href={route(
-                                                "administration.categories.show",
+                                                "administration.posts.show",
                                                 unique_id
                                             )}
                                             className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
@@ -82,19 +91,25 @@ export default function Index({ auth, categories }) {
                                         </Link>
                                     </td>
                                     <td className="w-px border-t">
-                                        <Link
+                                        <div
                                             tabIndex="-1"
-                                            href={route(
-                                                "administration.categories.show",
-                                                unique_id
-                                            )}
-                                            className="flex items-center px-4 focus:outline-none"
+                                            className="flex items-center px-4 gap-2 focus:outline-none"
                                         >
-                                            <Icons
-                                                name="cheveron-right"
-                                                className="block w-6 h-6 text-gray-400 fill-current"
-                                            />
-                                        </Link>
+                                            <DeleteButton
+                                                onDelete={(e) =>
+                                                    destroy(unique_id)
+                                                }
+                                            >
+                                                Delete
+                                            </DeleteButton>
+                                            <DeleteButton
+                                                onDelete={(e) =>
+                                                    restore(unique_id)
+                                                }
+                                            >
+                                                Restore
+                                            </DeleteButton>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -104,7 +119,7 @@ export default function Index({ auth, categories }) {
                                         className="px-6 py-4 border-t"
                                         colSpan="4"
                                     >
-                                        No categories found.
+                                        No posts found.
                                     </td>
                                 </tr>
                             )}
@@ -115,4 +130,4 @@ export default function Index({ auth, categories }) {
             </div>
         </AuthenticatedLayout>
     );
-}
+};

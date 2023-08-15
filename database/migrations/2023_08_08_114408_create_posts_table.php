@@ -31,6 +31,8 @@ return new class extends Migration {
             $table->tinyInteger('status')->default(PostStatus::Draft->value)->comment('1 => draft, 2 => published, 3 => archived');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->fullText(['title', 'seo_title', 'description', 'seo_description', 'body']);
         });
     }
 

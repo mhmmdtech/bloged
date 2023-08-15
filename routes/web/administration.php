@@ -1,6 +1,5 @@
 <?php
 
-use App\CustomTest\UniqueIdTest;
 use App\Http\Controllers\Administration\DashboardController;
 use App\Http\Controllers\Administration\CategoryController;
 use App\Http\Controllers\Administration\CityController;
@@ -24,13 +23,22 @@ Route::prefix('terminator')->name('administration.')->middleware(['auth', 'verif
     Route::get('users/report/{format}', [UserController::class, 'downloadReport'])->name('users.report.download');
     Route::resource('users', UserController::class);
 
+    Route::get('categories/trashed', [CategoryController::class, 'trashed'])->name('categories.trashed');
+    Route::delete('categories/force-delete/{category?}', [CategoryController::class, 'forceDelete'])->name('categories.force-delete');
+    Route::delete('categories/restore/{category}', [CategoryController::class, 'restore'])->name('categories.restore');
     Route::resource('categories', CategoryController::class);
 
     Route::patch('/posts/{post}/toggle-featured', [PostController::class, 'toggleFeatured'])->name('posts.toggle-featured');
+    Route::get('posts/trashed', [PostController::class, 'trashed'])->name('posts.trashed');
+    Route::delete('posts/force-delete/{post?}', [PostController::class, 'forceDelete'])->name('posts.force-delete');
+    Route::delete('posts/restore/{post}', [PostController::class, 'restore'])->name('posts.restore');
     Route::resource('posts', PostController::class);
 
     Route::resource('logs', LogController::class)->only(['index', 'show']);
 
+    Route::get('provinces/trashed', [ProvinceController::class, 'trashed'])->name('provinces.trashed');
+    Route::delete('provinces/force-delete/{province?}', [ProvinceController::class, 'forceDelete'])->name('provinces.force-delete');
+    Route::delete('provinces/restore/{province}', [ProvinceController::class, 'restore'])->name('provinces.restore');
     Route::resource('provinces', ProvinceController::class);
 
     Route::resource('provinces.cities', CityController::class)->shallow();
