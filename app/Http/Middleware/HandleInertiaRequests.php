@@ -42,7 +42,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user() === null ? $request->user() : new UserResource($request->user()),
                 'can' => [
                     'browse_category' => $request->user() && $request->user()->can('browse category', Category::class),
+                    'delete_category' => $request->user() && $request->user()->can('delete category', Category::class),
                     'browse_post' => $request->user() && $request->user()->can('browse post', Post::class),
+                    'delete_post' => $request->user() && $request->user()->can('delete post', Post::class),
                     'browse_user' => $request->user() && $request->user()->can('browse user', User::class),
                     'browse_log' => $request->user() && $request->user()->can('browse log', Log::class),
                     'browse_province' => $request->user() && $request->user()->can('browse province', Province::class),

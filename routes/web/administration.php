@@ -1,6 +1,5 @@
 <?php
 
-use App\CustomTest\UniqueIdTest;
 use App\Http\Controllers\Administration\DashboardController;
 use App\Http\Controllers\Administration\CategoryController;
 use App\Http\Controllers\Administration\CityController;
@@ -24,6 +23,9 @@ Route::prefix('terminator')->name('administration.')->middleware(['auth', 'verif
     Route::get('users/report/{format}', [UserController::class, 'downloadReport'])->name('users.report.download');
     Route::resource('users', UserController::class);
 
+    Route::get('categories/trashed', [CategoryController::class, 'trashed'])->name('categories.trashed');
+    Route::delete('categories/force-delete/{category?}', [CategoryController::class, 'forceDelete'])->name('categories.force-delete');
+    Route::delete('categories/restore/{category}', [CategoryController::class, 'restore'])->name('categories.restore');
     Route::resource('categories', CategoryController::class);
 
     Route::patch('/posts/{post}/toggle-featured', [PostController::class, 'toggleFeatured'])->name('posts.toggle-featured');

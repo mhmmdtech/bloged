@@ -107,3 +107,17 @@ if (!function_exists('getAsset')) {
         return Storage::url($path);
     }
 }
+
+if (!function_exists('array_flatten')) {
+    /**
+     * retrieve the flattened array
+     */
+    function array_flatten(array $array)
+    {
+        $return = array();
+        array_walk_recursive($array, function ($a) use (&$return) {
+            $return[] = $a;
+        });
+        return $return;
+    }
+}
