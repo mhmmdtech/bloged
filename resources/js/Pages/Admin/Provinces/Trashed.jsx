@@ -5,34 +5,34 @@ import { shortenText } from "@/utils/functions";
 import { router } from "@inertiajs/react";
 import DeleteButton from "@/Components/DeleteButton";
 
-export default ({ auth, posts }) => {
+export default ({ auth, provinces }) => {
     const {
         data,
         meta: { links },
-    } = posts;
+    } = provinces;
 
     function destroyAll() {
         if (data.length === 0) {
-            alert("There is not any trashed post right now.");
+            alert("There is not any trashed province right now.");
             return;
         }
-        router.delete(route("administration.posts.force-delete", null), {
+        router.delete(route("administration.provinces.force-delete", null), {
             onBefore: () =>
-                confirm("Are you sure you want to delete all these posts?"),
+                confirm("Are you sure you want to delete all these provinces?"),
         });
     }
 
-    function destroy(unique_id) {
-        router.delete(route("administration.posts.force-delete", unique_id), {
+    function destroy(id) {
+        router.delete(route("administration.provinces.force-delete", id), {
             onBefore: () =>
-                confirm("Are you sure you want to delete this category?"),
+                confirm("Are you sure you want to delete this province?"),
         });
     }
 
-    function restore(unique_id) {
-        router.delete(route("administration.posts.restore", unique_id), {
+    function restore(id) {
+        router.delete(route("administration.provinces.restore", id), {
             onBefore: () =>
-                confirm("Are you sure you want to restore this category?"),
+                confirm("Are you sure you want to restore this province?"),
         });
     }
     return (
@@ -40,17 +40,17 @@ export default ({ auth, posts }) => {
             user={auth?.user?.data}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Posts
+                    Province
                 </h2>
             }
         >
             <Head>
-                <title>List of Posts</title>
+                <title>List of Provinces</title>
             </Head>
             <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between mb-6">
                     <DeleteButton onDelete={destroyAll}>
-                        Delete Posts
+                        Delete Provinces
                     </DeleteButton>
                 </div>
                 <div className="overflow-x-auto bg-white rounded shadow">
@@ -62,7 +62,7 @@ export default ({ auth, posts }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {data.map(({ id, title, status, unique_id }) => (
+                            {data.map(({ id, local_name, status }) => (
                                 <tr
                                     key={id}
                                     className="hover:bg-gray-100 focus-within:bg-gray-100"
@@ -70,20 +70,20 @@ export default ({ auth, posts }) => {
                                     <td className="border-t">
                                         <Link
                                             href={route(
-                                                "administration.posts.show",
-                                                unique_id
+                                                "administration.provinces.show",
+                                                id
                                             )}
                                             className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
                                         >
-                                            {shortenText(title, 25)}
+                                            {local_name}
                                         </Link>
                                     </td>
                                     <td className="border-t">
                                         <Link
                                             tabIndex="-1"
                                             href={route(
-                                                "administration.posts.show",
-                                                unique_id
+                                                "administration.provinces.show",
+                                                id
                                             )}
                                             className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
                                         >
@@ -96,16 +96,12 @@ export default ({ auth, posts }) => {
                                             className="flex items-center px-4 gap-2 focus:outline-none"
                                         >
                                             <DeleteButton
-                                                onDelete={(e) =>
-                                                    destroy(unique_id)
-                                                }
+                                                onDelete={(e) => destroy(id)}
                                             >
                                                 Delete
                                             </DeleteButton>
                                             <DeleteButton
-                                                onDelete={(e) =>
-                                                    restore(unique_id)
-                                                }
+                                                onDelete={(e) => restore(id)}
                                             >
                                                 Restore
                                             </DeleteButton>
@@ -119,7 +115,7 @@ export default ({ auth, posts }) => {
                                         className="px-6 py-4 border-t"
                                         colSpan="4"
                                     >
-                                        No posts found.
+                                        No provinces found.
                                     </td>
                                 </tr>
                             )}

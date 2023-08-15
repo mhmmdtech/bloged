@@ -12,6 +12,10 @@ export default ({ auth, categories }) => {
     } = categories;
 
     function destroyAll() {
+        if (data.length === 0) {
+            alert("There is not any trashed category right now.");
+            return;
+        }
         router.delete(route("administration.categories.force-delete", null), {
             onBefore: () =>
                 confirm(

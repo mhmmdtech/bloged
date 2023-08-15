@@ -30,6 +30,15 @@ export default function Index({ auth, provinces }) {
                         <span>Create</span>
                         <span className="hidden md:inline"> Province</span>
                     </Link>
+                    {auth?.can?.delete_province && (
+                        <Link
+                            className="bg-indigo-500 p-2 rounded-md text-white focus:outline-none"
+                            href={route("administration.provinces.trashed")}
+                        >
+                            <span>Trashed</span>
+                            <span className="hidden md:inline"> Provinces</span>
+                        </Link>
+                    )}
                 </div>
                 <div className="overflow-x-auto bg-white rounded shadow">
                     <table className="w-full whitespace-nowrap">

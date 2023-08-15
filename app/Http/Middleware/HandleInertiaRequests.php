@@ -48,6 +48,7 @@ class HandleInertiaRequests extends Middleware
                     'browse_user' => $request->user() && $request->user()->can('browse user', User::class),
                     'browse_log' => $request->user() && $request->user()->can('browse log', Log::class),
                     'browse_province' => $request->user() && $request->user()->can('browse province', Province::class),
+                    'delete_province' => $request->user() && $request->user()->can('delete province', Province::class),
                     'browse_city' => $request->user() && $request->user()->can('browse city', City::class),
                     'browse_analytic' => $request->user() && $request->user()->can('browse analytic', User::class),
                 ],

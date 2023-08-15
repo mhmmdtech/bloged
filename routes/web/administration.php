@@ -36,6 +36,9 @@ Route::prefix('terminator')->name('administration.')->middleware(['auth', 'verif
 
     Route::resource('logs', LogController::class)->only(['index', 'show']);
 
+    Route::get('provinces/trashed', [ProvinceController::class, 'trashed'])->name('provinces.trashed');
+    Route::delete('provinces/force-delete/{province?}', [ProvinceController::class, 'forceDelete'])->name('provinces.force-delete');
+    Route::delete('provinces/restore/{province}', [ProvinceController::class, 'restore'])->name('provinces.restore');
     Route::resource('provinces', ProvinceController::class);
 
     Route::resource('provinces.cities', CityController::class)->shallow();
