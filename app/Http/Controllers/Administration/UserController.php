@@ -321,14 +321,14 @@ class UserController extends Controller
         if (array_key_exists('province', $reportParameters)) {
             $province = request()->query('province');
             $query->whereHas('province', function ($query) use ($province) {
-                $query->where('local_name', $province)->orWhere('latin_name', $province);
+                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$province]);
             });
         }
 
         if (array_key_exists('city', $reportParameters)) {
             $city = request()->query('city');
             $query->whereHas('city', function ($query) use ($city) {
-                $query->where('local_name', $city)->orWhere('latin_name', $city);
+                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$city]);
             });
         }
 
