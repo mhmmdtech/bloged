@@ -34,7 +34,7 @@ class UserController extends Controller
     {
         $this->authorize('browse user', User::class);
 
-        $users = new UserCollection(User::with('roles')->latest('id')->paginate(5));
+        $users = new UserCollection(User::with('roles')->latest($this->normalOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
 
         return Inertia::render('Admin/Users/Index', compact('users'));
     }
@@ -290,7 +290,7 @@ class UserController extends Controller
         })->get(['id', 'username']);
 
         if (count($allowedInputs) > 0) {
-            $results = new UserCollection(User::with('roles')->where($allowedInputs)->latest('id')->paginate(5));
+            $results = new UserCollection(User::with('roles')->where($allowedInputs)->latest($this->normalOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
             return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators'));
         }
         return Inertia::render('Admin/Users/AdvancedSearch', compact('creators'));
@@ -332,7 +332,7 @@ class UserController extends Controller
             });
         }
 
-        $results = $query->paginate(5)->withQueryString();
+        $results = $query->paginate($this->administrationPaginatedItemsCount)->withQueryString();
         $results = new UserCollection($results);
         return Inertia::render('Admin/Users/Report', compact('results', 'genders'));
     }

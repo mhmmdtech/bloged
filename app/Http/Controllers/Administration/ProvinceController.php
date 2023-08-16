@@ -20,7 +20,7 @@ class ProvinceController extends Controller
     {
         $this->authorize('browse province', Province::class);
 
-        $provinces = new ProvinceCollection(Province::latest('id')->paginate(5));
+        $provinces = new ProvinceCollection(Province::latest($this->normalOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
 
         return Inertia::render('Admin/Provinces/Index', compact('provinces'));
     }
@@ -112,7 +112,7 @@ class ProvinceController extends Controller
     {
         $this->authorize('delete province', Province::class);
 
-        $provinces = new ProvinceCollection(Province::onlyTrashed()->latest('deleted_at')->paginate(5));
+        $provinces = new ProvinceCollection(Province::onlyTrashed()->latest($this->trashedOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
 
         return Inertia::render('Admin/Provinces/Trashed', compact('provinces'));
     }

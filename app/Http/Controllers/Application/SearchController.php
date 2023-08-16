@@ -11,6 +11,7 @@ use Inertia\Inertia;
 
 class SearchController extends Controller
 {
+    protected int $applicationPaginatedItemsCount = 5;
     /**
      * Handle the incoming request.
      */
@@ -22,7 +23,7 @@ class SearchController extends Controller
         }
         if (strlen($query) < 5)
             return;
-        $posts = Post::with('author', 'category')->whereRaw("MATCH(title, seo_title, description, seo_description, body) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$query])->where('status', PostStatus::Published)->paginate(5);
+        $posts = Post::with('author', 'category')->whereRaw("MATCH(title, seo_title, description, seo_description, body) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$query])->where('status', PostStatus::Published)->paginate($this->applicationPaginatedItemsCount);
         $posts = new PostCollection($posts);
         return Inertia::render('App/Search', compact('posts', 'query'));
     }

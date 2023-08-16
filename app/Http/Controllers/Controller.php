@@ -9,4 +9,12 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
+
+    protected string $normalOrderedColumn = 'id';
+
+    protected string $trashedOrderedColumn = 'deleted_at';
+
+    protected int $applicationPaginatedItemsCount = 10;
+
+    protected int $administrationPaginatedItemsCount = 5;
 }
