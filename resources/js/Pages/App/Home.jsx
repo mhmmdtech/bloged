@@ -39,15 +39,14 @@ export default function Welcome({
     function handleSubmit(e) {
         e.preventDefault();
 
-        if (data.query === "" || data.query === null) return;
+        if (data.query.length < 5) {
+            alert("Please tell us more");
+            return;
+        }
 
-        router.get(
-            route("application.posts.search"),
-            removeNullFromArray(data),
-            {
-                preserveState: true,
-            }
-        );
+        router.get(route("application.search"), removeNullFromArray(data), {
+            preserveState: true,
+        });
     }
     useEffect(() => {
         const latestPostsSliderParams = {
@@ -97,7 +96,37 @@ export default function Welcome({
                     content="We are a testish RILT based blog"
                 />
             </Head>
-            <div className="container flex flex-col items-center justify-center mx-auto p-2">
+            <div className="container flex flex-col items-center justify-center mx-auto mt-12 px-4">
+                <form onSubmit={handleSubmit} className="w-full ">
+                    <div className="flex flex-wrap justify-between p-8 -mb-8 -mr-6 gap-4">
+                        <TextInput
+                            id="query"
+                            name="query"
+                            value={data.query}
+                            className="mt-1 block w-full"
+                            autoComplete="query"
+                            isFocused={false}
+                            onChange={(e) =>
+                                setData("query", e.target.value.trim())
+                            }
+                            placeholder="Search through published posts"
+                        />
+
+                        <InputError message={errors.query} className="mt-2" />
+                    </div>
+                    <div className="flex flex-wrap justify-center mt-4">
+                        <LoadingButton
+                            loading={processing}
+                            type="submit"
+                            className="bg-indigo-500 p-2 rounded-md text-white"
+                            disabled={data.query.length < 5}
+                        >
+                            Search
+                        </LoadingButton>
+                    </div>
+                </form>
+            </div>
+            <div className="container flex flex-col items-center justify-center mx-auto p-2 mt-12">
                 {featuredPost.data && (
                     <Link
                         href={route("application.posts.show", {
@@ -129,33 +158,6 @@ export default function Welcome({
                         </div>
                     </Link>
                 )}
-            </div>
-            <div className="container flex flex-col items-center justify-center mx-auto mt-12 px-4">
-                <form onSubmit={handleSubmit} className="w-full ">
-                    <div className="flex flex-wrap justify-between p-8 -mb-8 -mr-6 gap-4">
-                        <TextInput
-                            id="query"
-                            name="query"
-                            value={data.query}
-                            className="mt-1 block w-full"
-                            autoComplete="query"
-                            isFocused={false}
-                            onChange={(e) => setData("query", e.target.value)}
-                            placeholder="Search..."
-                        />
-
-                        <InputError message={errors.query} className="mt-2" />
-                    </div>
-                    <div className="flex flex-wrap justify-center mt-4">
-                        <LoadingButton
-                            loading={processing}
-                            type="submit"
-                            className="bg-indigo-500 p-2 rounded-md text-white"
-                        >
-                            Search
-                        </LoadingButton>
-                    </div>
-                </form>
             </div>
             <div className="max-w-screen-xl flex flex-wrap justify-between mx-auto gap-2 mt-4 px-4">
                 <img src={AcerLogo} alt="" className="w-14 h-14" />
