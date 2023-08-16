@@ -16,9 +16,15 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\DB;
+use App\Services\Upload\FileUpload;
 
 class RegisteredUserController extends Controller
 {
+    public function __construct(private FileUpload $fileUploadService)
+    {
+        //
+    }
+
     /**
      * Display the registration view.
      */
@@ -44,10 +50,14 @@ class RegisteredUserController extends Controller
             $user = User::create($inputs);
             $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
             if (isset($inputs['avatar'])) {
-                $imageService->setExclusiveDirectory('images');
-                $imageService->setImageDirectory('users' . DIRECTORY_SEPARATOR . 'avatars');
-                $imageService->setImageName($user->username);
-                $user->avatar = $imageService->fitAndSave($inputs['avatar'], 400, 400);
+                $user->avatar = $this->fileUploadService
+                    ->uploadWithResizingImage(
+                        $inputs['avatar'],
+                        'users' . DIRECTORY_SEPARATOR . 'avatars',
+                        $user->username,
+                        400,
+                        400
+                    );
                 $user->save();
             }
             DB::commit();

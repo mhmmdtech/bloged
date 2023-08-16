@@ -15,9 +15,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Services\Upload\FileUpload;
 
 class ProfileController extends Controller
 {
+    public function __construct(private FileUpload $fileUploadService)
+    {
+        //
+    }
+
     /**
      * Display the user's profile form.
      */
@@ -42,10 +48,14 @@ class ProfileController extends Controller
 
         if (isset($inputs['avatar'])) {
             $imageService->deleteImage($request->user()->avatar);
-            $imageService->setExclusiveDirectory('images');
-            $imageService->setImageDirectory('users' . DIRECTORY_SEPARATOR . 'avatars');
-            $imageService->setImageName($inputs['username']);
-            $inputs['avatar'] = $imageService->fitAndSave($inputs['avatar'], 400, 400);
+            $inputs['avatar'] = $this->fileUploadService
+                ->uploadWithResizingImage(
+                    $inputs['avatar'],
+                    'users' . DIRECTORY_SEPARATOR . 'avatars',
+                    $inputs['username'],
+                    400,
+                    400
+                );
         }
 
         $request->user()->fill($inputs);

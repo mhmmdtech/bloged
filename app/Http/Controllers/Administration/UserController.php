@@ -24,9 +24,15 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Exports\UsersExport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use App\Services\Upload\FileUpload;
 
 class UserController extends Controller
 {
+    public function __construct(private FileUpload $fileUploadService)
+    {
+        //
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -56,7 +62,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request, ImageService $imageService)
+    public function store(StoreUserRequest $request)
     {
         $this->authorize('add user', User::class);
 
@@ -70,10 +76,14 @@ class UserController extends Controller
             $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
 
             if (isset($inputs['avatar'])) {
-                $imageService->setExclusiveDirectory('images');
-                $imageService->setImageDirectory('users' . DIRECTORY_SEPARATOR . 'avatars');
-                $imageService->setImageName($user->username);
-                $user->avatar = $imageService->fitAndSave($inputs['avatar'], 400, 400);
+                $user->avatar = $this->fileUploadService
+                    ->uploadWithResizingImage(
+                        $inputs['avatar'],
+                        'users' . DIRECTORY_SEPARATOR . 'avatars',
+                        $user->username,
+                        400,
+                        400
+                    );
                 $user->save();
             }
             DB::commit();
@@ -132,10 +142,15 @@ class UserController extends Controller
 
         if (isset($inputs['avatar'])) {
             $imageService->deleteImage($request->user()->avatar);
-            $imageService->setExclusiveDirectory('images');
-            $imageService->setImageDirectory('users' . DIRECTORY_SEPARATOR . 'avatars');
-            $imageService->setImageName($inputs['username']);
-            $inputs['avatar'] = $imageService->fitAndSave($inputs['avatar'], 400, 400);
+            $user->avatar = $this->fileUploadService
+                ->uploadWithResizingImage(
+                    $inputs['avatar'],
+                    'users' . DIRECTORY_SEPARATOR . 'avatars',
+                    $user->username,
+                    400,
+                    400
+                );
+            $user->save();
         }
 
         $oldUser = clone $user;
@@ -156,11 +171,13 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $user, ImageService $imageService)
     {
         $this->authorize('delete user', $user);
 
         $user->delete();
+
+        $imageService->deleteImage($user->avatar);
 
         event(new UserModified(auth()->id(), 'destroy', User::class, $user->id, $user->toArray(), []));
 

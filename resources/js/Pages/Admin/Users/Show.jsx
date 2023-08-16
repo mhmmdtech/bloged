@@ -3,7 +3,7 @@ import { Head, Link } from "@inertiajs/react";
 import DeleteButton from "@/Components/DeleteButton";
 import { router } from "@inertiajs/react";
 import { formatDistance } from "date-fns";
-import { convertUtcToLocalDate } from "@/utils/functions";
+import { convertUtcToLocalDate, getPublicAsset } from "@/utils/functions";
 
 export default function Show({ auth, user: { data: userDetails } }) {
     function destroy() {
@@ -59,7 +59,7 @@ export default function Show({ auth, user: { data: userDetails } }) {
                     <div className="hidden xs:block w-80 h-80 my-4 rounded-full mx-auto shadow-lg shadow-neutral-500">
                         <img
                             className="w-80 h-80 object-cover rounded-full"
-                            src={userDetails.avatar}
+                            src={getPublicAsset(userDetails.avatar)}
                             alt={`${userDetails.username}'s avatar`}
                         />
                     </div>
