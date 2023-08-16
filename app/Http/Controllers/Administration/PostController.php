@@ -14,9 +14,15 @@ use App\Models\Post;
 use App\Services\Image\ImageService;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use App\Services\Upload\FileUpload;
 
 class PostController extends Controller
 {
+    public function __construct(private FileUpload $fileUploadService)
+    {
+        //
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -46,16 +52,18 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePostRequest $request, ImageService $imageService)
+    public function store(StorePostRequest $request)
     {
         $this->authorize('add post', Post::class);
 
         $inputs = $request->validated();
 
-        $imageService->setExclusiveDirectory('images');
-        $imageService->setImageDirectory('posts' . DIRECTORY_SEPARATOR . 'thumbnails');
-        $imageService->setImageName(Str::slug($inputs['seo_title']));
-        $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
+        $inputs['thumbnail'] = $this->fileUploadService
+            ->uploadMultiQualityImage(
+                $inputs['thumbnail'],
+                'posts' . DIRECTORY_SEPARATOR . 'thumbnails',
+                $inputs['seo_title']
+            );
 
         auth()->user()->posts()->create($inputs);
 
@@ -105,10 +113,12 @@ class PostController extends Controller
 
         if (isset($inputs['thumbnail'])) {
             $imageService->deleteIndex($post->thumbnail);
-            $imageService->setExclusiveDirectory('images');
-            $imageService->setImageDirectory('posts' . DIRECTORY_SEPARATOR . 'thumbnails');
-            $imageService->setImageName(Str::slug($inputs['seo_title']));
-            $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
+            $inputs['thumbnail'] = $this->fileUploadService
+                ->uploadMultiQualityImage(
+                    $inputs['thumbnail'],
+                    'posts' . DIRECTORY_SEPARATOR . 'thumbnails',
+                    $inputs['seo_title']
+                );
         }
 
         $post->update($inputs);

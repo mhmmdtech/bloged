@@ -10,11 +10,16 @@ use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Services\Image\ImageService;
+use App\Services\Upload\FileUpload;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+    public function __construct(private FileUpload $fileUploadService)
+    {
+        //
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -42,16 +47,18 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCategoryRequest $request, ImageService $imageService)
+    public function store(StoreCategoryRequest $request)
     {
         $this->authorize('add category', Category::class);
 
         $inputs = $request->validated();
 
-        $imageService->setExclusiveDirectory('images');
-        $imageService->setImageDirectory('categories' . DIRECTORY_SEPARATOR . 'thumbnails');
-        $imageService->setImageName(Str::slug($inputs['seo_title']));
-        $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
+        $inputs['thumbnail'] = $this->fileUploadService
+            ->uploadMultiQualityImage(
+                $inputs['thumbnail'],
+                'categories' . DIRECTORY_SEPARATOR . 'thumbnails',
+                $inputs['seo_title']
+            );
 
         auth()->user()->categories()->create($inputs);
 
@@ -97,10 +104,12 @@ class CategoryController extends Controller
 
         if (isset($inputs['thumbnail'])) {
             $imageService->deleteIndex($category->thumbnail);
-            $imageService->setExclusiveDirectory('images');
-            $imageService->setImageDirectory('categories' . DIRECTORY_SEPARATOR . 'thumbnails');
-            $imageService->setImageName(Str::slug($inputs['seo_title']));
-            $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
+            $inputs['thumbnail'] = $this->fileUploadService
+                ->uploadMultiQualityImage(
+                    $inputs['thumbnail'],
+                    'categories' . DIRECTORY_SEPARATOR . 'thumbnails',
+                    $inputs['seo_title']
+                );
         }
 
         $category->update($inputs);
