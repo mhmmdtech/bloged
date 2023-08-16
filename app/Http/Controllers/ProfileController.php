@@ -15,11 +15,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Services\Upload\FileUpload;
+use App\Services\FileManager\FileManager;
 
 class ProfileController extends Controller
 {
-    public function __construct(private FileUpload $fileUploadService)
+    public function __construct(private FileManager $fileManagerService)
     {
         //
     }
@@ -48,7 +48,7 @@ class ProfileController extends Controller
 
         if (isset($inputs['avatar'])) {
             $imageService->deleteImage($request->user()->avatar);
-            $inputs['avatar'] = $this->fileUploadService
+            $inputs['avatar'] = $this->fileManagerService
                 ->uploadWithResizingImage(
                     $inputs['avatar'],
                     'users' . DIRECTORY_SEPARATOR . 'avatars',

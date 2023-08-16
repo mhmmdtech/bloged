@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Upload;
+namespace App\Services\FileManager;
 
 use App\Services\Image\ImageService;
 use Illuminate\Support\Str;
 
-class FileUpload
+class FileManager
 {
     public function __construct(private ImageService $imageService)
     {

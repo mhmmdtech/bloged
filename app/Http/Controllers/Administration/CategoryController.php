@@ -10,12 +10,12 @@ use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Services\Image\ImageService;
-use App\Services\Upload\FileUpload;
+use App\Services\FileManager\FileManager;
 use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
-    public function __construct(private FileUpload $fileUploadService)
+    public function __construct(private FileManager $fileManagerService)
     {
         //
     }
@@ -53,7 +53,7 @@ class CategoryController extends Controller
 
         $inputs = $request->validated();
 
-        $inputs['thumbnail'] = $this->fileUploadService
+        $inputs['thumbnail'] = $this->fileManagerService
             ->uploadMultiQualityImage(
                 $inputs['thumbnail'],
                 'categories' . DIRECTORY_SEPARATOR . 'thumbnails',
@@ -104,7 +104,7 @@ class CategoryController extends Controller
 
         if (isset($inputs['thumbnail'])) {
             $imageService->deleteIndex($category->thumbnail);
-            $inputs['thumbnail'] = $this->fileUploadService
+            $inputs['thumbnail'] = $this->fileManagerService
                 ->uploadMultiQualityImage(
                     $inputs['thumbnail'],
                     'categories' . DIRECTORY_SEPARATOR . 'thumbnails',

@@ -13,11 +13,11 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Services\Image\ImageService;
 use Inertia\Inertia;
-use App\Services\Upload\FileUpload;
+use App\Services\FileManager\FileManager;
 
 class PostController extends Controller
 {
-    public function __construct(private FileUpload $fileUploadService)
+    public function __construct(private FileManager $fileManagerService)
     {
         //
     }
@@ -57,7 +57,7 @@ class PostController extends Controller
 
         $inputs = $request->validated();
 
-        $inputs['thumbnail'] = $this->fileUploadService
+        $inputs['thumbnail'] = $this->fileManagerService
             ->uploadMultiQualityImage(
                 $inputs['thumbnail'],
                 'posts' . DIRECTORY_SEPARATOR . 'thumbnails',
@@ -112,7 +112,7 @@ class PostController extends Controller
 
         if (isset($inputs['thumbnail'])) {
             $imageService->deleteIndex($post->thumbnail);
-            $inputs['thumbnail'] = $this->fileUploadService
+            $inputs['thumbnail'] = $this->fileManagerService
                 ->uploadMultiQualityImage(
                     $inputs['thumbnail'],
                     'posts' . DIRECTORY_SEPARATOR . 'thumbnails',

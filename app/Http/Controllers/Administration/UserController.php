@@ -24,11 +24,11 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Exports\UsersExport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
-use App\Services\Upload\FileUpload;
+use App\Services\FileManager\FileManager;
 
 class UserController extends Controller
 {
-    public function __construct(private FileUpload $fileUploadService)
+    public function __construct(private FileManager $fileManagerService)
     {
         //
     }
@@ -76,7 +76,7 @@ class UserController extends Controller
             $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
 
             if (isset($inputs['avatar'])) {
-                $user->avatar = $this->fileUploadService
+                $user->avatar = $this->fileManagerService
                     ->uploadWithResizingImage(
                         $inputs['avatar'],
                         'users' . DIRECTORY_SEPARATOR . 'avatars',
@@ -142,7 +142,7 @@ class UserController extends Controller
 
         if (isset($inputs['avatar'])) {
             $imageService->deleteImage($request->user()->avatar);
-            $user->avatar = $this->fileUploadService
+            $user->avatar = $this->fileManagerService
                 ->uploadWithResizingImage(
                     $inputs['avatar'],
                     'users' . DIRECTORY_SEPARATOR . 'avatars',
