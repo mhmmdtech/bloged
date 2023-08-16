@@ -3,7 +3,6 @@
 namespace App\Exports;
 
 use App\Http\Resources\UserCollection;
-use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Illuminate\Database\Eloquent\Collection;
