@@ -29,7 +29,7 @@ export default ({ auth, provinces }) => {
     }
 
     function restore(id) {
-        router.delete(route("administration.provinces.restore", id), {
+        router.patch(route("administration.provinces.restore", id), {
             onBefore: () =>
                 confirm("Are you sure you want to restore this province?"),
         });

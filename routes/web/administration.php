@@ -25,20 +25,20 @@ Route::prefix('terminator')->name('administration.')->middleware(['auth', 'verif
 
     Route::get('categories/trashed', [CategoryController::class, 'trashed'])->name('categories.trashed');
     Route::delete('categories/force-delete/{category?}', [CategoryController::class, 'forceDelete'])->withTrashed()->name('categories.force-delete');
-    Route::delete('categories/restore/{category}', [CategoryController::class, 'restore'])->withTrashed()->name('categories.restore');
+    Route::patch('categories/restore/{category}', [CategoryController::class, 'restore'])->withTrashed()->name('categories.restore');
     Route::resource('categories', CategoryController::class);
 
     Route::patch('/posts/{post}/toggle-featured', [PostController::class, 'toggleFeatured'])->name('posts.toggle-featured');
     Route::get('posts/trashed', [PostController::class, 'trashed'])->name('posts.trashed');
     Route::delete('posts/force-delete/{post?}', [PostController::class, 'forceDelete'])->withTrashed()->name('posts.force-delete');
-    Route::delete('posts/restore/{post}', [PostController::class, 'restore'])->withTrashed()->name('posts.restore');
+    Route::patch('posts/restore/{post}', [PostController::class, 'restore'])->withTrashed()->name('posts.restore');
     Route::resource('posts', PostController::class);
 
     Route::resource('logs', LogController::class)->only(['index', 'show']);
 
     Route::get('provinces/trashed', [ProvinceController::class, 'trashed'])->name('provinces.trashed');
     Route::delete('provinces/force-delete/{province?}', [ProvinceController::class, 'forceDelete'])->withTrashed()->name('provinces.force-delete');
-    Route::delete('provinces/restore/{province}', [ProvinceController::class, 'restore'])->withTrashed()->name('provinces.restore');
+    Route::patch('provinces/restore/{province}', [ProvinceController::class, 'restore'])->withTrashed()->name('provinces.restore');
     Route::resource('provinces', ProvinceController::class);
 
     Route::resource('provinces.cities', CityController::class)->shallow();
