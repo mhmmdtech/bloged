@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Application;
 
-use App\Enums\CategoryStatus;
-use App\Enums\PostStatus;
+use App\Enums;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
@@ -19,7 +18,7 @@ class CategoryController extends Controller
     public function index()
     {
 
-        $categories = new CategoryCollection(Category::with('creator')->where('status', CategoryStatus::Active->value)->latest($this->normalOrderedColumn)->get());
+        $categories = new CategoryCollection(Category::with('creator')->where('status', Enums\CategoryStatus::Active->value)->latest($this->normalOrderedColumn)->get());
 
         return Inertia::render('App/Categories/Index', compact('categories'));
     }
@@ -33,7 +32,7 @@ class CategoryController extends Controller
 
         $category = new CategoryResource($category);
 
-        $posts = new PostCollection($category->posts()->where('status', PostStatus::Published)->with('author')->latest($this->normalOrderedColumn)->paginate($this->applicationPaginatedItemsCount));
+        $posts = new PostCollection($category->posts()->where('status', Enums\PostStatus::Published)->with('author')->latest($this->normalOrderedColumn)->paginate($this->applicationPaginatedItemsCount));
 
         return Inertia::render('App/Categories/Single', compact('category', 'posts'));
     }

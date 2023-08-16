@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Administration;
 
 use App\Enums\GenderStatus;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Exports\UsersExport;
 use App\Http\Resources\UserCollection;
 use App\Models\User;

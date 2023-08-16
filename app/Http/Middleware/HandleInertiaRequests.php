@@ -2,13 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Category;
-use App\Models\Post;
-use App\Models\User;
 use App\Http\Resources\UserResource;
-use App\Models\City;
-use App\Models\Log;
-use App\Models\Province;
+use App\Models;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
@@ -41,16 +36,16 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user() === null ? $request->user() : new UserResource($request->user()),
                 'can' => [
-                    'browse_category' => $request->user() && $request->user()->can('browse category', Category::class),
-                    'delete_category' => $request->user() && $request->user()->can('delete category', Category::class),
-                    'browse_post' => $request->user() && $request->user()->can('browse post', Post::class),
-                    'delete_post' => $request->user() && $request->user()->can('delete post', Post::class),
-                    'browse_user' => $request->user() && $request->user()->can('browse user', User::class),
-                    'browse_log' => $request->user() && $request->user()->can('browse log', Log::class),
-                    'browse_province' => $request->user() && $request->user()->can('browse province', Province::class),
-                    'delete_province' => $request->user() && $request->user()->can('delete province', Province::class),
-                    'browse_city' => $request->user() && $request->user()->can('browse city', City::class),
-                    'browse_analytic' => $request->user() && $request->user()->can('browse analytic', User::class),
+                    'browse_category' => $request->user() && $request->user()->can('browse category', Models\Category::class),
+                    'delete_category' => $request->user() && $request->user()->can('delete category', Models\Category::class),
+                    'browse_post' => $request->user() && $request->user()->can('browse post', Models\Post::class),
+                    'delete_post' => $request->user() && $request->user()->can('delete post', Models\Post::class),
+                    'browse_user' => $request->user() && $request->user()->can('browse user', Models\User::class),
+                    'browse_log' => $request->user() && $request->user()->can('browse log', Models\Log::class),
+                    'browse_province' => $request->user() && $request->user()->can('browse province', Models\Province::class),
+                    'delete_province' => $request->user() && $request->user()->can('delete province', Models\Province::class),
+                    'browse_city' => $request->user() && $request->user()->can('browse city', Models\City::class),
+                    'browse_analytic' => $request->user() && $request->user()->can('browse analytic', Models\User::class),
                 ],
             ],
             'ziggy' => function () use ($request) {

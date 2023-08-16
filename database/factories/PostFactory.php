@@ -3,8 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\PostStatus;
-use App\Models\Category;
-use App\Models\User;
+use App\Models;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -23,8 +22,8 @@ class PostFactory extends Factory
         $title = fake()->unique()->sentence();
         $description = fake()->text();
         $body = fake()->paragraphs(3, true);
-        $authors = collect(User::all()->modelKeys());
-        $categories = collect(Category::all()->modelKeys());
+        $authors = collect(Models\User::all()->modelKeys());
+        $categories = collect(Models\Category::all()->modelKeys());
 
         return [
             'thumbnail' => ['directory' => 'images/thumbnails', 'defaultSize' => 'medium', 'sizes' => ['small' => fake()->imageUrl(640, 640), 'medium' => fake()->imageUrl(1280, 720), 'large' => fake()->imageUrl(1920, 1080)]],

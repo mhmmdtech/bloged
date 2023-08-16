@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Application;
 
-use App\Enums\CategoryStatus;
-use App\Enums\PostStatus;
+use App\Enums;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\PostCollection;
@@ -25,9 +24,9 @@ class HomeController extends Controller
         if (collect($featuredPost)->isNotEmpty())
             $featuredPost = new PostResource($featuredPost);
 
-        $latestPosts = new PostCollection(Post::with('category', 'author')->where('status', PostStatus::Published->value)->latest($this->normalOrderedColumn)->take(6)->get());
+        $latestPosts = new PostCollection(Post::with('category', 'author')->where('status', Enums\PostStatus::Published->value)->latest($this->normalOrderedColumn)->take(6)->get());
 
-        $categories = new CategoryCollection(Category::with('creator')->where('status', CategoryStatus::Active->value)->latest($this->normalOrderedColumn)->take(3)->get());
+        $categories = new CategoryCollection(Category::with('creator')->where('status', Enums\CategoryStatus::Active->value)->latest($this->normalOrderedColumn)->take(3)->get());
 
         return Inertia::render('App/Home', compact('featuredPost', 'latestPosts', 'categories'));
     }

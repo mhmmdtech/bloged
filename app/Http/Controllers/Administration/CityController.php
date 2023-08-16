@@ -11,7 +11,6 @@ use App\Http\Resources\CityResource;
 use App\Http\Resources\ProvinceResource;
 use App\Models\City;
 use App\Models\Province;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CityController extends Controller
