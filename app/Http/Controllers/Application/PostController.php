@@ -16,7 +16,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = new PostCollection(Post::with('category', 'author')->where('status', PostStatus::Published->value)->latest()->paginate(10));
+        $posts = new PostCollection(Post::with('category', 'author')->where('status', PostStatus::Published->value)->latest('id')->paginate(10));
 
         return Inertia::render('App/Posts/Index', compact('posts'));
     }

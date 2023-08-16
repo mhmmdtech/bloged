@@ -34,7 +34,7 @@ class UserController extends Controller
     {
         $this->authorize('browse user', User::class);
 
-        $users = new UserCollection(User::with('roles')->latest()->paginate(5));
+        $users = new UserCollection(User::with('roles')->latest('id')->paginate(5));
 
         return Inertia::render('Admin/Users/Index', compact('users'));
     }

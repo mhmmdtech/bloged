@@ -150,7 +150,7 @@ class PostController extends Controller
     {
         $this->authorize('delete post', Post::class);
 
-        $posts = new PostCollection(post::onlyTrashed()->latest('id')->paginate(5));
+        $posts = new PostCollection(post::onlyTrashed()->latest('deleted_at')->paginate(5));
 
         return Inertia::render('Admin/Posts/Trashed', compact('posts'));
     }

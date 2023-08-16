@@ -127,7 +127,7 @@ class CategoryController extends Controller
     {
         $this->authorize('delete category', Category::class);
 
-        $categories = new CategoryCollection(Category::onlyTrashed()->latest('id')->paginate(5));
+        $categories = new CategoryCollection(Category::onlyTrashed()->latest('deleted_at')->paginate(5));
 
         return Inertia::render('Admin/Categories/Trashed', compact('categories'));
     }
