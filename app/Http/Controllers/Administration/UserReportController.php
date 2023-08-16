@@ -9,6 +9,7 @@ use App\Exports\UsersExport;
 use App\Http\Resources\UserCollection;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\Eloquent\Builder;
 use Inertia\Inertia;
 
 class UserReportController extends Controller
@@ -19,35 +20,15 @@ class UserReportController extends Controller
     public function report()
     {
         $this->authorize('browse analytic', User::class);
-        $results = [];
-        $allowedColumns = ['province', 'city', 'gender',];
+        $allowedColumns = ['province', 'city', 'gender'];
         $userInputs = removeNullFromArray(request()->input());
         $reportParameters = array_intersect_key($userInputs, array_flip($allowedColumns));
         $genders = GenderStatus::array();
-
         if (count($reportParameters) === 0) {
             return Inertia::render('Admin/Users/Report', compact('genders'));
         }
 
-        $query = User::query();
-
-        if (array_key_exists('gender', $reportParameters)) {
-            $query->where('gender', request()->query('gender'));
-        }
-
-        if (array_key_exists('province', $reportParameters)) {
-            $province = request()->query('province');
-            $query->whereHas('province', function ($query) use ($province) {
-                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$province]);
-            });
-        }
-
-        if (array_key_exists('city', $reportParameters)) {
-            $city = request()->query('city');
-            $query->whereHas('city', function ($query) use ($city) {
-                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$city]);
-            });
-        }
+        $query = $this->generateReportQuery($reportParameters);
 
         $results = $query->paginate($this->administrationPaginatedItemsCount)->withQueryString();
         $results = new UserCollection($results);
@@ -67,7 +48,7 @@ class UserReportController extends Controller
             return redirect()->route('administration.users.report', request()->query());
         }
 
-        $allowedColumns = ['province', 'city', 'gender',];
+        $allowedColumns = ['province', 'city', 'gender'];
         $userInputs = removeNullFromArray(request()->input());
         $reportParameters = array_intersect_key($userInputs, array_flip($allowedColumns));
 
@@ -93,29 +74,31 @@ class UserReportController extends Controller
     }
 
     /**
+     *  generate sql query for requested report
+     */
+    private function generateReportQuery($reportParameters): Builder
+    {
+        $query = User::query();
+
+        foreach ($reportParameters as $parameter => $value) {
+            if ($parameter === 'gender') {
+                $query->where('gender', $reportParameters['gender']);
+                break;
+            }
+            $query->whereHas($parameter, function ($query) use ($value) {
+                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$value]);
+            });
+        }
+
+        return $query;
+    }
+
+    /**
      *  generate printable report file
      */
     private function printReport($reportParameters)
     {
-        $query = User::query();
-
-        if (array_key_exists('gender', $reportParameters)) {
-            $query->where('gender', request()->query('gender'));
-        }
-
-        if (array_key_exists('province', $reportParameters)) {
-            $province = request()->query('province');
-            $query->whereHas('province', function ($query) use ($province) {
-                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$province]);
-            });
-        }
-
-        if (array_key_exists('city', $reportParameters)) {
-            $city = request()->query('city');
-            $query->whereHas('city', function ($query) use ($city) {
-                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$city]);
-            });
-        }
+        $query = $this->generateReportQuery($reportParameters);
 
         $users = $query->get();
         $users = new UserCollection($users);
@@ -127,25 +110,7 @@ class UserReportController extends Controller
      */
     private function pdfReport($reportParameters)
     {
-        $query = User::query();
-
-        if (array_key_exists('gender', $reportParameters)) {
-            $query->where('gender', request()->query('gender'));
-        }
-
-        if (array_key_exists('province', $reportParameters)) {
-            $province = request()->query('province');
-            $query->whereHas('province', function ($query) use ($province) {
-                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$province]);
-            });
-        }
-
-        if (array_key_exists('city', $reportParameters)) {
-            $city = request()->query('city');
-            $query->whereHas('city', function ($query) use ($city) {
-                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$city]);
-            });
-        }
+        $query = $this->generateReportQuery($reportParameters);
 
         $users = $query->get();
         $users = new UserCollection($users);
@@ -155,29 +120,11 @@ class UserReportController extends Controller
 
     /**
      *  genrate excel report file
+     * https://docs.laravel-excel.com/
      */
     private function excelReport($reportParameters)
     {
-        // https://docs.laravel-excel.com/
-        $query = User::query();
-
-        if (array_key_exists('gender', $reportParameters)) {
-            $query->where('gender', request()->query('gender'));
-        }
-
-        if (array_key_exists('province', $reportParameters)) {
-            $province = request()->query('province');
-            $query->whereHas('province', function ($query) use ($province) {
-                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$province]);
-            });
-        }
-
-        if (array_key_exists('city', $reportParameters)) {
-            $city = request()->query('city');
-            $query->whereHas('city', function ($query) use ($city) {
-                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$city]);
-            });
-        }
+        $query = $this->generateReportQuery($reportParameters);
 
         $result = $query->get();
 
@@ -186,29 +133,11 @@ class UserReportController extends Controller
 
     /**
      *  genrate csv report file
+     * https://github.com/vitorccs/laravel-csv
      */
     private function csvReport($reportParameters)
     {
-        // https://github.com/vitorccs/laravel-csv
-        $query = User::query();
-
-        if (array_key_exists('gender', $reportParameters)) {
-            $query->where('gender', request()->query('gender'));
-        }
-
-        if (array_key_exists('province', $reportParameters)) {
-            $province = request()->query('province');
-            $query->whereHas('province', function ($query) use ($province) {
-                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$province]);
-            });
-        }
-
-        if (array_key_exists('city', $reportParameters)) {
-            $city = request()->query('city');
-            $query->whereHas('city', function ($query) use ($city) {
-                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$city]);
-            });
-        }
+        $query = $this->generateReportQuery($reportParameters);
 
         $result = $query->get();
 
