@@ -39,12 +39,6 @@ class RegisteredUserController extends Controller
     {
         $inputs = $request->validated();
 
-        $inputs['mobile_number'] = convertToIrMobileFormat($inputs['mobile_number']);
-
-        if ($inputs['gender'] != GenderStatus::Male->value)
-            $inputs['military_status'] = null;
-
-
         DB::beginTransaction();
         try {
             $user = User::create($inputs);
