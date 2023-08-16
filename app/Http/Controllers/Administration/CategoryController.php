@@ -135,17 +135,19 @@ class CategoryController extends Controller
     /**
      * force delete the specified resource from storage.
      */
-    public function forceDelete(ImageService $imageService, $categoryUniqueId = null)
+    public function forceDelete(ImageService $imageService, ?Category $category = null)
     {
         $this->authorize('delete category', Category::class);
 
-        if (is_null($categoryUniqueId)) {
-            $trashedCategories = Category::onlyTrashed()->get(['id'])->toArray();
-            Category::whereIn('id', array_flatten($trashedCategories))->forceDelete();
+        if (is_null($category)) {
+            $trashedCategories = Category::onlyTrashed()->get(['id', 'thumbnail']);
+            $trashedCategories->each(function (Category $category) use ($imageService) {
+                $imageService->deleteIndex($category->thumbnail);
+            });
+            Category::whereIn('id', array_flatten($trashedCategories->toArray()))->forceDelete();
             return redirect()->route('administration.categories.trashed');
         }
 
-        $category = Category::withTrashed()->where("unique_id", $categoryUniqueId)->first();
         $imageService->deleteIndex($category->thumbnail);
         $category->forceDelete();
         return redirect()->route('administration.categories.trashed');
@@ -154,10 +156,9 @@ class CategoryController extends Controller
     /**
      * restore the specified resource from storage.
      */
-    public function restore($categoryUniqueId)
+    public function restore(Category $category)
     {
         $this->authorize('delete category', Category::class);
-        $category = Category::withTrashed()->where("unique_id", $categoryUniqueId)->first();
         $category->restore();
         return redirect()->route('administration.categories.trashed');
     }

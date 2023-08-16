@@ -158,17 +158,19 @@ class PostController extends Controller
     /**
      * force delete the specified resource from storage.
      */
-    public function forceDelete(ImageService $imageService, $postUniqueId = null)
+    public function forceDelete(ImageService $imageService, ?Post $post = null)
     {
         $this->authorize('delete post', Post::class);
 
-        if (is_null($postUniqueId)) {
-            $trashedPosts = Post::onlyTrashed()->get(['id'])->toArray();
-            Post::whereIn('id', array_flatten($trashedPosts))->forceDelete();
+        if (is_null($post)) {
+            $trashedPosts = Post::onlyTrashed()->get(['id', 'thumbnail']);
+            $trashedPosts->each(function (Post $post) use ($imageService) {
+                $imageService->deleteIndex($post->thumbnail);
+            });
+            Post::whereIn('id', array_flatten($trashedPosts->toArray()))->forceDelete();
             return redirect()->route('administration.posts.trashed');
         }
 
-        $post = Post::withTrashed()->where("unique_id", $postUniqueId)->first();
         $imageService->deleteIndex($post->thumbnail);
         $post->forceDelete();
         return redirect()->route('administration.posts.trashed');
@@ -177,10 +179,9 @@ class PostController extends Controller
     /**
      * restore the specified resource from storage.
      */
-    public function restore($postUniqueId)
+    public function restore(Post $post)
     {
         $this->authorize('delete post', Post::class);
-        $post = Post::withTrashed()->where("unique_id", $postUniqueId)->first();
         $post->restore();
         return redirect()->route('administration.posts.trashed');
     }
