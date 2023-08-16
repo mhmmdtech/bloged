@@ -104,14 +104,14 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, ImageService $imageService, Post $post)
+    public function update(UpdatePostRequest $request, Post $post)
     {
         $this->authorize('edit post', $post);
 
         $inputs = removeNullFromArray($request->validated());
 
         if (isset($inputs['thumbnail'])) {
-            $imageService->deleteIndex($post->thumbnail);
+            $this->fileManagerService->deleteMultiQualityImage($post->thumbnail);
             $inputs['thumbnail'] = $this->fileManagerService
                 ->uploadMultiQualityImage(
                     $inputs['thumbnail'],
@@ -167,20 +167,21 @@ class PostController extends Controller
     /**
      * force delete the specified resource from storage.
      */
-    public function forceDelete(ImageService $imageService, ?Post $post = null)
+    public function forceDelete(?Post $post = null)
     {
         $this->authorize('delete post', Post::class);
 
         if (is_null($post)) {
             $trashedPosts = Post::onlyTrashed()->get(['id', 'thumbnail']);
-            $trashedPosts->each(function (Post $post) use ($imageService) {
-                $imageService->deleteIndex($post->thumbnail);
+            $trashedPosts->each(function (Post $post) {
+                $this->fileManagerService->deleteMultiQualityImage($post->thumbnail);
+
             });
             Post::whereIn('id', array_flatten($trashedPosts->toArray()))->forceDelete();
             return redirect()->route('administration.posts.trashed');
         }
 
-        $imageService->deleteIndex($post->thumbnail);
+        $this->fileManagerService->deleteMultiQualityImage($post->thumbnail);
         $post->forceDelete();
         return redirect()->route('administration.posts.trashed');
     }

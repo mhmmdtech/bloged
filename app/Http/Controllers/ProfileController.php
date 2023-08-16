@@ -7,7 +7,6 @@ use App\Enums\MilitaryStatus;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Province;
-use App\Services\Image\ImageService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,12 +41,13 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request, ImageService $imageService): RedirectResponse
+    public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $inputs = removeNullFromArray($request->validated());
 
         if (isset($inputs['avatar'])) {
-            $imageService->deleteImage($request->user()->avatar);
+            $this->fileManagerService->deleteImage($request->user()->avatar);
+
             $inputs['avatar'] = $this->fileManagerService
                 ->uploadWithResizingImage(
                     $inputs['avatar'],

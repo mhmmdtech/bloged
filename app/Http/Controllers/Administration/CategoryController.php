@@ -96,14 +96,14 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, ImageService $imageService, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
         $this->authorize('edit category', $category);
 
         $inputs = removeNullFromArray($request->validated());
 
         if (isset($inputs['thumbnail'])) {
-            $imageService->deleteIndex($category->thumbnail);
+            $this->fileManagerService->deleteMultiQualityImage($category->thumbnail);
             $inputs['thumbnail'] = $this->fileManagerService
                 ->uploadMultiQualityImage(
                     $inputs['thumbnail'],
@@ -144,20 +144,21 @@ class CategoryController extends Controller
     /**
      * force delete the specified resource from storage.
      */
-    public function forceDelete(ImageService $imageService, ?Category $category = null)
+    public function forceDelete(?Category $category = null)
     {
         $this->authorize('delete category', Category::class);
 
         if (is_null($category)) {
             $trashedCategories = Category::onlyTrashed()->get(['id', 'thumbnail']);
-            $trashedCategories->each(function (Category $category) use ($imageService) {
-                $imageService->deleteIndex($category->thumbnail);
+            $trashedCategories->each(function (Category $category) {
+                $this->fileManagerService->deleteMultiQualityImage($category->thumbnail);
+
             });
             Category::whereIn('id', array_flatten($trashedCategories->toArray()))->forceDelete();
             return redirect()->route('administration.categories.trashed');
         }
 
-        $imageService->deleteIndex($category->thumbnail);
+        $this->fileManagerService->deleteMultiQualityImage($category->thumbnail);
         $category->forceDelete();
         return redirect()->route('administration.categories.trashed');
     }

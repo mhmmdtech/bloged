@@ -20,11 +20,21 @@ class FileManager
         return $this->imageService->createIndexAndSave($file);
     }
 
+    public function deleteMultiQualityImage($image)
+    {
+        $this->imageService->deleteIndex($image);
+    }
+
     public function uploadWithResizingImage($file, $path, $name, $width = 400, $height = 400)
     {
         $this->imageService->setExclusiveDirectory('images');
         $this->imageService->setImageDirectory($path);
         $this->imageService->setImageName(Str::slug($name));
         return $this->imageService->fitAndSave($file, $width, $height);
+    }
+
+    public function deleteImage($image)
+    {
+        $this->imageService->deleteImage($image);
     }
 }

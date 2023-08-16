@@ -12,7 +12,6 @@ use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\Province;
 use App\Models\User;
-use App\Services\Image\ImageService;
 use Inertia\Inertia;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
@@ -126,14 +125,14 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, ImageService $imageService, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
         $this->authorize('edit user', $user);
 
         $inputs = removeNullFromArray($request->validated());
 
         if (isset($inputs['avatar'])) {
-            $imageService->deleteImage($request->user()->avatar);
+            $this->fileManagerService->deleteImage($request->user()->avatar);
             $user->avatar = $this->fileManagerService
                 ->uploadWithResizingImage(
                     $inputs['avatar'],
@@ -163,13 +162,13 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user, ImageService $imageService)
+    public function destroy(User $user)
     {
         $this->authorize('delete user', $user);
 
         $user->delete();
 
-        $imageService->deleteImage($user->avatar);
+        $this->fileManagerService->deleteImage($user->avatar);
 
         event(new UserModified(auth()->id(), 'destroy', User::class, $user->id, $user->toArray(), []));
 
