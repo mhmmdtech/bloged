@@ -20,7 +20,7 @@ class ProvinceController extends Controller
     {
         $this->authorize('browse province', Province::class);
 
-        $provinces = new ProvinceCollection(Province::latest()->paginate(5));
+        $provinces = new ProvinceCollection(Province::latest($this->normalOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
 
         return Inertia::render('Admin/Provinces/Index', compact('provinces'));
     }
@@ -112,7 +112,7 @@ class ProvinceController extends Controller
     {
         $this->authorize('delete province', Province::class);
 
-        $provinces = new ProvinceCollection(Province::onlyTrashed()->latest()->paginate(5));
+        $provinces = new ProvinceCollection(Province::onlyTrashed()->latest($this->trashedOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
 
         return Inertia::render('Admin/Provinces/Trashed', compact('provinces'));
     }
@@ -120,17 +120,16 @@ class ProvinceController extends Controller
     /**
      * force delete the specified resource from storage.
      */
-    public function forceDelete($provinceId = null)
+    public function forceDelete(?Province $province = null)
     {
         $this->authorize('delete province', Province::class);
 
-        if (is_null($provinceId)) {
-            $trashedProvinces = Province::onlyTrashed()->get(['id'])->toArray();
-            Province::whereIn('id', array_flatten($trashedProvinces))->forceDelete();
+        if (is_null($province)) {
+            $trashedProvinces = Province::onlyTrashed()->get(['id']);
+            Province::whereIn('id', array_flatten($trashedProvinces->toArray()))->forceDelete();
             return redirect()->route('administration.provinces.trashed');
         }
 
-        $province = Province::withTrashed()->findOrFail($provinceId);
         $province->forceDelete();
         return redirect()->route('administration.provinces.trashed');
     }
@@ -138,10 +137,9 @@ class ProvinceController extends Controller
     /**
      * restore the specified resource from storage.
      */
-    public function restore($provinceId)
+    public function restore(Province $province)
     {
         $this->authorize('delete province', Province::class);
-        $province = Province::withTrashed()->findOrFail($provinceId);
         $province->restore();
         return redirect()->route('administration.provinces.trashed');
     }

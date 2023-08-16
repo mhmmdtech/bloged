@@ -334,7 +334,6 @@ export default function Create({ auth, genders, militaryStatuses, provinces }) {
                                 onChange={(e) =>
                                     setData("military_status", e.target.value)
                                 }
-                                disabled={data.gender != 1}
                             >
                                 <option value="">Choose</option>
                                 {Object.entries(militaryStatuses).map(

@@ -13,10 +13,15 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Services\Image\ImageService;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
+use App\Services\FileManager\FileManager;
 
 class PostController extends Controller
 {
+    public function __construct(private FileManager $fileManagerService)
+    {
+        //
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -24,7 +29,7 @@ class PostController extends Controller
     {
         $this->authorize('browse post', Post::class);
 
-        $posts = new PostCollection(Post::with('author', 'category')->latest('id')->paginate(5));
+        $posts = new PostCollection(Post::with('author', 'category')->latest($this->normalOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
 
         return Inertia::render('Admin/Posts/Index', compact('posts'));
     }
@@ -46,16 +51,18 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePostRequest $request, ImageService $imageService)
+    public function store(StorePostRequest $request)
     {
         $this->authorize('add post', Post::class);
 
         $inputs = $request->validated();
 
-        $imageService->setExclusiveDirectory('images');
-        $imageService->setImageDirectory('posts' . DIRECTORY_SEPARATOR . 'thumbnails');
-        $imageService->setImageName(Str::slug($inputs['seo_title']));
-        $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
+        $inputs['thumbnail'] = $this->fileManagerService
+            ->uploadMultiQualityImage(
+                $inputs['thumbnail'],
+                'posts' . DIRECTORY_SEPARATOR . 'thumbnails',
+                $inputs['seo_title']
+            );
 
         auth()->user()->posts()->create($inputs);
 
@@ -97,18 +104,20 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, ImageService $imageService, Post $post)
+    public function update(UpdatePostRequest $request, Post $post)
     {
         $this->authorize('edit post', $post);
 
         $inputs = removeNullFromArray($request->validated());
 
         if (isset($inputs['thumbnail'])) {
-            $imageService->deleteIndex($post->thumbnail);
-            $imageService->setExclusiveDirectory('images');
-            $imageService->setImageDirectory('posts' . DIRECTORY_SEPARATOR . 'thumbnails');
-            $imageService->setImageName(Str::slug($inputs['seo_title']));
-            $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
+            $this->fileManagerService->deleteMultiQualityImage($post->thumbnail);
+            $inputs['thumbnail'] = $this->fileManagerService
+                ->uploadMultiQualityImage(
+                    $inputs['thumbnail'],
+                    'posts' . DIRECTORY_SEPARATOR . 'thumbnails',
+                    $inputs['seo_title']
+                );
         }
 
         $post->update($inputs);
@@ -150,7 +159,7 @@ class PostController extends Controller
     {
         $this->authorize('delete post', Post::class);
 
-        $posts = new PostCollection(post::onlyTrashed()->latest('id')->paginate(5));
+        $posts = new PostCollection(post::onlyTrashed()->latest($this->trashedOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
 
         return Inertia::render('Admin/Posts/Trashed', compact('posts'));
     }
@@ -158,18 +167,21 @@ class PostController extends Controller
     /**
      * force delete the specified resource from storage.
      */
-    public function forceDelete(ImageService $imageService, $postUniqueId = null)
+    public function forceDelete(?Post $post = null)
     {
         $this->authorize('delete post', Post::class);
 
-        if (is_null($postUniqueId)) {
-            $trashedPosts = Post::onlyTrashed()->get(['id'])->toArray();
-            Post::whereIn('id', array_flatten($trashedPosts))->forceDelete();
+        if (is_null($post)) {
+            $trashedPosts = Post::onlyTrashed()->get(['id', 'thumbnail']);
+            $trashedPosts->each(function (Post $post) {
+                $this->fileManagerService->deleteMultiQualityImage($post->thumbnail);
+
+            });
+            Post::whereIn('id', array_flatten($trashedPosts->toArray()))->forceDelete();
             return redirect()->route('administration.posts.trashed');
         }
 
-        $post = Post::withTrashed()->where("unique_id", $postUniqueId)->first();
-        $imageService->deleteIndex($post->thumbnail);
+        $this->fileManagerService->deleteMultiQualityImage($post->thumbnail);
         $post->forceDelete();
         return redirect()->route('administration.posts.trashed');
     }
@@ -177,10 +189,9 @@ class PostController extends Controller
     /**
      * restore the specified resource from storage.
      */
-    public function restore($postUniqueId)
+    public function restore(Post $post)
     {
         $this->authorize('delete post', Post::class);
-        $post = Post::withTrashed()->where("unique_id", $postUniqueId)->first();
         $post->restore();
         return redirect()->route('administration.posts.trashed');
     }

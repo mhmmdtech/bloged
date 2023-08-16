@@ -25,7 +25,7 @@ class CityController extends Controller
 
         $province = new ProvinceResource($province);
 
-        $cities = new CityCollection($province->cities()->paginate(5));
+        $cities = new CityCollection($province->cities()->paginate($this->administrationPaginatedItemsCount));
 
         return Inertia::render('Admin/Cities/Index', compact('province', 'cities'));
     }

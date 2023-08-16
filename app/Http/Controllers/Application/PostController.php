@@ -16,7 +16,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = new PostCollection(Post::with('category', 'author')->where('status', PostStatus::Published->value)->latest()->paginate(10));
+        $posts = new PostCollection(Post::with('category', 'author')->where('status', PostStatus::Published->value)->latest($this->normalOrderedColumn)->paginate($this->applicationPaginatedItemsCount));
 
         return Inertia::render('App/Posts/Index', compact('posts'));
     }
@@ -31,16 +31,5 @@ class PostController extends Controller
         $post = new PostResource($post);
 
         return Inertia::render('App/Posts/Show', compact('post'));
-    }
-
-    /**
-     * Search about specified resource.
-     */
-    public function search()
-    {
-        $query = trim(request()->query('query', ""));
-        $posts = Post::with('author', 'category')->whereRaw("MATCH(title, seo_title, description, seo_description, body) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$query])->paginate(5);
-        $posts = new PostCollection($posts);
-        return Inertia::render('App/Search', compact('posts', 'query'));
     }
 }

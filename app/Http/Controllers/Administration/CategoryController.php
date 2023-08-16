@@ -10,11 +10,16 @@ use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Services\Image\ImageService;
+use App\Services\FileManager\FileManager;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+    public function __construct(private FileManager $fileManagerService)
+    {
+        //
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -22,7 +27,7 @@ class CategoryController extends Controller
     {
         $this->authorize('browse category', Category::class);
 
-        $categories = new CategoryCollection(Category::latest('id')->paginate(5));
+        $categories = new CategoryCollection(Category::latest($this->normalOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
 
         return Inertia::render('Admin/Categories/Index', compact('categories'));
     }
@@ -42,16 +47,18 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCategoryRequest $request, ImageService $imageService)
+    public function store(StoreCategoryRequest $request)
     {
         $this->authorize('add category', Category::class);
 
         $inputs = $request->validated();
 
-        $imageService->setExclusiveDirectory('images');
-        $imageService->setImageDirectory('categories' . DIRECTORY_SEPARATOR . 'thumbnails');
-        $imageService->setImageName(Str::slug($inputs['seo_title']));
-        $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
+        $inputs['thumbnail'] = $this->fileManagerService
+            ->uploadMultiQualityImage(
+                $inputs['thumbnail'],
+                'categories' . DIRECTORY_SEPARATOR . 'thumbnails',
+                $inputs['seo_title']
+            );
 
         auth()->user()->categories()->create($inputs);
 
@@ -89,18 +96,20 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, ImageService $imageService, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
         $this->authorize('edit category', $category);
 
         $inputs = removeNullFromArray($request->validated());
 
         if (isset($inputs['thumbnail'])) {
-            $imageService->deleteIndex($category->thumbnail);
-            $imageService->setExclusiveDirectory('images');
-            $imageService->setImageDirectory('categories' . DIRECTORY_SEPARATOR . 'thumbnails');
-            $imageService->setImageName(Str::slug($inputs['seo_title']));
-            $inputs['thumbnail'] = $imageService->createIndexAndSave($inputs['thumbnail']);
+            $this->fileManagerService->deleteMultiQualityImage($category->thumbnail);
+            $inputs['thumbnail'] = $this->fileManagerService
+                ->uploadMultiQualityImage(
+                    $inputs['thumbnail'],
+                    'categories' . DIRECTORY_SEPARATOR . 'thumbnails',
+                    $inputs['seo_title']
+                );
         }
 
         $category->update($inputs);
@@ -127,7 +136,7 @@ class CategoryController extends Controller
     {
         $this->authorize('delete category', Category::class);
 
-        $categories = new CategoryCollection(Category::onlyTrashed()->latest('id')->paginate(5));
+        $categories = new CategoryCollection(Category::onlyTrashed()->latest($this->trashedOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
 
         return Inertia::render('Admin/Categories/Trashed', compact('categories'));
     }
@@ -135,18 +144,21 @@ class CategoryController extends Controller
     /**
      * force delete the specified resource from storage.
      */
-    public function forceDelete(ImageService $imageService, $categoryUniqueId = null)
+    public function forceDelete(?Category $category = null)
     {
         $this->authorize('delete category', Category::class);
 
-        if (is_null($categoryUniqueId)) {
-            $trashedCategories = Category::onlyTrashed()->get(['id'])->toArray();
-            Category::whereIn('id', array_flatten($trashedCategories))->forceDelete();
+        if (is_null($category)) {
+            $trashedCategories = Category::onlyTrashed()->get(['id', 'thumbnail']);
+            $trashedCategories->each(function (Category $category) {
+                $this->fileManagerService->deleteMultiQualityImage($category->thumbnail);
+
+            });
+            Category::whereIn('id', array_flatten($trashedCategories->toArray()))->forceDelete();
             return redirect()->route('administration.categories.trashed');
         }
 
-        $category = Category::withTrashed()->where("unique_id", $categoryUniqueId)->first();
-        $imageService->deleteIndex($category->thumbnail);
+        $this->fileManagerService->deleteMultiQualityImage($category->thumbnail);
         $category->forceDelete();
         return redirect()->route('administration.categories.trashed');
     }
@@ -154,10 +166,9 @@ class CategoryController extends Controller
     /**
      * restore the specified resource from storage.
      */
-    public function restore($categoryUniqueId)
+    public function restore(Category $category)
     {
         $this->authorize('delete category', Category::class);
-        $category = Category::withTrashed()->where("unique_id", $categoryUniqueId)->first();
         $category->restore();
         return redirect()->route('administration.categories.trashed');
     }

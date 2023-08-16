@@ -7,7 +7,6 @@ use App\Enums\MilitaryStatus;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Province;
-use App\Services\Image\ImageService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,9 +14,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Services\FileManager\FileManager;
 
 class ProfileController extends Controller
 {
+    public function __construct(private FileManager $fileManagerService)
+    {
+        //
+    }
+
     /**
      * Display the user's profile form.
      */
@@ -36,21 +41,21 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request, ImageService $imageService): RedirectResponse
+    public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $inputs = removeNullFromArray($request->validated());
 
-        $inputs['mobile_number'] = convertToIrMobileFormat($inputs['mobile_number']);
-
-        if ($inputs['gender'] != GenderStatus::Male->value)
-            $inputs['military_status'] = null;
-
         if (isset($inputs['avatar'])) {
-            $imageService->deleteImage($request->user()->avatar);
-            $imageService->setExclusiveDirectory('images');
-            $imageService->setImageDirectory('users' . DIRECTORY_SEPARATOR . 'avatars');
-            $imageService->setImageName($inputs['username']);
-            $inputs['avatar'] = $imageService->fitAndSave($inputs['avatar'], 400, 400);
+            $this->fileManagerService->deleteImage($request->user()->avatar);
+
+            $inputs['avatar'] = $this->fileManagerService
+                ->uploadWithResizingImage(
+                    $inputs['avatar'],
+                    'users' . DIRECTORY_SEPARATOR . 'avatars',
+                    $inputs['username'],
+                    400,
+                    400
+                );
         }
 
         $request->user()->fill($inputs);

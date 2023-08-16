@@ -3,11 +3,16 @@
 namespace App\Observers;
 
 use App\Models\Category;
+use App\Services\Image\ImageService;
 use App\Services\UniqueId\UniqueId;
 use Illuminate\Support\Str;
 
 class CategoryObserver
 {
+    public function __construct(private ImageService $imageService)
+    {
+        //
+    }
     /**
      * Handle the Category "creating" event.
      */

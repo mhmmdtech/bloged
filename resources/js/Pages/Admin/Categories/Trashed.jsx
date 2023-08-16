@@ -35,7 +35,7 @@ export default ({ auth, categories }) => {
     }
 
     function restore(unique_id) {
-        router.delete(route("administration.categories.restore", unique_id), {
+        router.patch(route("administration.categories.restore", unique_id), {
             onBefore: () =>
                 confirm("Are you sure you want to restore this category?"),
         });

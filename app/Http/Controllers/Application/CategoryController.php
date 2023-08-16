@@ -19,7 +19,7 @@ class CategoryController extends Controller
     public function index()
     {
 
-        $categories = new CategoryCollection(Category::with('creator')->where('status', CategoryStatus::Active->value)->latest()->get());
+        $categories = new CategoryCollection(Category::with('creator')->where('status', CategoryStatus::Active->value)->latest($this->normalOrderedColumn)->get());
 
         return Inertia::render('App/Categories/Index', compact('categories'));
     }
@@ -33,7 +33,7 @@ class CategoryController extends Controller
 
         $category = new CategoryResource($category);
 
-        $posts = new PostCollection($category->posts()->where('status', PostStatus::Published)->with('author')->latest()->paginate(10));
+        $posts = new PostCollection($category->posts()->where('status', PostStatus::Published)->with('author')->latest($this->normalOrderedColumn)->paginate($this->applicationPaginatedItemsCount));
 
         return Inertia::render('App/Categories/Single', compact('category', 'posts'));
     }
