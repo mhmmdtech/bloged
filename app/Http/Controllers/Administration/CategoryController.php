@@ -9,7 +9,6 @@ use App\Http\Requests\Admin\UpdateCategoryRequest;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
-use App\Services\Image\ImageService;
 use App\Services\FileManager\FileManager;
 use Inertia\Inertia;
 

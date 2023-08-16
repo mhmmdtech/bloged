@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\GenderStatus;
-use App\Enums\MilitaryStatus;
+use App\Enums;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Province;
@@ -31,8 +30,8 @@ class ProfileController extends Controller
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
-            'genders' => GenderStatus::array(),
-            'militaryStatuses' => MilitaryStatus::array(),
+            'genders' => Enums\GenderStatus::array(),
+            'militaryStatuses' => Enums\MilitaryStatus::array(),
             'provinces' => Province::with('cities')->get(['id', 'local_name']),
             'user' => new UserResource($request->user()->load('province', 'city')),
         ]);

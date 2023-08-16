@@ -11,7 +11,6 @@ use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
 use App\Models\Category;
 use App\Models\Post;
-use App\Services\Image\ImageService;
 use Inertia\Inertia;
 use App\Services\FileManager\FileManager;
 

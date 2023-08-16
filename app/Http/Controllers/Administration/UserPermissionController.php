@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Administration;
 
 use App\Events\UserModified;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use App\Http\Requests\Admin\UpdateUserPermissionsRequest;
 use App\Http\Resources\UserResource;
