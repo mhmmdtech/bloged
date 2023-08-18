@@ -11,35 +11,35 @@ With Blogged, you can create and manage your blog effortlessly. The project leve
 - [Database Documentation](#database-documentation)
 
 ## Installation
-1. Clone the repository:
+1. Clone the repository:  
 ```git clone  https://github.com/mhmmdtech/bloged.git```
 
-2. Navigate to the Project Directory:
+2. Navigate to the Project Directory:  
 ```cd bloged```
 
-3. Install back-end dependencies:
+3. Install back-end dependencies:  
 ```composer install```
 
 
-4. Create the .env file:
+4. Create the .env file:  
 ```cp .env.example .env```
 
-5. Generate a unique application key:
+5. Generate a unique application key:  
 ```php artisan key:generate```
 
-6. Create and migrate the database:
+6. Create and migrate the database:  
 ``` php artisan migrate --seed ```
 
 7. Run the server:  
 ``` php artisan serve ```
 
-8. Install front-end dependencies:
+8. Install front-end dependencies:  
 ``` npm install ```
 
-9. For development purposes:
+9. For development purposes:  
 ``` npm run dev ```
 
-10 For production purposes:  
+10. For production purposes:  
 ``` npm run build ```
 
 
