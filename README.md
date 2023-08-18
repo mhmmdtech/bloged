@@ -1,66 +1,70 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Blogged
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Blogged is a modern and powerful blog system developed using React, Inertia.js, Laravel, and Tailwind CSS. It offers a seamless and efficient blogging experience with a combination of cutting-edge frontend technologies and a robust backend framework.
 
-## About Laravel
+With Blogged, you can create and manage your blog effortlessly. The project leverages the flexibility and interactivity of React to provide a dynamic and responsive user interface. Inertia.js allows for a single-page application (SPA) experience while utilizing Laravel's backend capabilities for efficient data handling and server-side rendering.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Table of Contents
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [Installation](#installation)
+- [Features](#features)
+- [Database Documentation](#database-documentation)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Installation
+1. Clone the repository:
+```git clone  https://github.com/mhmmdtech/bloged.git```
 
-## Learning Laravel
+2. Navigate to the Project Directory:
+```cd bloged```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. Install back-end dependencies:
+```composer install```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+4. Create the .env file:
+```cp .env.example .env```
 
-## Laravel Sponsors
+5. Generate a unique application key:
+```php artisan key:generate```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+6. Create and migrate the database:
+``` php artisan migrate --seed ```
 
-### Premium Partners
+7. Run the server:  
+``` php artisan serve ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+8. Install front-end dependencies:
+``` npm install ```
 
-## Contributing
+9. For development purposes:
+``` npm run dev ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+10 For production purposes:  
+``` npm run build ```
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
+## Features
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Blogged offers a wide range of features to enhance the blogging experience such as:
 
-## License
+- Rich Registration Form: The registration form in Blogged provides a comprehensive set of fields to collect user information.
+- Captcha Code: To prevent automated spam registrations, Blogged includes a captcha code feature. This helps verify that the user registering is a human and adds an extra layer of security.
+- User Analytics by Provinces: Blogged provides an analytics feature that allows administrators to gain valuable insights into the distribution of users across different provinces. This feature provides a clear understanding of which provinces have the highest concentration of users.
+- Users Advanced Search: Blogged includes an advanced search functionality that enables administrators to search and filter users based on various criteria.
+- User Reports by Province, Cities, and Genders: Administrators can generate user reports in Blogged, providing insights into user demographics based on provinces, cities, and genders. This information helps tailor content and marketing efforts to specific user segments, resulting in more targeted and effective strategies.
+- Creating Categories: Blogged allows administrators to create and manage categories for organizing blog posts.
+- Post Publishing: Blogged provides a straightforward post publishing feature, allowing bloggers to create, edit, and publish their blog posts easily.
+- Avatar Resizing: Blogged includes an avatar resizing feature that automatically adjusts the size of user avatars to ensure consistency and optimal display throughout the blog.
+- Storing Thumbnail Posts and Categories in Different Qualities: To optimize performance and improve load times, Blogged stores thumbnail images for posts and categories in different qualities.
+- SEO-Friendly URL: Blogged generates SEO-friendly URLs for blog posts, adhering to best practices for search engine optimization. This helps improve the visibility and discoverability of blog content, making it easier for search engines and users to find and access the posts.
+- Activity Logs of Users Table: Blogged keeps track of user activity by maintaining activity logs of the users table. This feature allows administrators to monitor and review user actions such as logins, updates to user profiles, and other relevant activities.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+## Database Documentation
+
+- [Database Documentation](https://www.notion.so/mhmmdtech/2f33fa408e3e48609bc2fe50b7779861): This link provides detailed documentation about the database structure, including tables, relationships, and any other relevant information. It offers insights into how the data is organized and accessed within the project.
+- [Database Schema Design](https://drive.google.com/file/d/1HPqS2bFBT8SKWDBh7qFDQDDsa-g6RVI5/view?usp=sharing): This link visualizes the database schema design using Draw.io, a powerful diagramming tool. It showcases the entities, attributes, and relationships in a graphical representation, helping you understand the overall structure and interconnections of the data model.
+
+Thank you for reviewing the project! We value your expertise and would greatly appreciate any suggestions or feedback you have. Please feel free to contact us through your preferred communication channel or email me(mhmmdtech@yahoo.com) to share your thoughts. We are excited to hear your suggestions and improve our project based on your input.
