@@ -24,7 +24,7 @@ class PostResource extends JsonResource
             'unique_id' => $this->unique_id,
             'slug' => $this->slug,
             'body' => $this->body,
-            'htmlContent' => $this->htmlContent,
+            'html_content' => $this->html_content,
             'is_featured' => $this->is_featured ? true : false,
             'author' => $this->whenLoaded('author'),
             'category' => $this->whenLoaded('category'),

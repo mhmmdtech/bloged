@@ -75,7 +75,7 @@ export default function Show({ auth, post: { data: postDetails } }) {
                 </ul>
                 <div
                     dangerouslySetInnerHTML={{
-                        __html: postDetails.htmlContent,
+                        __html: postDetails.html_content,
                     }}
                 ></div>
             </div>

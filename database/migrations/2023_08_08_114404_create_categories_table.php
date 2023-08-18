@@ -14,13 +14,13 @@ return new class extends Migration {
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->text('thumbnail');
-            $table->string('title');
-            $table->string('seo_title');
-            $table->string('description');
-            $table->string('seo_description');
+            $table->json('thumbnail');
+            $table->string('title', 100);
+            $table->string('seo_title', 100);
+            $table->string('description', 255);
+            $table->string('seo_description', 255);
             $table->char('unique_id', 11)->unique();
-            $table->string('slug')->nullable();
+            $table->string('slug', 150)->nullable();
             $table->foreignIdFor(User::class, 'creator_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->tinyInteger('status')->default(CategoryStatus::Disable->value)->comment('1 => active, 2 => disable');
             $table->timestamps();
