@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->json('thumbnail');
+            $table->text('thumbnail');
             $table->string('title', 100);
             $table->string('seo_title', 100);
             $table->string('description', 255);

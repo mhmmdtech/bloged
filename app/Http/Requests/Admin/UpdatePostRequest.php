@@ -31,7 +31,7 @@ class UpdatePostRequest extends FormRequest
             'description' => ['required', 'string', 'min:5', 'max:255'],
             'seo_description' => ['required', 'string', 'min:5', 'max:255'],
             'body' => ['required', 'string', 'min:250'],
-            'htmlContent' => ['required', 'string', 'min:250'],
+            'html_content' => ['required', 'string', 'min:250'],
             'status' => ['required', new Rules\Enum(PostStatus::class)],
             'thumbnail' => ['nullable', Rules\File::image()->min(0.5 * 1024)->max(5 * 1024)->dimensions(Rule::dimensions()->minWidth(320)->minHeight(320))],
             'category_id' => ['required', Rule::exists(Category::class, 'id')],
