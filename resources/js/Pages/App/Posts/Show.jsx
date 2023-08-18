@@ -46,7 +46,7 @@ export default ({ auth, post: { data: post } }) => {
                 <div
                     className="mt-4"
                     dangerouslySetInnerHTML={{
-                        __html: post.htmlContent,
+                        __html: post.html_content,
                     }}
                 ></div>
             </div>
