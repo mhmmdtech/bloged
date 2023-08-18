@@ -15,8 +15,8 @@ return new class extends Migration {
     {
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
-            $table->string('local_name');
-            $table->string('latin_name')->nullable();
+            $table->string('local_name', 100);
+            $table->string('latin_name', 100)->nullable();
             $table->foreignIdFor(Province::class, 'province_id')->constrained('provinces')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(User::class, 'creator_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->tinyInteger('status')->default(CityStatus::Active->value)->comment('1 => active, 2 => disable');
