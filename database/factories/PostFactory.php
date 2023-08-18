@@ -34,7 +34,7 @@ class PostFactory extends Factory
             'unique_id' => fake()->unique()->randomNumber(9, true) . "01",
             'slug' => Str::slug($title),
             'body' => $body,
-            'htmlContent' => $body,
+            'html_content' => $body,
             'reading_time' => fake()->randomDigitNotNull(),
             'status' => fake()->randomElement([PostStatus::Draft, PostStatus::Published, PostStatus::Archived]),
             'author_id' => $authors->random(),

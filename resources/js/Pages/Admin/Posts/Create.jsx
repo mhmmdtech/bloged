@@ -20,14 +20,14 @@ export default function Create({ auth, statuses, activeCategories }) {
         status: "",
         thumbnail: "",
         body: "",
-        htmlContent: "",
+        html_content: "",
         category_id: "",
     });
 
     function handleSubmit(e) {
         e.preventDefault();
         data.body = new DOMParser().parseFromString(
-            data.htmlContent,
+            data.html_content,
             "text/html"
         ).documentElement.textContent;
         post(route("administration.posts.store"));
@@ -231,10 +231,10 @@ export default function Create({ auth, statuses, activeCategories }) {
 
                             <CKEditor
                                 editor={ClassicEditor}
-                                data={data.htmlContent}
+                                data={data.html_content}
                                 onChange={(event, editor) => {
                                     const data = editor.getData();
-                                    setData("htmlContent", data);
+                                    setData("html_content", data);
                                 }}
                             />
 
