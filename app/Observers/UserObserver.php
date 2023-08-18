@@ -12,7 +12,6 @@ class UserObserver
      */
     public function creating(User $user): void
     {
-        $user->searchable_username = $user->username;
         $user->mobile_number = convertToIrMobileFormat($user->mobile_number);
         if ($user->gender != GenderStatus::Male->value) {
             $user->military_status = null;
@@ -32,9 +31,6 @@ class UserObserver
      */
     public function updating(User $user): void
     {
-        if ($user->isDirty('username')) {
-            $user->searchable_username = $user->username;
-        }
         if ($user->isDirty('mobile_number')) {
             $user->mobile_number = convertToIrMobileFormat($user->mobile_number);
         }

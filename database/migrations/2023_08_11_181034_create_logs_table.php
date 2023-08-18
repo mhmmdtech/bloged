@@ -14,8 +14,8 @@ return new class extends Migration {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class, 'actioner_id')->comment('who performed the action')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('action');
-            $table->string('model_type');
+            $table->string('action', 100);
+            $table->string('model_type', 100);
             $table->bigInteger('model_id');
             $table->json('old_model')->comment('the old structure of model');
             $table->json('new_model')->comment('the new structure of model');

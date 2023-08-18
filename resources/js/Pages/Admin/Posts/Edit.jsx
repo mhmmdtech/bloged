@@ -25,14 +25,14 @@ export default function Edit({
         status: postDetails.status?.key || "",
         thumbnail: "",
         body: postDetails.body || "",
-        htmlContent: postDetails.htmlContent || "",
+        html_content: postDetails.html_content || "",
         category_id: postDetails.category?.id || "",
         _method: "PUT",
     });
     function handleSubmit(e) {
         e.preventDefault();
         data.body = new DOMParser().parseFromString(
-            data.htmlContent,
+            data.html_content,
             "text/html"
         ).documentElement.textContent;
         post(route("administration.posts.update", postDetails.unique_id));
@@ -238,10 +238,10 @@ export default function Edit({
 
                             <CKEditor
                                 editor={ClassicEditor}
-                                data={data.htmlContent}
+                                data={data.html_content}
                                 onChange={(event, editor) => {
                                     const data = editor.getData();
-                                    setData("htmlContent", data);
+                                    setData("html_content", data);
                                 }}
                             />
 

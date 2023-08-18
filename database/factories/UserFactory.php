@@ -26,7 +26,6 @@ class UserFactory extends Factory
             'mobile_number' => fake()->e164PhoneNumber(),
             'gender' => fake()->randomElement([GenderStatus::Male, GenderStatus::Female]),
             'username' => $username,
-            'searchable_username' => $username,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => bcrypt('password'),
