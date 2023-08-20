@@ -50,4 +50,12 @@ class Captcha
         $faCode = replaceEnDigitsWithFaDigits($code);
         return $this->generateImage($faCode);
     }
+
+    public function generateForTest()
+    {
+        $this->forgetCode();
+        $code = $this->generateRandomCode();
+        $this->storeCode($code);
+        return $code;
+    }
 }

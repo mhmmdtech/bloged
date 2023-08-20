@@ -31,8 +31,6 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('verify-code', [Auth\EmailVerificationCodeController::class, 'show'])
-        ->name('verification-code.show');
 
     Route::post('verify-code', [Auth\EmailVerificationCodeController::class, 'verify'])
         ->name('verification-code.verify');

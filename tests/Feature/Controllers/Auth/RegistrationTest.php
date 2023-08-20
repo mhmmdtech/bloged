@@ -3,7 +3,9 @@
 namespace Tests\Feature\Auth;
 
 use App\Enums\GenderStatus;
+use App\Enums\MilitaryStatus;
 use App\Providers\RouteServiceProvider;
+use App\Services\Captcha\Captcha;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,18 +20,20 @@ class RegistrationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_new_users_can_register(): void
+    public function test_new_users_can_register_with_filling_required_information(): void
     {
         $response = $this->post('/register', [
             'first_name' => 'John',
             'last_name' => 'Doe',
-            'national_code' => '674-96-0165',
-            'mobile_number' => '+17169736475',
+            'national_code' => '5309752331',
+            'mobile_number' => '+989123456789',
             'gender' => GenderStatus::Male->value,
             'email' => 'test@example.com',
             'username' => 'mhmdmrkbti',
             'password' => 'password',
             'password_confirmation' => 'password',
+            'military_status' => MilitaryStatus::Done->value,
+            'captcha_code' => (new Captcha())->generateForTest()
         ]);
 
         $this->assertAuthenticated();
