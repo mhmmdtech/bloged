@@ -5,7 +5,6 @@ namespace Tests\Feature\Controllers\Auth;
 use App\Models\User;
 use App\Models\UserVerificationCode;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -13,8 +12,6 @@ use Inertia\Testing\AssertableInertia;
 
 class EmailVerificationCodeTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_verify_method_marks_email_as_verified_and_redirects_when_code_matches()
     {
         // Create a user with an unverified email

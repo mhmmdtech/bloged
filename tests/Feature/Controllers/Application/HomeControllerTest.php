@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Controllers\Application;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -10,8 +9,6 @@ use Inertia\Testing\AssertableInertia;
 
 class HomeControllerTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_index_page_is_shown_successfully(): void
     {
         $response = $this->get(route('application.home'));

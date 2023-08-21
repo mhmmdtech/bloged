@@ -22,6 +22,11 @@ class DatabaseSeeder extends Seeder
                 PermissionSeeder::class,
                 RoleSeeder::class
             ],
+            'testing' => [
+                UserSeeder::class,
+                PermissionSeeder::class,
+                RoleSeeder::class
+            ],
             'production' => [
                 UserSeeder::class,
                 PermissionSeeder::class,

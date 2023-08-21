@@ -6,13 +6,10 @@ use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
 use App\Providers\RouteServiceProvider;
 use App\Services\Captcha\Captcha;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_registration_screen_can_be_rendered(): void
     {
         $response = $this->get('/register');

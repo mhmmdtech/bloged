@@ -5,7 +5,6 @@ namespace Tests\Feature\Controllers\Application;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -13,8 +12,6 @@ use Inertia\Testing\AssertableInertia;
 
 class PostControllerTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_posts_page_is_shown_successfully(): void
     {
         $response = $this->get(route('application.posts.index'));

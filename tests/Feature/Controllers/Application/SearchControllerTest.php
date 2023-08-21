@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Controllers\Application;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -10,8 +9,6 @@ use Inertia\Testing\AssertableInertia;
 
 class SearchControllerTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_search_returns_empty_when_no_query_parameter_available(): void
     {
         // Make the search request without a query parameter
