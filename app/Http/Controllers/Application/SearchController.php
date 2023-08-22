@@ -18,11 +18,14 @@ class SearchController extends Controller
     public function __invoke(Request $request)
     {
         $query = trim(request()->query('query', ""));
-        if ($query === "" || $query === NULL) {
+
+        if ($query === "" || $query === NULL)
             return Inertia::render('App/Search');
-        }
+
+
         if (strlen($query) < 5)
-            return;
+            return redirect()->back();
+
         $posts = Post::with('author', 'category')->whereRaw("MATCH(title, seo_title, description, seo_description, body) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$query])->where('status', PostStatus::Published)->paginate($this->applicationPaginatedItemsCount);
         $posts = new PostCollection($posts);
         return Inertia::render('App/Search', compact('posts', 'query'));

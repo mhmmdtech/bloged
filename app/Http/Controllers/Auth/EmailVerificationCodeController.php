@@ -13,18 +13,6 @@ use Illuminate\Auth\Events\Verified;
 class EmailVerificationCodeController extends Controller
 {
     /**
-     * Show the form for verifying the resource.
-     */
-    public function show()
-    {
-        if (request()->user()->hasVerifiedEmail()) {
-            return redirect()->intended(RouteServiceProvider::HOME . '?verified=1');
-        }
-
-        return Inertia::render('Auth/VerifyCode');
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function verify(EmailVerificationCodeRequest $request)
@@ -32,7 +20,7 @@ class EmailVerificationCodeController extends Controller
         $user = request()->user()->load('verificationCodes');
         $inputs = $request->validated();
 
-        if ($user->verificationCodes->last()->token === $inputs['token']) {
+        if ($user->verificationCodes->last()->token == $inputs['token']) {
             if ($user->markEmailAsVerified()) {
                 event(new Verified($user));
             }

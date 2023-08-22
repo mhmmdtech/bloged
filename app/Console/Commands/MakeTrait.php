@@ -40,9 +40,10 @@ class MakeTrait extends Command
     {
         File::isDirectory($fileDirectory) || File::makeDirectory($fileDirectory);
 
-        $filePath = $fileDirectory . '/' . $fileName;
+        $filePath = $fileDirectory . DIRECTORY_SEPARATOR . $fileName;
 
-        if (File::exists($filePath)) return false;
+        if (File::exists($filePath))
+            return false;
 
         File::put($filePath, $mainContent);
 
@@ -55,6 +56,11 @@ class MakeTrait extends Command
     public function handle()
     {
         $name = $this->argument('name') ?? $this->ask('What is Trait\'s name?');
+
+        if (trim($name) === "") {
+            $this->error('Not enough arguments (missing: "name").');
+            return;
+        }
 
         $stubContent = $this->getStub();
 

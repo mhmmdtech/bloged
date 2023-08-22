@@ -66,7 +66,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return redirect()->route('administration.users.index');
+        return redirect()->route('profile.edit');
     }
 
     /**

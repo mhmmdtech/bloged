@@ -53,7 +53,7 @@ class SendEmailVerificationNotification extends Notification
                 ->markdown('mail.auth.verify-account', [
                     'username' => $notifiable->username,
                     'automaticAccountVerificationUrl' => $url,
-                    'manualAccountVerificationUrl' => route('verification-code.show'),
+                    'manualAccountVerificationUrl' => route('verification.notice'),
                     'token' => $this->token,
                 ]);
     }
