@@ -9,6 +9,11 @@ class Captcha
         //
     }
 
+    public function getCode()
+    {
+        return $this->captchaRepository->getCode();
+    }
+
     public function generate()
     {
         $this->captchaRepository->forgetCode();
