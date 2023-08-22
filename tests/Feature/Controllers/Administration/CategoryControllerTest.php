@@ -324,8 +324,8 @@ class CategoryControllerTest extends TestCase
 
         // Create some soft-deleted categories for testing
         $categories = Category::factory()->count(5)->create();
-        foreach ($categories as $province) {
-            $province->delete();
+        foreach ($categories as $category) {
+            $category->delete();
         }
 
         // Simulate a request with the authenticated user

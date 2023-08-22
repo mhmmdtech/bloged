@@ -136,21 +136,6 @@ class PostController extends Controller
         return redirect()->route('administration.posts.index');
     }
 
-    public function toggleFeatured(Post $post)
-    {
-        $this->authorize('edit post', $post);
-
-        if ($post->is_featured) {
-            $post->update(['is_featured' => false]);
-            return;
-        }
-
-        // Disable the previously featured post
-        Post::where('is_featured', true)->update(['is_featured' => false]);
-
-        $post->update(['is_featured' => true]);
-    }
-
     /**
      * Display a listing of the soft deleted resource.
      */
@@ -193,5 +178,23 @@ class PostController extends Controller
         $this->authorize('delete post', Post::class);
         $post->restore();
         return redirect()->route('administration.posts.trashed');
+    }
+
+    /**
+     * toggle the is_featured functionality
+     */
+    public function toggleFeatured(Post $post)
+    {
+        $this->authorize('edit post', $post);
+
+        if ($post->is_featured) {
+            $post->update(['is_featured' => false]);
+            return;
+        }
+
+        // Disable the previously featured post
+        Post::where('is_featured', true)->update(['is_featured' => false]);
+
+        $post->update(['is_featured' => true]);
     }
 }
