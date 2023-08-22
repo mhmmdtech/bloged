@@ -6,6 +6,7 @@ use App\Enums\GenderStatus;
 use App\Enums\MilitaryStatus;
 use App\Providers\RouteServiceProvider;
 use App\Services\Captcha\Captcha;
+use App\Services\Captcha\CaptchaRepository;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -19,6 +20,10 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register_with_filling_required_information(): void
     {
+        // Initialize captcha service
+        $captchaRepository = new CaptchaRepository();
+        $captcha = new Captcha($captchaRepository);
+
         $response = $this->post('/register', [
             'first_name' => 'John',
             'last_name' => 'Doe',
@@ -30,7 +35,7 @@ class RegistrationTest extends TestCase
             'password' => 'password',
             'password_confirmation' => 'password',
             'military_status' => MilitaryStatus::Done->value,
-            'captcha_code' => (new Captcha())->generateForTest()
+            'captcha_code' => $captcha->generateForTest()
         ]);
 
         $this->assertAuthenticated();

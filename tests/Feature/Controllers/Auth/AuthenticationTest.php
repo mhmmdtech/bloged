@@ -4,9 +4,10 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
-use App\Services\Captcha\Captcha;
 use Illuminate\Http\Response;
 use Tests\TestCase;
+use App\Services\Captcha\Captcha;
+use App\Services\Captcha\CaptchaRepository;
 
 class AuthenticationTest extends TestCase
 {
@@ -21,10 +22,14 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create(['username' => 'tester']);
 
+        // Initialize captcha service
+        $captchaRepository = new CaptchaRepository();
+        $captcha = new Captcha($captchaRepository);
+
         $response = $this->post('/login', [
             'username' => $user->username,
             'password' => 'password',
-            'captcha_code' => (new Captcha())->generateForTest()
+            'captcha_code' => $captcha->generateForTest()
         ]);
 
         $this->assertAuthenticated();
@@ -35,10 +40,14 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create(['username' => 'tester']);
 
+        // Initialize captcha service
+        $captchaRepository = new CaptchaRepository();
+        $captcha = new Captcha($captchaRepository);
+
         $this->post('/login', [
             'username' => $user->username,
             'password' => 'wrong-password',
-            'captcha_code' => (new Captcha())->generateForTest()
+            'captcha_code' => $captcha->generateForTest()
         ]);
 
         $this->assertGuest();
