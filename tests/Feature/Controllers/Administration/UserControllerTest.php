@@ -10,8 +10,6 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
-use App\Services\Captcha\Captcha;
-use App\Services\Captcha\CaptchaRepository;
 
 class UserControllerTest extends TestCase
 {
@@ -81,10 +79,6 @@ class UserControllerTest extends TestCase
         $user = User::factory()->create();
         $user->givePermissionTo('add user');
 
-        // Initialize captcha service
-        $captchaRepository = new CaptchaRepository();
-        $captcha = new Captcha($captchaRepository);
-
         // Simulate a request with the authenticated user and valid input data
         $response = $this->actingAs($user)->post(route('administration.users.store'), [
             'first_name' => 'John',
@@ -97,7 +91,6 @@ class UserControllerTest extends TestCase
             'password' => 'password',
             'password_confirmation' => 'password',
             'military_status' => MilitaryStatus::Done->value,
-            'captcha_code' => $captcha->generateForTest()
         ]);
 
         // Assert the response
@@ -116,10 +109,6 @@ class UserControllerTest extends TestCase
         // Create a user without the necessary role and permissions to add users
         $user = User::factory()->create();
 
-        // Initialize captcha service
-        $captchaRepository = new CaptchaRepository();
-        $captcha = new Captcha($captchaRepository);
-
         // Simulate a request with the authenticated user and valid input data
         $response = $this->actingAs($user)->post(route('administration.users.store'), [
             'first_name' => 'John',
@@ -132,7 +121,6 @@ class UserControllerTest extends TestCase
             'password' => 'password',
             'password_confirmation' => 'password',
             'military_status' => MilitaryStatus::Done->value,
-            'captcha_code' => $captcha->generateForTest()
         ]);
 
         // Assert the response
@@ -231,10 +219,6 @@ class UserControllerTest extends TestCase
         // Create a user for testing
         $user = User::factory()->create();
 
-        // Initialize captcha service
-        $captchaRepository = new CaptchaRepository();
-        $captcha = new Captcha($captchaRepository);
-
         // Simulate a request with the authenticated user and valid input data
         $response = $this->actingAs($creator)->put(route('administration.users.update', $user->id), [
             'first_name' => 'John',
@@ -247,7 +231,6 @@ class UserControllerTest extends TestCase
             'password' => 'password',
             'password_confirmation' => 'password',
             'military_status' => MilitaryStatus::Done->value,
-            'captcha_code' => $captcha->generateForTest()
         ]);
 
         // Assert the response
@@ -266,10 +249,6 @@ class UserControllerTest extends TestCase
         // Create a user for testing
         $user = User::factory()->create();
 
-        // Initialize captcha service
-        $captchaRepository = new CaptchaRepository();
-        $captcha = new Captcha($captchaRepository);
-
         // Simulate a request with the authenticated user and valid input data
         $response = $this->actingAs($creator)->put(route('administration.users.update', $user->id), [
             'first_name' => 'John',
@@ -282,7 +261,6 @@ class UserControllerTest extends TestCase
             'password' => 'password',
             'password_confirmation' => 'password',
             'military_status' => MilitaryStatus::Done->value,
-            'captcha_code' => $captcha->generateForTest()
         ]);
 
         // Assert the response
