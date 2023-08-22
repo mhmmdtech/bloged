@@ -2,9 +2,10 @@
 
 namespace App\Rules;
 
-use App\Services\Captcha\Captcha;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use App\Services\Captcha\Captcha;
+use App\Services\Captcha\CaptchaRepository;
 
 class CaptchaValidator implements ValidationRule
 {
@@ -15,7 +16,10 @@ class CaptchaValidator implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $code = (Captcha::getCode());
+        // Initialize captcha service
+        $captchaRepository = new CaptchaRepository();
+        $captcha = new Captcha($captchaRepository);
+        $code = $captcha->getCode();
 
         if ((int) $code !== (int) $value)
             $fail('The :attribute is invalid.');
