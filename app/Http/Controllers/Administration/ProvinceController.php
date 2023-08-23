@@ -9,10 +9,16 @@ use App\Http\Requests\Admin\UpdateProvinceRequest;
 use App\Http\Resources\ProvinceCollection;
 use App\Http\Resources\ProvinceResource;
 use App\Models\Province;
+use App\Repositories\ProvinceRepository;
 use Inertia\Inertia;
 
 class ProvinceController extends Controller
 {
+    public function __construct(
+        private ProvinceRepository $provinceRepository
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -20,7 +26,12 @@ class ProvinceController extends Controller
     {
         $this->authorize('browse province', Province::class);
 
-        $provinces = new ProvinceCollection(Province::latest($this->normalOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
+        $provinces = new ProvinceCollection(
+            $this->provinceRepository->getPaginatedProvinces(
+                $this->administrationPaginatedItemsCount,
+                $this->normalOrderedColumn
+            )
+        );
 
         return Inertia::render('Admin/Provinces/Index', compact('provinces'));
     }
@@ -46,7 +57,7 @@ class ProvinceController extends Controller
 
         $inputs = $request->validated();
 
-        auth()->user()->provinces()->create($inputs);
+        $this->provinceRepository->create($inputs);
 
         return redirect()->route('administration.provinces.index');
     }
@@ -88,7 +99,7 @@ class ProvinceController extends Controller
 
         $inputs = removeNullFromArray($request->validated());
 
-        $province->update($inputs);
+        $this->provinceRepository->update($province, $inputs);
 
         return redirect()->route('administration.provinces.index');
     }
@@ -100,7 +111,7 @@ class ProvinceController extends Controller
     {
         $this->authorize('delete province', $province);
 
-        $province->delete();
+        $this->provinceRepository->delete($province);
 
         return redirect()->route('administration.provinces.index');
     }
@@ -112,7 +123,12 @@ class ProvinceController extends Controller
     {
         $this->authorize('delete province', Province::class);
 
-        $provinces = new ProvinceCollection(Province::onlyTrashed()->latest($this->trashedOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
+        $provinces = new ProvinceCollection(
+            $this->provinceRepository->getTrashedPaginatedProvinces(
+                $this->administrationPaginatedItemsCount,
+                $this->trashedOrderedColumn,
+            )
+        );
 
         return Inertia::render('Admin/Provinces/Trashed', compact('provinces'));
     }
@@ -125,12 +141,11 @@ class ProvinceController extends Controller
         $this->authorize('delete province', Province::class);
 
         if (is_null($province)) {
-            $trashedProvinces = Province::onlyTrashed()->get(['id']);
-            Province::whereIn('id', array_flatten($trashedProvinces->toArray()))->forceDelete();
+            $this->provinceRepository->forceDeleteAll();
             return redirect()->route('administration.provinces.trashed');
         }
 
-        $province->forceDelete();
+        $this->provinceRepository->forceDelete($province);
         return redirect()->route('administration.provinces.trashed');
     }
 
@@ -140,7 +155,9 @@ class ProvinceController extends Controller
     public function restore(Province $province)
     {
         $this->authorize('delete province', Province::class);
-        $province->restore();
+
+        $this->provinceRepository->restore($province);
+
         return redirect()->route('administration.provinces.trashed');
     }
 }

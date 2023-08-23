@@ -11,10 +11,16 @@ use App\Http\Resources\CityResource;
 use App\Http\Resources\ProvinceResource;
 use App\Models\City;
 use App\Models\Province;
+use App\Repositories\CityRepository;
 use Inertia\Inertia;
 
 class CityController extends Controller
 {
+    public function __construct(
+        private CityRepository $cityRepository
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -22,9 +28,15 @@ class CityController extends Controller
     {
         $this->authorize('browse city', City::class);
 
-        $province = new ProvinceResource($province);
+        $cities = new CityCollection(
+            $this->cityRepository->getPaginatedCities(
+                $province,
+                $this->administrationPaginatedItemsCount,
+                $this->normalOrderedColumn
+            )
+        );
 
-        $cities = new CityCollection($province->cities()->paginate($this->administrationPaginatedItemsCount));
+        $province = new ProvinceResource($province);
 
         return Inertia::render('Admin/Cities/Index', compact('province', 'cities'));
     }
@@ -52,7 +64,7 @@ class CityController extends Controller
 
         $inputs = $request->validated();
 
-        auth()->user()->cities()->create(array_merge($inputs, ['province_id' => $province->id]));
+        $this->cityRepository->create($province, $inputs);
 
         return redirect()->route('administration.provinces.cities.index', $province->id);
     }
@@ -94,7 +106,7 @@ class CityController extends Controller
 
         $inputs = removeNullFromArray($request->validated());
 
-        $city->update($inputs);
+        $this->cityRepository->update($city, $inputs);
 
         return redirect()->route('administration.cities.show', $city->id);
     }
@@ -106,7 +118,7 @@ class CityController extends Controller
     {
         $this->authorize('delete city', $city);
 
-        $city->delete();
+        $this->cityRepository->delete($city);
 
         return redirect()->route('administration.provinces.index');
     }

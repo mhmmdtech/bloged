@@ -1,10 +1,7 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
-import DeleteButton from "@/Components/DeleteButton";
+import { Link } from "@inertiajs/react";
 import { useEffect } from "react";
 
-export default function Show({ users: { data: users } }) {
-    console.log(users);
+export default ({ results: { data: users } }) => {
     useEffect(() => {
         window.print();
         return () => {
@@ -57,4 +54,4 @@ export default function Show({ users: { data: users } }) {
             </tbody>
         </table>
     );
-}
+};

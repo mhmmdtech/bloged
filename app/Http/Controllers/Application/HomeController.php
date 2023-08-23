@@ -9,24 +9,32 @@ use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
 use App\Models\Category;
 use App\Models\Post;
+use App\Repositories\CategoryRepositoryInterface;
+use App\Repositories\PostRepositoryInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class HomeController extends Controller
 {
+    public function __construct(
+        private CategoryRepositoryInterface $categoryRepository,
+        private PostRepositoryInterface $postRepository
+    ) {
+    }
+
     /**
      * Handle the incoming request.
      */
     public function __invoke(Request $request)
     {
-        $featuredPost = Post::where('is_featured', true)->first() ?? [];
+        $featuredPost = $this->postRepository->getFeaturedPost();
 
         if (collect($featuredPost)->isNotEmpty())
             $featuredPost = new PostResource($featuredPost);
 
-        $latestPosts = new PostCollection(Post::with('category', 'author')->where('status', Enums\PostStatus::Published->value)->latest($this->normalOrderedColumn)->take(6)->get());
+        $latestPosts = new PostCollection($this->postRepository->getLatestPublishedPosts($this->normalOrderedColumn, 6));
 
-        $categories = new CategoryCollection(Category::with('creator')->where('status', Enums\CategoryStatus::Active->value)->latest($this->normalOrderedColumn)->take(3)->get());
+        $categories = new CategoryCollection($this->categoryRepository->getActiveCategoriesWithLimit($this->normalOrderedColumn, 3));
 
         return Inertia::render('App/Home', compact('featuredPost', 'latestPosts', 'categories'));
     }

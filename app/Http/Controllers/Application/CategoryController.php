@@ -8,17 +8,25 @@ use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\PostCollection;
 use App\Models\Category;
+use App\Repositories\CategoryRepositoryInterface;
+use App\Repositories\PostRepositoryInterface;
 use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
+    public function __construct(
+        private CategoryRepositoryInterface $categoryRepository,
+        private PostRepositoryInterface $postRepository
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
 
-        $categories = new CategoryCollection(Category::with('creator')->where('status', Enums\CategoryStatus::Active->value)->latest($this->normalOrderedColumn)->get());
+        $categories = new CategoryCollection($this->categoryRepository->getAllActiveCategories($this->normalOrderedColumn));
 
         return Inertia::render('App/Categories/Index', compact('categories'));
     }
@@ -32,7 +40,7 @@ class CategoryController extends Controller
 
         $category = new CategoryResource($category);
 
-        $posts = new PostCollection($category->posts()->where('status', Enums\PostStatus::Published)->with('author')->latest($this->normalOrderedColumn)->paginate($this->applicationPaginatedItemsCount));
+        $posts = new PostCollection($this->postRepository->getPublishedPostsByCategoryId($category->id, $this->normalOrderedColumn, $this->applicationPaginatedItemsCount));
 
         return Inertia::render('App/Categories/Single', compact('category', 'posts'));
     }
