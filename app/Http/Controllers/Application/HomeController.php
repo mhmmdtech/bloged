@@ -32,9 +32,9 @@ class HomeController extends Controller
         if (collect($featuredPost)->isNotEmpty())
             $featuredPost = new PostResource($featuredPost);
 
-        $latestPosts = new PostCollection($this->postRepository->getLatestPublishedPosts('id', 6));
+        $latestPosts = new PostCollection($this->postRepository->getLatestPublishedPosts($this->normalOrderedColumn, 6));
 
-        $categories = new CategoryCollection($this->categoryRepository->getActiveCategoriesWithLimit('id', 3));
+        $categories = new CategoryCollection($this->categoryRepository->getActiveCategoriesWithLimit($this->normalOrderedColumn, 3));
 
         return Inertia::render('App/Home', compact('featuredPost', 'latestPosts', 'categories'));
     }

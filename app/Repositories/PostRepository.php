@@ -31,4 +31,18 @@ class PostRepository implements PostRepositoryInterface
             ->take($limit)
             ->get();
     }
+
+    public function getPublishedPostsPaginated(string $orderedColumn = 'id', int $perPage = 5)
+    {
+        return Post::with('category', 'author')
+            ->where('status', Enums\PostStatus::Published->value)
+            ->latest($orderedColumn)
+            ->paginate($perPage);
+    }
+
+    public function getPostById($postId)
+    {
+        return Post::with('author', 'category')
+            ->findOrFail($postId);
+    }
 }
