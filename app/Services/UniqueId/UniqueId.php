@@ -4,7 +4,7 @@ namespace App\Services\UniqueId;
 
 class UniqueId
 {
-    public static function generateUniqueId($modelId, $outputLength = 11, $maxModelIdLength = 5)
+    public function __invoke($modelId, $outputLength = 11, $maxModelIdLength = 5)
     {
         $int = pow(10, ($outputLength - 1) - $maxModelIdLength);
         $rand = (string) random_int($int, (10 * $int) - 1);

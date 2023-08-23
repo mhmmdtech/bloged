@@ -15,7 +15,7 @@ class PostObserver
     {
         $post->reading_time = estimateReadingTime($post->body);
         $post->slug = Str::slug($post->seo_title);
-        $post->unique_id = UniqueId::generateUniqueId($post->id);
+        $post->unique_id = (new UniqueId())($post->id);
     }
 
     /**
