@@ -18,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(Repositories\ProvinceRepositoryInterface::class, Repositories\ProvinceRepository::class);
         $this->app->bind(Repositories\CityRepositoryInterface::class, Repositories\CityRepository::class);
         $this->app->bind(Repositories\UserStatisticsRepositoryInterface::class, Repositories\UserStatisticsRepository::class);
+        $this->app->bind(Repositories\LogRepositoryInterface::class, Repositories\LogRepository::class);
     }
 
     /**
