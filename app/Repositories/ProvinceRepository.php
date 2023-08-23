@@ -20,7 +20,6 @@ class ProvinceRepository
     {
         return Province::with('creator')
             ->findOrFail($provinceId);
-        ;
     }
 
     public function create(array $data)
