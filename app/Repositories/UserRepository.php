@@ -19,6 +19,16 @@ class UserRepository
         return User::with('roles')->latest($orderedColumn)->paginate($perPage);
     }
 
+    public function getUserDirectPermissions(User $user)
+    {
+        return $user->getDirectPermissions()->pluck('name')->toArray();
+    }
+
+    public function getUserRolesName(User $user)
+    {
+        return $user->getRoleNames()->toArray();
+    }
+
     public function getById(int $userId)
     {
         return User::with('creator', 'province', 'city')
@@ -95,5 +105,34 @@ class UserRepository
     public function updatePassword(User $user, array $data)
     {
         $user->update(['password' => $data['password']]);
+    }
+
+    public function updatePermissions(User $user, array $data)
+    {
+        $oldPermissions = $user->getPermissionNames();
+
+        $user->syncPermissions($data['currentPermissions']);
+
+        $newPermissions = $user->getPermissionNames();
+
+        return [
+            'old_permissions' => $oldPermissions->toArray(),
+            'new_permissions' => $newPermissions->toArray(),
+        ];
+    }
+
+    public function updateRoles(User $user, array $data)
+    {
+
+        $oldRoles = $user->getRoleNames();
+
+        $user->syncRoles($data['currentRoles']);
+
+        $newRoles = $user->getRoleNames();
+
+        return [
+            'old_roles' => $oldRoles->toArray(),
+            'new_roles' => $newRoles->toArray(),
+        ];
     }
 }

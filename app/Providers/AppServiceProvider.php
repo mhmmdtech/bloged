@@ -20,6 +20,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(Repositories\UserStatisticsRepositoryInterface::class, Repositories\UserStatisticsRepository::class);
         $this->app->bind(Repositories\LogRepositoryInterface::class, Repositories\LogRepository::class);
         $this->app->bind(Repositories\UserRepositoryInterface::class, Repositories\UserRepository::class);
+        $this->app->bind(Repositories\PermissionRepositoryInterface::class, Repositories\PermissionRepository::class);
+        $this->app->bind(Repositories\RoleRepositoryInterface::class, Repositories\RoleRepository::class);
     }
 
     /**

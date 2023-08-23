@@ -8,6 +8,10 @@ interface UserRepositoryInterface
 {
     public function getPaginatedUsers(int $perPage = 5, string $orderedColumn = "id");
 
+    public function getUserDirectPermissions(User $user);
+
+    public function getUserRolesName(User $user);
+
     public function getById(int $userId);
 
     public function create(array $data);
@@ -15,4 +19,10 @@ interface UserRepositoryInterface
     public function update(User $user, array $data);
 
     public function delete(User $user);
+
+    public function updatePassword(User $user, array $data);
+
+    public function updatePermissions(User $user, array $data);
+
+    public function updateRoles(User $user, array $data);
 }
