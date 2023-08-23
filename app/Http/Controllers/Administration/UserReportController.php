@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Exports\UsersExport;
 use App\Http\Resources\UserCollection;
 use App\Models\User;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\Report\ReportProcessor;
 use Illuminate\Database\Eloquent\Builder;
 use Inertia\Inertia;
 
@@ -55,21 +55,14 @@ class UserReportController extends Controller
             return redirect()->route('administration.users.report');
         }
 
-        $reportMethods = [
-            'print' => 'printReport',
-            'pdf' => 'pdfReport',
-            'excel' => 'excelReport',
-            'csv' => 'csvReport',
-        ];
+        $query = $this->generateReportQuery($reportParameters);
+        $results = $query->get();
 
-        $result = NULL;
+        $reportProcessor = ReportProcessor::createReportProcessor($format);
 
-        if (isset($reportMethods[$format])) {
-            $methodName = $reportMethods[$format];
-            $result = $this->$methodName($reportParameters);
-        }
+        $reportFile = $reportProcessor->generate($results, 'users', 'users', UsersExport::class, UserCollection::class);
 
-        return $result;
+        return $reportFile;
     }
 
     /**
@@ -90,59 +83,5 @@ class UserReportController extends Controller
         }
 
         return $query;
-    }
-
-    /**
-     *  generate printable report file
-     */
-    private function printReport($reportParameters)
-    {
-        $query = $this->generateReportQuery($reportParameters);
-
-        $users = $query->get();
-        $users = new UserCollection($users);
-        return Inertia::render('Admin/Users/PrintableReport', compact('users'));
-    }
-
-    /**
-     *  genrate pdf report file
-     */
-    private function pdfReport($reportParameters)
-    {
-        $query = $this->generateReportQuery($reportParameters);
-
-        $users = $query->get();
-        $users = new UserCollection($users);
-        $pdf = Pdf::loadView('reports.users', compact('users'));
-        return $pdf->download('users-report.pdf');
-    }
-
-    /**
-     *  genrate excel report file
-     * https://docs.laravel-excel.com/
-     */
-    private function excelReport($reportParameters)
-    {
-        $query = $this->generateReportQuery($reportParameters);
-
-        $result = $query->get();
-
-        return (new UsersExport($result))->download('users.xlsx');
-    }
-
-    /**
-     *  genrate csv report file
-     * https://github.com/vitorccs/laravel-csv
-     */
-    private function csvReport($reportParameters)
-    {
-        $query = $this->generateReportQuery($reportParameters);
-
-        $result = $query->get();
-
-        return (new UsersExport($result))->download('users.csv', \Maatwebsite\Excel\Excel::CSV, [
-            'Content-Type' => 'text/csv',
-        ]);
-
     }
 }
