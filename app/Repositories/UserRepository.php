@@ -67,6 +67,7 @@ class UserRepository
                     400
                 );
             $user->save();
+            unset($data['avatar']);
         }
 
         $oldUser = clone $user;
