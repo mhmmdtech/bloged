@@ -4,7 +4,7 @@ namespace App\Contracts;
 
 use Illuminate\Database\Eloquent\Collection;
 
-interface YourContractName
+interface ReportContract
 {
-    public function generate(Collection $results, ?string $reportName, ?string $reportTemplateName, ?string $export, ?string $collection);
+    public function generate();
 }

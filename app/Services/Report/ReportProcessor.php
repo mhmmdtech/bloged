@@ -7,8 +7,14 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ReportProcessor
 {
-    public static function createReportProcessor($type)
-    {
+    public function createReportProcessor(
+        $type,
+        $results,
+        $reportName,
+        $reportTemplateName,
+        $export,
+        $collection
+    ) {
         $reportProcessors = [
             'csv' => CsvReport::class,
             'excel' => ExcelReport::class,
@@ -21,6 +27,12 @@ class ReportProcessor
         }
 
         $reportProcessorClass = $reportProcessors[$type];
-        return new $reportProcessorClass();
+        return new $reportProcessorClass(
+            $results,
+            $reportName,
+            $reportTemplateName,
+            $export,
+            $collection
+        );
     }
 }
