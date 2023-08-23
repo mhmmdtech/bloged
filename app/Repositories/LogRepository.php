@@ -16,4 +16,8 @@ class LogRepository
         return Log::with('actioner')
             ->findOrFail($logId);
     }
+
+    public function create(array $data){
+       return Log::create($data);
+    }
 }
