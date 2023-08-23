@@ -10,6 +10,10 @@ interface UserRepositoryInterface
 
     public function getUserDirectPermissions(User $user);
 
+    public function getAllUsersWithSpecificPermission(string $permission);
+
+    public function getUsersBySearchParams(array $allowedInputs, int $perPage = 5, string $orderedColumn = "id");
+
     public function getUserRolesName(User $user);
 
     public function getById(int $userId);

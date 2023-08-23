@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\User;
 use App\Services\FileManager\FileManager;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserRepository
 {
@@ -22,6 +23,21 @@ class UserRepository
     public function getUserDirectPermissions(User $user)
     {
         return $user->getDirectPermissions()->pluck('name')->toArray();
+    }
+
+    public function getAllUsersWithSpecificPermission(string $permission)
+    {
+        return User::whereHas('roles.permissions', function (Builder $query) use ($permission) {
+            $query->where('name', $permission);
+        })->get();
+    }
+
+    public function getUsersBySearchParams(array $allowedInputs, int $perPage = 5, string $orderedColumn = "id")
+    {
+        return User::with('roles')
+            ->where($allowedInputs)
+            ->latest($orderedColumn)
+            ->paginate($perPage);
     }
 
     public function getUserRolesName(User $user)
