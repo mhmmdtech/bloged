@@ -13,4 +13,6 @@ interface PostRepositoryInterface
     public function getPublishedPostsPaginated(string $orderedColumn = 'id', int $perPage = 5);
 
     public function getPostById(int $postId);
+
+    public function searchPostsPaginated(string $query = "", int $perPage = 5);
 }

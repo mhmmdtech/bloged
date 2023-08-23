@@ -106,9 +106,7 @@ export default function Welcome({
                             className="mt-1 block w-full"
                             autoComplete="query"
                             isFocused={false}
-                            onChange={(e) =>
-                                setData("query", e.target.value.trim())
-                            }
+                            onChange={(e) => setData("query", e.target.value)}
                             placeholder="Search through published posts"
                         />
 

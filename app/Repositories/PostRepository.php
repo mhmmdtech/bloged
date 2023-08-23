@@ -45,4 +45,12 @@ class PostRepository implements PostRepositoryInterface
         return Post::with('author', 'category')
             ->findOrFail($postId);
     }
+
+    public function searchPostsPaginated(string $query = "", int $perPage = 5)
+    {
+        return Post::with('author', 'category')
+            ->whereRaw("MATCH(title, seo_title, description, seo_description, body) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$query])
+            ->where('status', Enums\PostStatus::Published)
+            ->paginate($perPage);
+    }
 }
