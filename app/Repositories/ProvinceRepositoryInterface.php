@@ -6,6 +6,8 @@ use App\Models\Province;
 
 interface ProvinceRepositoryInterface
 {
+    public function getAllProvincesWithCities(string $orderedColumn = "id");
+
     public function getPaginatedProvinces(int $perPage = 5, string $orderedColumn = "id");
 
     public function getTrashedPaginatedProvinces(int $perPage = 5, string $orderedColumn = "deleted_at");

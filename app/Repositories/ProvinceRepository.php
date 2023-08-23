@@ -6,6 +6,11 @@ use App\Models\Province;
 
 class ProvinceRepository
 {
+    public function getAllProvincesWithCities(string $orderedColumn = "id")
+    {
+        return Province::with('cities')->get();
+    }
+
     public function getPaginatedProvinces(int $perPage = 5, string $orderedColumn = "id")
     {
         return Province::latest($orderedColumn)->paginate($perPage);
