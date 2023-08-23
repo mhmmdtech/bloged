@@ -16,23 +16,45 @@ class ReportProcessor
         $collection
     ) {
         $reportProcessors = [
-            'csv' => CsvReport::class,
-            'excel' => ExcelReport::class,
-            'pdf' => PdfReport::class,
-            'print' => PrintReport::class,
+            'csv' => [
+                'factory' => CsvReportFactory::class,
+                'parameters' => [
+                    'reportName' => $reportName,
+                    'export' => $export,
+                ]
+            ],
+            'excel' => [
+                'factory' => ExcelReportFactory::class,
+                'parameters' => [
+                    'reportName' => $reportName,
+                    'export' => $export,
+                ]
+            ],
+            'pdf' => [
+                'factory' => PdfReportFactory::class,
+                'parameters' => [
+                    'reportName' => $reportName,
+                    'reportTemplateName' => $reportTemplateName,
+                    'collection' => $collection,
+                ]
+            ],
+            'print' => [
+                'factory' => PrintReportFactory::class,
+                'parameters' => [
+                    'reportTemplateName' => $reportTemplateName,
+                    'collection' => $collection,
+                ]
+            ],
         ];
 
         if (!isset($reportProcessors[$type])) {
             throw new InvalidArgumentException('Invalid data type.');
         }
 
-        $reportProcessorClass = $reportProcessors[$type];
-        return new $reportProcessorClass(
-            $results,
-            $reportName,
-            $reportTemplateName,
-            $export,
-            $collection
-        );
+        $reportFactoryClass = $reportProcessors[$type]['factory'];
+        $reportFactoryParameters = $reportProcessors[$type]['parameters'];
+        $reportFactoryObject = new $reportFactoryClass(...$reportFactoryParameters);
+        $reportProcessor = $reportFactoryObject->create();
+        return $reportProcessor->generate($results);
     }
 }

@@ -9,10 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 class PrintReport implements ReportContract
 {
     public function __construct(
-        private Collection $results,
-        private ?string $reportName = null,
         private ?string $reportTemplateName = null,
-        private ?string $export = null,
         private ?string $collection = null
     ) {
     }
@@ -20,9 +17,10 @@ class PrintReport implements ReportContract
     /**
      *  generate printable report file
      */
-    public function generate()
+    public function generate(Collection $results)
     {
-        $results = new $this->collection($this->results);
+        $results = new $this->collection($results);
+
         return Inertia::render('Admin/Reports/' . ucfirst($this->reportTemplateName), compact('results'));
     }
 }

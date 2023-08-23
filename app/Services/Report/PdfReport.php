@@ -6,13 +6,11 @@ use App\Contracts\ReportContract;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Collection;
 
-class pdfReport implements ReportContract
+class PdfReport implements ReportContract
 {
     public function __construct(
-        private Collection $results,
         private ?string $reportName = null,
         private ?string $reportTemplateName = null,
-        private ?string $export = null,
         private ?string $collection = null
     ) {
     }
@@ -20,9 +18,9 @@ class pdfReport implements ReportContract
     /**
      *  genrate pdf report file
      */
-    public function generate()
+    public function generate(Collection $results)
     {
-        $results = new $this->collection($this->results);
+        $results = new $this->collection($results);
         $pdf = Pdf::loadView('reports.' . $this->reportTemplateName, compact('results'));
         return $pdf->download($this->reportName . '.pdf');
     }

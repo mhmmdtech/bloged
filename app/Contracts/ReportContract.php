@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface ReportContract
 {
-    public function generate();
+    public function generate(Collection $results);
 }

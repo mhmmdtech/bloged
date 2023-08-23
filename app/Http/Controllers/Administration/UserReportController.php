@@ -64,9 +64,7 @@ class UserReportController extends Controller
 
         $results = $this->userReportRepository->generateForDownload($reportParameters);
 
-        $reportProcessor = (new ReportProcessor())->createReportProcessor($format, $results, 'users', 'users', UsersExport::class, UserCollection::class);
-
-        $reportFile = $reportProcessor->generate($results, 'users', 'users', UsersExport::class, UserCollection::class);
+        $reportFile = (new ReportProcessor())->createReportProcessor($format, $results, 'users', 'users', UsersExport::class, UserCollection::class);
 
         return $reportFile;
     }
