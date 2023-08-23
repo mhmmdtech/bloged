@@ -13,7 +13,8 @@ class UserObserver
     public function creating(User $user): void
     {
         $user->mobile_number = convertToIrMobileFormat($user->mobile_number);
-        if ($user->gender != GenderStatus::Male->value) {
+
+        if ($user->gender !== GenderStatus::Male) {
             $user->military_status = null;
         }
     }
@@ -34,7 +35,7 @@ class UserObserver
         if ($user->isDirty('mobile_number')) {
             $user->mobile_number = convertToIrMobileFormat($user->mobile_number);
         }
-        if ($user->gender != GenderStatus::Male->value) {
+        if ($user->gender !== GenderStatus::Male) {
             $user->military_status = null;
         }
     }
