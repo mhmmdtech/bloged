@@ -8,11 +8,16 @@ use App\Exports\UsersExport;
 use App\Http\Resources\UserCollection;
 use App\Models\User;
 use App\Services\Report\ReportProcessor;
-use Illuminate\Database\Eloquent\Builder;
+use App\Repositories\UserReportRepository;
 use Inertia\Inertia;
 
 class UserReportController extends Controller
 {
+    public function __construct(
+        private UserReportRepository $userReportRepository,
+    ) {
+    }
+
     /**
      * Display a report based on province, city and gender parameters.
      */
@@ -27,9 +32,11 @@ class UserReportController extends Controller
             return Inertia::render('Admin/Users/Report', compact('genders'));
         }
 
-        $query = $this->generateReportQuery($reportParameters);
+        $results = $this->userReportRepository->generateForWeb(
+            $reportParameters,
+            $this->administrationPaginatedItemsCount
+        );
 
-        $results = $query->paginate($this->administrationPaginatedItemsCount)->withQueryString();
         $results = new UserCollection($results);
         return Inertia::render('Admin/Users/Report', compact('results', 'genders'));
     }
@@ -55,33 +62,12 @@ class UserReportController extends Controller
             return redirect()->route('administration.users.report');
         }
 
-        $query = $this->generateReportQuery($reportParameters);
-        $results = $query->get();
+        $results = $this->userReportRepository->generateForDownload($reportParameters);
 
         $reportProcessor = ReportProcessor::createReportProcessor($format);
 
         $reportFile = $reportProcessor->generate($results, 'users', 'users', UsersExport::class, UserCollection::class);
 
         return $reportFile;
-    }
-
-    /**
-     *  generate sql query for requested report
-     */
-    private function generateReportQuery($reportParameters): Builder
-    {
-        $query = User::query();
-
-        foreach ($reportParameters as $parameter => $value) {
-            if ($parameter === 'gender') {
-                $query->where('gender', $reportParameters['gender']);
-                break;
-            }
-            $query->whereHas($parameter, function ($query) use ($value) {
-                $query->whereRaw("MATCH(local_name, latin_name) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$value]);
-            });
-        }
-
-        return $query;
     }
 }
