@@ -11,14 +11,14 @@ use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
 use App\Models\Category;
 use App\Models\Post;
+use App\Repositories\PostRepository;
 use Inertia\Inertia;
-use App\Services\FileManager\FileManager;
 
 class PostController extends Controller
 {
-    public function __construct(private FileManager $fileManagerService)
-    {
-        //
+    public function __construct(
+        private PostRepository $postRepository
+    ) {
     }
 
     /**
@@ -28,7 +28,12 @@ class PostController extends Controller
     {
         $this->authorize('browse post', Post::class);
 
-        $posts = new PostCollection(Post::with('author', 'category')->latest($this->normalOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
+        $posts = new PostCollection(
+            $this->postRepository->getPaginatedPosts(
+                $this->administrationPaginatedItemsCount,
+                $this->normalOrderedColumn,
+            )
+        );
 
         return Inertia::render('Admin/Posts/Index', compact('posts'));
     }
@@ -56,14 +61,7 @@ class PostController extends Controller
 
         $inputs = $request->validated();
 
-        $inputs['thumbnail'] = $this->fileManagerService
-            ->uploadMultiQualityImage(
-                $inputs['thumbnail'],
-                'posts' . DIRECTORY_SEPARATOR . 'thumbnails',
-                $inputs['seo_title']
-            );
-
-        auth()->user()->posts()->create($inputs);
+        $this->postRepository->create($inputs);
 
         return redirect()->route('administration.posts.index');
     }
@@ -109,17 +107,7 @@ class PostController extends Controller
 
         $inputs = removeNullFromArray($request->validated());
 
-        if (isset($inputs['thumbnail'])) {
-            $this->fileManagerService->deleteMultiQualityImage($post->thumbnail);
-            $inputs['thumbnail'] = $this->fileManagerService
-                ->uploadMultiQualityImage(
-                    $inputs['thumbnail'],
-                    'posts' . DIRECTORY_SEPARATOR . 'thumbnails',
-                    $inputs['seo_title']
-                );
-        }
-
-        $post->update($inputs);
+        $this->postRepository->update($post, $inputs);
 
         return redirect()->route('administration.posts.index');
     }
@@ -131,7 +119,7 @@ class PostController extends Controller
     {
         $this->authorize('delete post', $post);
 
-        $post->delete();
+        $this->postRepository->delete($post);
 
         return redirect()->route('administration.posts.index');
     }
@@ -143,7 +131,12 @@ class PostController extends Controller
     {
         $this->authorize('delete post', Post::class);
 
-        $posts = new PostCollection(post::onlyTrashed()->latest($this->trashedOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
+        $posts = new PostCollection(
+            $this->postRepository->getTrashedPaginatedPosts(
+                $this->administrationPaginatedItemsCount,
+                $this->trashedOrderedColumn,
+            )
+        );
 
         return Inertia::render('Admin/Posts/Trashed', compact('posts'));
     }
@@ -156,17 +149,11 @@ class PostController extends Controller
         $this->authorize('delete post', Post::class);
 
         if (is_null($post)) {
-            $trashedPosts = Post::onlyTrashed()->get(['id', 'thumbnail']);
-            $trashedPosts->each(function (Post $post) {
-                $this->fileManagerService->deleteMultiQualityImage($post->thumbnail);
-
-            });
-            Post::whereIn('id', array_flatten($trashedPosts->toArray()))->forceDelete();
+            $this->postRepository->forceDeleteAll();
             return redirect()->route('administration.posts.trashed');
         }
 
-        $this->fileManagerService->deleteMultiQualityImage($post->thumbnail);
-        $post->forceDelete();
+        $this->postRepository->forceDelete($post);
         return redirect()->route('administration.posts.trashed');
     }
 
@@ -176,7 +163,9 @@ class PostController extends Controller
     public function restore(Post $post)
     {
         $this->authorize('delete post', Post::class);
-        $post->restore();
+
+        $this->postRepository->restore($post);
+
         return redirect()->route('administration.posts.trashed');
     }
 
@@ -187,14 +176,6 @@ class PostController extends Controller
     {
         $this->authorize('edit post', $post);
 
-        if ($post->is_featured) {
-            $post->update(['is_featured' => false]);
-            return;
-        }
-
-        // Disable the previously featured post
-        Post::where('is_featured', true)->update(['is_featured' => false]);
-
-        $post->update(['is_featured' => true]);
+        $this->postRepository->toggleFeatured($post);
     }
 }
