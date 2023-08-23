@@ -127,7 +127,7 @@ export default function Welcome({
                 </form>
             </div>
             <div className="container flex flex-col items-center justify-center mx-auto p-2 mt-12">
-                {featuredPost.data && (
+                {featuredPost?.data && (
                     <Link
                         href={route("application.posts.show", {
                             post: featuredPost.data.unique_id,

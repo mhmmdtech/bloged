@@ -15,4 +15,13 @@ class CategoryRepository implements CategoryRepositoryInterface
             ->latest($orderedColumn)
             ->get();
     }
+
+    public function getActiveCategoriesWithLimit(string $orderedColumn = 'id', int $limit = 3)
+    {
+        return Category::with('creator')
+            ->where('status', Enums\CategoryStatus::Active->value)
+            ->latest($orderedColumn)
+            ->take($limit)
+            ->get();
+    }
 }
