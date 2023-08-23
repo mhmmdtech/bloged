@@ -44,7 +44,7 @@ export default ({ auth, posts = {}, query = "" }) => {
                                 autoComplete="query"
                                 isFocused={false}
                                 onChange={(e) =>
-                                    setData("query", e.target.value.trim())
+                                    setData("query", e.target.value)
                                 }
                                 placeholder="Search through published posts"
                             />

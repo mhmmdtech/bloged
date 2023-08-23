@@ -19,7 +19,7 @@ class CategoryObserver
     public function creating(Category $category): void
     {
         $category->slug = Str::slug($category->seo_title);
-        $category->unique_id = UniqueId::generateUniqueId($category->id);
+        $category->unique_id = (new UniqueId())($category->id);
     }
 
     /**

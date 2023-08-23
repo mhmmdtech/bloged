@@ -6,11 +6,16 @@ use App\Enums\PostStatus;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\PostCollection;
-use App\Models\Post;
+use App\Repositories\PostRepositoryInterface;
 use Inertia\Inertia;
 
 class SearchController extends Controller
 {
+
+    public function __construct(
+        private PostRepositoryInterface $postRepository
+    ) {
+    }
     protected int $applicationPaginatedItemsCount = 5;
     /**
      * Handle the incoming request.
@@ -26,7 +31,7 @@ class SearchController extends Controller
         if (strlen($query) < 5)
             return redirect()->back();
 
-        $posts = Post::with('author', 'category')->whereRaw("MATCH(title, seo_title, description, seo_description, body) AGAINST(? IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)", [$query])->where('status', PostStatus::Published)->paginate($this->applicationPaginatedItemsCount);
+        $posts = $this->postRepository->searchPostsPaginated($query, $this->applicationPaginatedItemsCount);
         $posts = new PostCollection($posts);
         return Inertia::render('App/Search', compact('posts', 'query'));
     }

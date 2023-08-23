@@ -20,7 +20,7 @@ class UsersExport implements FromView
 
     public function view(): View
     {
-        $users = new UserCollection($this->users);
-        return view('reports.users', compact('users'));
+        $results = new UserCollection($this->users);
+        return view('reports.users', compact('results'));
     }
 }

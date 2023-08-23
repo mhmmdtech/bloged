@@ -5,11 +5,17 @@ namespace App\Http\Controllers\Administration;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LogCollection;
 use App\Http\Resources\LogResource;
+use App\Repositories\LogRepository;
 use App\Models\Log;
 use Inertia\Inertia;
 
 class LogController extends Controller
 {
+
+    public function __construct(
+        private LogRepository $logRepository
+    ) {
+    }
     /**
      * Display a listing of the resource.
      */
@@ -17,7 +23,7 @@ class LogController extends Controller
     {
         $this->authorize('browse log', Log::class);
 
-        $logs = new LogCollection(Log::with('actioner')->latest($this->normalOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
+        $logs = new LogCollection($this->logRepository->getPaginatedLogs($this->administrationPaginatedItemsCount, $this->normalOrderedColumn));
 
         return Inertia::render('Admin/Logs/Index', compact('logs'));
     }

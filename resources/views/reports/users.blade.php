@@ -18,7 +18,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($users as $user)
+            @foreach ($results as $user)
                 <tr class="hover:bg-gray-100 focus-within:bg-gray-100">
                     <td class="border-t">
                         <a href="javascript:void(0)"
@@ -42,10 +42,6 @@
             @endforeach
         </tbody>
     </table>
-
-    <script>
-        window.print()
-    </script>
 </body>
 
 </html>

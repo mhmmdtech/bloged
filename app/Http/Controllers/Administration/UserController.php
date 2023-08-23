@@ -12,16 +12,18 @@ use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\Province;
 use App\Models\User;
+use App\Repositories\ProvinceRepository;
+use App\Repositories\UserRepository;
 use Inertia\Inertia;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\DB;
-use App\Services\FileManager\FileManager;
 
 class UserController extends Controller
 {
-    public function __construct(private FileManager $fileManagerService)
-    {
-        //
+
+    public function __construct(
+        private UserRepository $userRepository,
+        private ProvinceRepository $provinceRepository
+    ) {
     }
 
     /**
@@ -31,7 +33,12 @@ class UserController extends Controller
     {
         $this->authorize('browse user', User::class);
 
-        $users = new UserCollection(User::with('roles')->latest($this->normalOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
+        $users = new UserCollection(
+            $this->userRepository->getPaginatedUsers(
+                $this->administrationPaginatedItemsCount,
+                $this->normalOrderedColumn
+            )
+        );
 
         return Inertia::render('Admin/Users/Index', compact('users'));
     }
@@ -45,7 +52,7 @@ class UserController extends Controller
 
         $genders = GenderStatus::array();
         $militaryStatuses = MilitaryStatus::array();
-        $provinces = Province::with('cities')->get(['id', 'local_name']);
+        $provinces = $this->provinceRepository->getAllProvincesWithCities($this->normalOrderedColumn);
 
         return Inertia::render('Admin/Users/Create', compact('genders', 'militaryStatuses', 'provinces'));
     }
@@ -59,29 +66,7 @@ class UserController extends Controller
 
         $inputs = $request->validated();
 
-        DB::beginTransaction();
-
-        try {
-            $user = auth()->user()->users()->create($inputs);
-
-            $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
-
-            if (isset($inputs['avatar'])) {
-                $user->avatar = $this->fileManagerService
-                    ->uploadWithResizingImage(
-                        $inputs['avatar'],
-                        'users' . DIRECTORY_SEPARATOR . 'avatars',
-                        $user->username,
-                        400,
-                        400
-                    );
-                $user->save();
-            }
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            throw $e;
-        }
+        $user = $this->userRepository->create($inputs);
 
         event(new Registered($user));
 
@@ -115,7 +100,7 @@ class UserController extends Controller
 
         $genders = GenderStatus::array();
         $militaryStatuses = MilitaryStatus::array();
-        $provinces = Province::with('cities')->get(['id', 'local_name']);
+        $provinces = $this->provinceRepository->getAllProvincesWithCities($this->normalOrderedColumn);
 
         $user = new UserResource($user);
 
@@ -131,30 +116,9 @@ class UserController extends Controller
 
         $inputs = removeNullFromArray($request->validated());
 
-        if (isset($inputs['avatar'])) {
-            $this->fileManagerService->deleteImage($request->user()->avatar);
-            $user->avatar = $this->fileManagerService
-                ->uploadWithResizingImage(
-                    $inputs['avatar'],
-                    'users' . DIRECTORY_SEPARATOR . 'avatars',
-                    $user->username,
-                    400,
-                    400
-                );
-            $user->save();
-        }
+        $result = $this->userRepository->update($user, $inputs);
 
-        $oldUser = clone $user;
-        $user->fill($inputs);
-
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-            $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
-        }
-
-        $user->save();
-
-        event(new UserModified(auth()->id(), 'update', User::class, $user->id, $oldUser->toArray(), $user->toArray()));
+        event(new UserModified(auth()->id(), 'update', User::class, $user->id, $result['old_user'], $result['new_user']));
 
         return redirect()->route('administration.users.index');
     }
@@ -166,9 +130,7 @@ class UserController extends Controller
     {
         $this->authorize('delete user', $user);
 
-        $user->delete();
-
-        $this->fileManagerService->deleteImage($user->avatar);
+        $this->userRepository->delete($user);
 
         event(new UserModified(auth()->id(), 'destroy', User::class, $user->id, $user->toArray(), []));
 

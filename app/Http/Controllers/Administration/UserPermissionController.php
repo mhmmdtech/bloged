@@ -8,10 +8,18 @@ use Spatie\Permission\Models\Permission;
 use App\Http\Requests\Admin\UpdateUserPermissionsRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Repositories\PermissionRepository;
+use App\Repositories\UserRepository;
 use Inertia\Inertia;
 
 class UserPermissionController extends Controller
 {
+    public function __construct(
+        private UserRepository $userRepository,
+        private PermissionRepository $permissionRepository,
+    ) {
+    }
+
     /**
      * Display a listing of all permissions.
      */
@@ -19,9 +27,9 @@ class UserPermissionController extends Controller
     {
         $this->authorize('edit user', $user);
 
-        $permissions = Permission::all();
+        $permissions = $this->permissionRepository->getAll();
+        $currentPermissions = $this->userRepository->getUserDirectPermissions($user);
         $user = new UserResource($user);
-        $currentPermissions = $user->getDirectPermissions()->pluck('name')->toArray();
 
         return Inertia::render('Admin/Users/Permissions', compact('user', 'permissions', 'currentPermissions'));
     }
@@ -35,13 +43,9 @@ class UserPermissionController extends Controller
 
         $inputs = $request->validated();
 
-        $oldPermissions = $user->getPermissionNames();
+        $results = $this->userRepository->updatePermissions($user, $inputs);
 
-        $user->syncPermissions($inputs['currentPermissions']);
-
-        $newPermissions = $user->getPermissionNames();
-
-        event(new UserModified(auth()->id(), 'update permissions', User::class, $user->id, $oldPermissions->toArray(), $newPermissions->toArray()));
+        event(new UserModified(auth()->id(), 'update permissions', User::class, $user->id, $results['old_permissions'], $results['new_permissions']));
 
         return redirect()->route('administration.users.show', $user->id);
     }

@@ -5,12 +5,18 @@ namespace App\Http\Controllers\Administration;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserCollection;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Database\Eloquent\Builder;
 
 class UserSearchController extends Controller
 {
+
+    public function __construct(
+        private UserRepository $userRepository,
+    ) {
+    }
+
     /**
      * Handle the incoming request.
      */
@@ -23,14 +29,20 @@ class UserSearchController extends Controller
         $userInputs = removeNullFromArray(request()->input());
         $allowedInputs = array_intersect_key($userInputs, array_flip($allowedColumns));
 
-        $creators = User::whereHas('roles.permissions', function (Builder $query) {
-            $query->where('name', 'add user');
-        })->get(['id', 'username']);
+        $creators = $this->userRepository->getAllUsersWithSpecificPermission('add user');
 
         if (count($allowedInputs) > 0) {
-            $results = new UserCollection(User::with('roles')->where($allowedInputs)->latest($this->normalOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
+            $results = new UserCollection(
+                $this->userRepository->getUsersBySearchParams(
+                    $allowedInputs,
+                    $this->administrationPaginatedItemsCount,
+                    $this->normalOrderedColumn
+                )
+            );
+
             return Inertia::render('Admin/Users/AdvancedSearch', compact('results', 'creators'));
         }
+
         return Inertia::render('Admin/Users/AdvancedSearch', compact('creators'));
     }
 }

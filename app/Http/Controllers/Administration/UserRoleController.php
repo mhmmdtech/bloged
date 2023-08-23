@@ -7,11 +7,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateUserRolesRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Repositories\RoleRepository;
+use App\Repositories\UserRepository;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
 class UserRoleController extends Controller
 {
+    public function __construct(
+        private UserRepository $userRepository,
+        private RoleRepository $roleRepository,
+    ) {
+    }
     /**
      * Display a listing of all roles.
      */
@@ -19,9 +26,9 @@ class UserRoleController extends Controller
     {
         $this->authorize('edit user', $user);
 
-        $roles = Role::all();
+        $roles = $this->roleRepository->getAll();
+        $currentRoles = $this->userRepository->getUserRolesName($user);
         $user = new UserResource($user);
-        $currentRoles = $user->getRoleNames()->toArray();
 
         return Inertia::render('Admin/Users/Roles', compact('user', 'roles', 'currentRoles'));
     }
@@ -35,13 +42,9 @@ class UserRoleController extends Controller
 
         $inputs = $request->validated();
 
-        $oldRoles = $user->getRoleNames();
+        $results = $this->userRepository->updateRoles($user, $inputs);
 
-        $user->syncRoles($inputs['currentRoles']);
-
-        $newRoles = $user->getRoleNames();
-
-        event(new UserModified(auth()->id(), 'update roles', User::class, $user->id, $oldRoles->toArray(), $newRoles->toArray()));
+        event(new UserModified(auth()->id(), 'update roles', User::class, $user->id, $results['old_roles'], $results['new_roles']));
 
         return redirect()->route('administration.users.show', $user->id);
     }
