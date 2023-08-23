@@ -9,14 +9,16 @@ use App\Http\Requests\Admin\UpdateCategoryRequest;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Repositories\CategoryRepositoryInterface;
 use App\Services\FileManager\FileManager;
 use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
-    public function __construct(private FileManager $fileManagerService)
-    {
-        //
+
+    public function __construct(
+        private CategoryRepositoryInterface $categoryRepository
+    ) {
     }
 
     /**
@@ -26,7 +28,12 @@ class CategoryController extends Controller
     {
         $this->authorize('browse category', Category::class);
 
-        $categories = new CategoryCollection(Category::latest($this->normalOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
+        $categories = new CategoryCollection(
+            $this->categoryRepository->getPaginatedCategories(
+                $this->administrationPaginatedItemsCount,
+                $this->normalOrderedColumn
+            )
+        );
 
         return Inertia::render('Admin/Categories/Index', compact('categories'));
     }
@@ -52,14 +59,7 @@ class CategoryController extends Controller
 
         $inputs = $request->validated();
 
-        $inputs['thumbnail'] = $this->fileManagerService
-            ->uploadMultiQualityImage(
-                $inputs['thumbnail'],
-                'categories' . DIRECTORY_SEPARATOR . 'thumbnails',
-                $inputs['seo_title']
-            );
-
-        auth()->user()->categories()->create($inputs);
+        $this->categoryRepository->create($inputs);
 
         return redirect()->route('administration.categories.index');
     }
@@ -101,17 +101,7 @@ class CategoryController extends Controller
 
         $inputs = removeNullFromArray($request->validated());
 
-        if (isset($inputs['thumbnail'])) {
-            $this->fileManagerService->deleteMultiQualityImage($category->thumbnail);
-            $inputs['thumbnail'] = $this->fileManagerService
-                ->uploadMultiQualityImage(
-                    $inputs['thumbnail'],
-                    'categories' . DIRECTORY_SEPARATOR . 'thumbnails',
-                    $inputs['seo_title']
-                );
-        }
-
-        $category->update($inputs);
+        $this->categoryRepository->update($category, $inputs);
 
         return redirect()->route('administration.categories.index');
     }
@@ -123,7 +113,7 @@ class CategoryController extends Controller
     {
         $this->authorize('delete category', $category);
 
-        $category->delete();
+        $this->categoryRepository->delete($category);
 
         return redirect()->route('administration.categories.index');
     }
@@ -135,7 +125,12 @@ class CategoryController extends Controller
     {
         $this->authorize('delete category', Category::class);
 
-        $categories = new CategoryCollection(Category::onlyTrashed()->latest($this->trashedOrderedColumn)->paginate($this->administrationPaginatedItemsCount));
+        $categories = new CategoryCollection(
+            $this->categoryRepository->getTrashedPaginatedCategories(
+                $this->administrationPaginatedItemsCount,
+                $this->trashedOrderedColumn
+            )
+        );
 
         return Inertia::render('Admin/Categories/Trashed', compact('categories'));
     }
@@ -148,17 +143,12 @@ class CategoryController extends Controller
         $this->authorize('delete category', Category::class);
 
         if (is_null($category)) {
-            $trashedCategories = Category::onlyTrashed()->get(['id', 'thumbnail']);
-            $trashedCategories->each(function (Category $category) {
-                $this->fileManagerService->deleteMultiQualityImage($category->thumbnail);
-
-            });
-            Category::whereIn('id', array_flatten($trashedCategories->toArray()))->forceDelete();
+            $this->categoryRepository->forceDeleteAll();
             return redirect()->route('administration.categories.trashed');
         }
 
-        $this->fileManagerService->deleteMultiQualityImage($category->thumbnail);
-        $category->forceDelete();
+        $this->categoryRepository->forceDelete($category);
+
         return redirect()->route('administration.categories.trashed');
     }
 
@@ -168,7 +158,9 @@ class CategoryController extends Controller
     public function restore(Category $category)
     {
         $this->authorize('delete category', Category::class);
-        $category->restore();
+
+        $this->categoryRepository->restore($category);
+
         return redirect()->route('administration.categories.trashed');
     }
 }
