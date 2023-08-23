@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Repositories;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -12,7 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(Repositories\CategoryRepositoryInterface::class, Repositories\CategoryRepository::class);
+        $this->app->bind(Repositories\PostRepositoryInterface::class, Repositories\PostRepository::class);
     }
 
     /**
