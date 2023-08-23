@@ -92,4 +92,8 @@ class UserRepository
 
         $user->delete();
     }
+    public function updatePassword(User $user, array $data)
+    {
+        $user->update(['password' => $data['password']]);
+    }
 }
