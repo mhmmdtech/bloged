@@ -9,13 +9,13 @@ use App\Http\Requests\Admin\UpdateProvinceRequest;
 use App\Http\Resources\ProvinceCollection;
 use App\Http\Resources\ProvinceResource;
 use App\Models\Province;
-use App\Repositories\ProvinceRepository;
+use App\Repositories\ProvinceRepositoryInterface;
 use Inertia\Inertia;
 
 class ProvinceController extends Controller
 {
     public function __construct(
-        private ProvinceRepository $provinceRepository
+        private ProvinceRepositoryInterface $provinceRepository
     ) {
     }
 

@@ -11,15 +11,15 @@ use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
 use App\Models\Category;
 use App\Models\Post;
-use App\Repositories\CategoryRepository;
-use App\Repositories\PostRepository;
+use App\Repositories\CategoryRepositoryInterface;
+use App\Repositories\PostRepositoryInterface;
 use Inertia\Inertia;
 
 class PostController extends Controller
 {
     public function __construct(
-        private PostRepository $postRepository,
-        private CategoryRepository $categoryRepository,
+        private PostRepositoryInterface $postRepository,
+        private CategoryRepositoryInterface $categoryRepository,
     ) {
     }
 

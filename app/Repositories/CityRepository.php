@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Models\City;
 use App\Models\Province;
 
-class CityRepository
+class CityRepository implements CityRepositoryInterface
 {
     public function getPaginatedCities(Province $province, int $perPage = 5, string $orderedColumn = "id")
     {

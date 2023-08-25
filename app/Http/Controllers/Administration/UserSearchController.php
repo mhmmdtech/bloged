@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Administration;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserCollection;
 use App\Models\User;
-use App\Repositories\UserRepository;
+use App\Repositories\UserRepositoryInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,7 +13,7 @@ class UserSearchController extends Controller
 {
 
     public function __construct(
-        private UserRepository $userRepository,
+        private UserRepositoryInterface $userRepository,
     ) {
     }
 

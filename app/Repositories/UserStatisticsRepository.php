@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
 
-class UserStatisticsRepository
+class UserStatisticsRepository implements UserStatisticsRepositoryInterface
 {
     public function getProvincesWithMostUsers(int $limit = 5)
     {

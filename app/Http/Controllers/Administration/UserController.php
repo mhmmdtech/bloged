@@ -10,10 +10,9 @@ use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
-use App\Models\Province;
 use App\Models\User;
-use App\Repositories\ProvinceRepository;
-use App\Repositories\UserRepository;
+use App\Repositories\ProvinceRepositoryInterface;
+use App\Repositories\UserRepositoryInterface;
 use Inertia\Inertia;
 use Illuminate\Auth\Events\Registered;
 
@@ -21,8 +20,8 @@ class UserController extends Controller
 {
 
     public function __construct(
-        private UserRepository $userRepository,
-        private ProvinceRepository $provinceRepository
+        private UserRepositoryInterface $userRepository,
+        private ProvinceRepositoryInterface $provinceRepository
     ) {
     }
 

@@ -8,13 +8,13 @@ use App\Exports\UsersExport;
 use App\Http\Resources\UserCollection;
 use App\Models\User;
 use App\Services\Report\ReportProcessor;
-use App\Repositories\UserReportRepository;
+use App\Repositories\UserReportRepositoryInterface;
 use Inertia\Inertia;
 
 class UserReportController extends Controller
 {
     public function __construct(
-        private UserReportRepository $userReportRepository,
+        private UserReportRepositoryInterface $userReportRepository,
     ) {
     }
 

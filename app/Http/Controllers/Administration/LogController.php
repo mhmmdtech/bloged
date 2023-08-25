@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Administration;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LogCollection;
 use App\Http\Resources\LogResource;
-use App\Repositories\LogRepository;
+use App\Repositories\LogRepositoryInterface;
 use App\Models\Log;
 use Inertia\Inertia;
 
@@ -13,7 +13,7 @@ class LogController extends Controller
 {
 
     public function __construct(
-        private LogRepository $logRepository
+        private LogRepositoryInterface $logRepository
     ) {
     }
     /**

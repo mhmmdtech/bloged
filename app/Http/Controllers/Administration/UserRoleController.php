@@ -7,16 +7,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateUserRolesRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Repositories\RoleRepository;
-use App\Repositories\UserRepository;
+use App\Repositories\RoleRepositoryInterface;
+use App\Repositories\UserRepositoryInterface;
 use Inertia\Inertia;
-use Spatie\Permission\Models\Role;
 
 class UserRoleController extends Controller
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private RoleRepository $roleRepository,
+        private UserRepositoryInterface $userRepository,
+        private RoleRepositoryInterface $roleRepository,
     ) {
     }
     /**

@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class UserReportRepository
+class UserReportRepository implements UserReportRepositoryInterface
 {
     public function generateForWeb(array $reportParameters, int $perPage = 5)
     {
