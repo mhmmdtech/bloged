@@ -54,7 +54,7 @@ class CategoryRepository implements CategoryRepositoryInterface
             'categories' . DIRECTORY_SEPARATOR . 'thumbnails',
             $data['seo_title']
         );
-        
+
         return auth()->user()->categories()->create($data);
 
     }

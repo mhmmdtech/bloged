@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use Spatie\Permission\Models\Permission;
 
-class PermissionRepository
+class PermissionRepository implements PermissionRepositoryInterface
 {
     public function getAll()
     {

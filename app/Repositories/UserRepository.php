@@ -7,7 +7,7 @@ use App\Services\FileManager\FileManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 
-class UserRepository
+class UserRepository implements UserRepositoryInterface
 {
 
     public function __construct(

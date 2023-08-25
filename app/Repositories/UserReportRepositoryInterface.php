@@ -11,5 +11,5 @@ interface UserReportRepositoryInterface
 
     public function generateForDownload(array $reportParameters);
 
-    public function generateQuery(array $reportParameters): Builder;
+    public function generateReportQuery(array $reportParameters): Builder;
 }

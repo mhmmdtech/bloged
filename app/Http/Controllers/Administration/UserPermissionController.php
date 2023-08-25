@@ -8,15 +8,15 @@ use Spatie\Permission\Models\Permission;
 use App\Http\Requests\Admin\UpdateUserPermissionsRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Repositories\PermissionRepository;
-use App\Repositories\UserRepository;
+use App\Repositories\PermissionRepositoryInterface;
+use App\Repositories\UserRepositoryInterface;
 use Inertia\Inertia;
 
 class UserPermissionController extends Controller
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private PermissionRepository $permissionRepository,
+        private UserRepositoryInterface $userRepository,
+        private PermissionRepositoryInterface $permissionRepository,
     ) {
     }
 

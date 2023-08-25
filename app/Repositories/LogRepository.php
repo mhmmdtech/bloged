@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Log;
 
-class LogRepository
+class LogRepository implements LogRepositoryInterface
 {
     public function getPaginatedLogs(int $perPage = 5, string $orderedColumn = "id")
     {
@@ -17,7 +17,8 @@ class LogRepository
             ->findOrFail($logId);
     }
 
-    public function create(array $data){
-       return Log::create($data);
+    public function create(array $data)
+    {
+        return Log::create($data);
     }
 }

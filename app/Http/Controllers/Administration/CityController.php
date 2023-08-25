@@ -11,13 +11,13 @@ use App\Http\Resources\CityResource;
 use App\Http\Resources\ProvinceResource;
 use App\Models\City;
 use App\Models\Province;
-use App\Repositories\CityRepository;
+use App\Repositories\CityRepositoryInterface;
 use Inertia\Inertia;
 
 class CityController extends Controller
 {
     public function __construct(
-        private CityRepository $cityRepository
+        private CityRepositoryInterface $cityRepository
     ) {
     }
 

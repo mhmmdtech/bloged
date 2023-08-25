@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use Spatie\Permission\Models\Role;
 
-class RoleRepository
+class RoleRepository implements RoleRepositoryInterface
 {
     public function getAll()
     {

@@ -10,7 +10,6 @@ use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Repositories\CategoryRepositoryInterface;
-use App\Services\FileManager\FileManager;
 use Inertia\Inertia;
 
 class CategoryController extends Controller

@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Province;
 
-class ProvinceRepository
+class ProvinceRepository implements ProvinceRepositoryInterface
 {
     public function getAllProvincesWithCities(string $orderedColumn = "id")
     {
