@@ -58,7 +58,10 @@ class UserRepository implements UserRepositoryInterface
         try {
             $user = auth()->user()->users()->create($data);
 
-            $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
+            $user->verificationCodes()->create([
+                'token' => generateRandomCode(5, 8),
+                'expires_at' => now()->addHour(),
+            ]);
 
             if (isset($data['avatar'])) {
                 $user->avatar = $this->fileManagerService
@@ -101,7 +104,10 @@ class UserRepository implements UserRepositoryInterface
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
-            $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
+            $user->verificationCodes()->create([
+                'token' => generateRandomCode(5, 8),
+                'expires_at' => now()->addHour(),
+            ]);
         }
 
         $user->save();

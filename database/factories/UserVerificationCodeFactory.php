@@ -22,6 +22,17 @@ class UserVerificationCodeFactory extends Factory
         return [
             'token' => generateRandomCode(5, 8),
             'user_id' => $users->random(),
+            'expires_at' => now()->addHour(),
         ];
+    }
+
+    /**
+     * Indicate that the model's email address should be unverified.
+     */
+    public function nonExpirable(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'expires_at' => null,
+        ]);
     }
 }
