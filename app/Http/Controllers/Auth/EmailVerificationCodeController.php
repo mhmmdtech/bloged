@@ -20,12 +20,24 @@ class EmailVerificationCodeController extends Controller
         $user = request()->user()->load('verificationCodes');
         $inputs = $request->validated();
 
-        if ($user->verificationCodes->last()->token == $inputs['token']) {
-            if ($user->markEmailAsVerified()) {
-                event(new Verified($user));
-            }
-
-            return redirect()->intended(RouteServiceProvider::HOME . '?verified=1');
+        if ($user->verificationCodes->last()->token !== $inputs['token']) {
+            return back()->with('status', [
+                'name' => 'verification-code-issue',
+                'message' => 'Please enter the last received code'
+            ]);
         }
+
+        if (now()->greaterThan($user->verificationCodes->last()->expires_at)) {
+            return back()->with('status', [
+                'name' => 'verification-code-issue',
+                'message' => 'The entered code has been expired'
+            ]);
+        }
+
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+        }
+
+        return redirect()->intended(RouteServiceProvider::HOME . '?verified=1');
     }
 }

@@ -17,7 +17,11 @@ class EmailVerificationNotificationController extends Controller
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->intended(RouteServiceProvider::HOME);
         }
-        $request->user()->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
+
+        $request->user()->verificationCodes()->create([
+            'token' => generateRandomCode(5, 8),
+            'expires_at' => now()->addHour(),
+        ]);
 
         $request->user()->sendEmailVerificationNotification();
 

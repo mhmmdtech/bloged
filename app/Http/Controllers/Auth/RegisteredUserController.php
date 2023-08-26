@@ -48,7 +48,10 @@ class RegisteredUserController extends Controller
         DB::beginTransaction();
         try {
             $user = User::create($inputs);
-            $user->verificationCodes()->create(['token' => generateRandomCode(5, 8)]);
+            $user->verificationCodes()->create([
+                'token' => generateRandomCode(5, 8),
+                'expires_at' => now()->addHour(),
+            ]);
             if (isset($inputs['avatar'])) {
                 $user->avatar = $this->fileManagerService
                     ->uploadWithResizingImage(

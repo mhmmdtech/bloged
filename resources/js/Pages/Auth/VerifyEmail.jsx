@@ -30,6 +30,13 @@ export default function VerifyEmail({ status }) {
                 </div>
             )}
 
+            {status?.name === "verification-code-issue" && (
+                <div className="mb-4 font-medium text-sm text-red-600">
+                    {status?.message ??
+                        "There is something wrong with your verification code"}
+                </div>
+            )}
+
             <form onSubmit={submit}>
                 <div className="mt-4 flex items-center justify-between">
                     <PrimaryButton disabled={processing}>

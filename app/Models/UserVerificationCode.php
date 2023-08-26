@@ -22,7 +22,16 @@ class UserVerificationCode extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['user_id', 'token'];
+    protected $fillable = ['user_id', 'token', 'expires_at'];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
 
     /**
      * Get the user that owns the post.
