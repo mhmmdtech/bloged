@@ -9,6 +9,7 @@ use App\Http\Requests\Auth\RegisterationRequest;
 use App\Models\Province;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use App\Repositories\UserRepositoryInterface;
 use App\Services\Image\ImageService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +21,7 @@ use App\Services\FileManager\FileManager;
 
 class RegisteredUserController extends Controller
 {
-    public function __construct(private FileManager $fileManagerService)
+    public function __construct(private UserRepositoryInterface $userRepository)
     {
         //
     }
@@ -41,33 +42,11 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(RegisterationRequest $request, ImageService $imageService): RedirectResponse
+    public function store(RegisterationRequest $request): RedirectResponse
     {
         $inputs = $request->validated();
 
-        DB::beginTransaction();
-        try {
-            $user = User::create($inputs);
-            $user->verificationCodes()->create([
-                'token' => generateRandomCode(5, 8),
-                'expires_at' => now()->addHour(),
-            ]);
-            if (isset($inputs['avatar'])) {
-                $user->avatar = $this->fileManagerService
-                    ->uploadWithResizingImage(
-                        $inputs['avatar'],
-                        'users' . DIRECTORY_SEPARATOR . 'avatars',
-                        $user->username,
-                        400,
-                        400
-                    );
-                $user->save();
-            }
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            throw $e;
-        }
+        $user = $this->userRepository->create($inputs);
 
         event(new Registered($user));
 

@@ -57,7 +57,7 @@ class UserRepository implements UserRepositoryInterface
         DB::beginTransaction();
 
         try {
-            $user = auth()->user()->users()->create($data);
+            $user = User::create($data);
 
             $user->verificationCodes()->create([
                 'token' => generateRandomCode(5, 8),

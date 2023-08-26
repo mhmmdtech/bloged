@@ -17,7 +17,7 @@ use Inertia\Response;
 class ProfileController extends Controller
 {
     public function __construct(
-        private UserRepositoryInterface $userRepositoryInterface
+        private UserRepositoryInterface $userRepository
     ) {
         //
     }
@@ -44,7 +44,7 @@ class ProfileController extends Controller
     {
         $inputs = removeNullFromArray($request->validated());
 
-        $this->userRepositoryInterface->update($request->user(), $inputs);
+        $this->userRepository->update($request->user(), $inputs);
 
         return redirect()->route('profile.edit');
     }
@@ -60,7 +60,7 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        $this->userRepositoryInterface->deleteSelfAccount($user);
+        $this->userRepository->deleteSelfAccount($user);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
