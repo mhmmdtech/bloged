@@ -13,7 +13,7 @@ class UserObserver
     public function creating(User $user): void
     {
         $user->mobile_number = convertToIrMobileFormat($user->mobile_number);
-
+        $user->creator_id = auth()->id();
         if ($user->gender !== GenderStatus::Male) {
             $user->military_status = null;
         }
