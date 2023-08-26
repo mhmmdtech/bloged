@@ -39,7 +39,7 @@ class UserPasswordController extends Controller
 
         $inputs = $request->validated();
 
-        $this->userRepository->updatePassword($user, $inputs);
+        $this->userRepository->updatePassword($user, $inputs['password']);
 
         event(new UserModified(auth()->id(), 'update password', User::class, $user->id, $user->toArray(), $user->toArray()));
 

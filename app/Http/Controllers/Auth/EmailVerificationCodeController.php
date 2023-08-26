@@ -20,7 +20,7 @@ class EmailVerificationCodeController extends Controller
         $user = request()->user()->load('verificationCodes');
         $inputs = $request->validated();
 
-        if ($user->verificationCodes->last()->token !== $inputs['token']) {
+        if ($user->verificationCodes->last()->token != $inputs['token']) {
             return back()->with('status', [
                 'name' => 'verification-code-issue',
                 'message' => 'Please enter the last received code'
