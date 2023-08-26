@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\FileManager\FileManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -124,6 +125,17 @@ class UserRepository implements UserRepositoryInterface
 
         $user->delete();
     }
+
+    public function deleteSelfAccount(User $user)
+    {
+        Auth::logout();
+
+        $this->fileManagerService->deleteImage($user->avatar);
+
+        $user->delete();
+    }
+
+
     public function updatePassword(User $user, array $data)
     {
         $user->update(['password' => $data['password']]);

@@ -6,19 +6,19 @@ use App\Enums;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Province;
+use App\Repositories\UserRepositoryInterface;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Services\FileManager\FileManager;
 
 class ProfileController extends Controller
 {
-    public function __construct(private FileManager $fileManagerService)
-    {
+    public function __construct(
+        private UserRepositoryInterface $userRepositoryInterface
+    ) {
         //
     }
 
@@ -44,30 +44,7 @@ class ProfileController extends Controller
     {
         $inputs = removeNullFromArray($request->validated());
 
-        if (isset($inputs['avatar'])) {
-            $this->fileManagerService->deleteImage($request->user()->avatar);
-
-            $inputs['avatar'] = $this->fileManagerService
-                ->uploadWithResizingImage(
-                    $inputs['avatar'],
-                    'users' . DIRECTORY_SEPARATOR . 'avatars',
-                    $inputs['username'],
-                    400,
-                    400
-                );
-        }
-
-        $request->user()->fill($inputs);
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-            $request->user()->verificationCodes()->create([
-                'token' => generateRandomCode(5, 8),
-                'expires_at' => now()->addHour(),
-            ]);
-        }
-
-        $request->user()->save();
+        $this->userRepositoryInterface->update($request->user(), $inputs);
 
         return redirect()->route('profile.edit');
     }
@@ -83,9 +60,7 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        Auth::logout();
-
-        $user->delete();
+        $this->userRepositoryInterface->deleteSelfAccount($user);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
