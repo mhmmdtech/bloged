@@ -136,9 +136,9 @@ class UserRepository implements UserRepositoryInterface
     }
 
 
-    public function updatePassword(User $user, array $data)
+    public function updatePassword(User $user, string $password)
     {
-        $user->update(['password' => $data['password']]);
+        $user->update(['password' => $password]);
     }
 
     public function updatePermissions(User $user, array $data)

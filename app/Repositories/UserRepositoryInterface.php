@@ -26,7 +26,7 @@ interface UserRepositoryInterface
 
     public function deleteSelfAccount(User $user);
 
-    public function updatePassword(User $user, array $data);
+    public function updatePassword(User $user, string $password);
 
     public function updatePermissions(User $user, array $data);
 
